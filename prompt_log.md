@@ -282,8 +282,40 @@
 
 > wait no lets do the things u said we need to do together, guide me 1 by 1
 
+> *[screenshot of the Supabase "create new project" form]*
+
+> okay done
+
 > cant u do all of this
+
+> done
+
+> don e
+
+> *[screenshot of the Supabase project dashboard]* where
+
+> done
 
 > Yes, create a public GitHub repo named caresignal under HDBRI, commit and push the Final Project code (with the prompt log).
 
 > Also I hope all of this is logged in the log
+
+> Yes, add those setup messages as follow-ups under Task 7, then commit and push.
+
+> Yes, guide me through deploying on Vercel now (do as much as you can yourself).
+
+> *[screenshot of the Vercel "New Project" page]* which code
+
+> *[screenshot of the terminal showing "You are now signed in" to Vercel]*
+
+> done
+
+> yay everything worked perfectly
+
+> *[screenshot of the Overview "Current handoff" card showing HO-3KN6634Y, "Acknowledged in the simulated receiver"]* what is this
+
+> *[screenshot of the three welcome cards]* from a user pov this is a bit confusing how can we make it better, can we do the receipt no thing only when clicked or something, also I wan t teh sign in for the 3rd box to be aligned with the others in the image -
+
+> Yes, push the commits to GitHub and redeploy the live site.
+
+> yes log everything unless I tell u not to
