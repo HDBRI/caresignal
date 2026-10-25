@@ -1,0 +1,49 @@
+{
+  "name": "caresignal",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CareSignal - classroom prototype that turns caregiver observations into evidence-linked, caregiver-reviewed handoffs. Synthetic data only.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "env:check": "tsx scripts/env-check.ts",
+    "db:setup": "tsx scripts/db.ts setup",
+    "db:reset": "tsx scripts/db.ts reset",
+    "db:status": "tsx scripts/db.ts status"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.11",
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "dotenv": "^18.0.9",
+    "next": "^16.4.3",
+    "openai": "^7.43.0",
+    "postgres": "^3.4.9",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.3",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
+  },
+  "type": "module"
+}

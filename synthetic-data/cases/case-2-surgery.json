@@ -1,0 +1,338 @@
+{
+  "seedKey": "PAT-SURGERY-002",
+  "synthetic": true,
+  "title": "Post-surgery recovery — predefined urgent test scenario",
+  "demonstrates": "Routine recovery notes, then a predefined synthetic urgent note. The deterministic safety rules show emergency guidance immediately — before and without any AI — and the weekly handoff is never what delivers urgent guidance.",
+  "demoAccount": {
+    "userId": "0d1e7a10-0000-4000-8000-000000000002",
+    "username": "demo-surgery",
+    "email": "demo.surgery@caresignal.example",
+    "displayName": "Demo · Morgan Patel case"
+  },
+  "patient": {
+    "patientRef": "PAT-SURGERY-002",
+    "pseudonym": "Morgan Patel",
+    "ageRange": "65_79",
+    "primaryCondition": "Recovery after abdominal surgery (fictional)",
+    "carePhase": "recovering",
+    "careSetting": "home",
+    "careContext": "Fictional. Morgan is recovering at home after abdominal surgery, using a walker, with a follow-up visit scheduled.",
+    "milestones": "Follow-up visit with the surgeon’s office (moved once).",
+    "synthetic": true
+  },
+  "caregiver": {
+    "name": "Riley",
+    "relationship": "Adult child"
+  },
+  "baselines": [
+    {
+      "category": "mobility_function",
+      "description": "Discharge plan: walk short distances several times a day with the walker."
+    },
+    {
+      "category": "mood_communication",
+      "description": "Usually upbeat and chatty."
+    }
+  ],
+  "observations": [
+    {
+      "fixtureId": "OBS-C2-01",
+      "at": {
+        "dayOffset": -6,
+        "time": "09:00"
+      },
+      "eventTime": null,
+      "author": null,
+      "text": "First full day home. Walked to the kitchen and back twice with the walker.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_function",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary",
+          "matches_baseline"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-02",
+      "at": {
+        "dayOffset": -6,
+        "time": "20:30"
+      },
+      "eventTime": null,
+      "author": null,
+      "text": "Incision dressing looks clean and dry. Pain is manageable — Morgan rated it 4 out of 10 when I asked.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "symptoms_comfort",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "routine_safety_example"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-03",
+      "at": {
+        "dayOffset": -5,
+        "time": "13:00"
+      },
+      "eventTime": null,
+      "author": null,
+      "text": "Had soup and crackers for lunch and kept sipping water through the afternoon.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "eating_drinking",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-04",
+      "at": {
+        "dayOffset": -4,
+        "time": "15:40"
+      },
+      "eventTime": {
+        "dayOffset": -4,
+        "time": "15:20"
+      },
+      "author": null,
+      "text": "A little dizzy after standing up too fast. Sat down and it passed after a minute.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "symptoms_comfort",
+        "secondaryCategories": [
+          "mobility_function"
+        ],
+        "safetyTier": "review",
+        "tags": [
+          "routine_safety_example"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-05",
+      "at": {
+        "dayOffset": -3,
+        "time": "11:00"
+      },
+      "eventTime": null,
+      "author": null,
+      "text": "Surgeon's office called — the follow-up visit moved to next Tuesday.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "care_coordination",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-06",
+      "at": {
+        "dayOffset": -2,
+        "time": "21:00"
+      },
+      "eventTime": null,
+      "author": null,
+      "text": "In good spirits, watched the game with our neighbor.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mood_cognition",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary",
+          "matches_baseline"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-07",
+      "at": {
+        "dayOffset": -2,
+        "time": "22:15"
+      },
+      "eventTime": null,
+      "author": null,
+      "text": "Took the evening medicines as listed on the discharge sheet.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "medications_treatment",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-08",
+      "at": {
+        "dayOffset": -1,
+        "time": "07:10"
+      },
+      "eventTime": {
+        "dayOffset": -1,
+        "time": "07:00"
+      },
+      "author": null,
+      "text": "Hard to wake Morgan this morning, and Morgan's breathing seemed difficult.",
+      "isTestScenario": true,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "symptoms_comfort",
+        "secondaryCategories": [
+          "mood_cognition"
+        ],
+        "safetyTier": "emergency",
+        "tags": [
+          "urgent_scenario",
+          "predefined_test_scenario"
+        ]
+      }
+    }
+  ],
+  "missingDays": [],
+  "checkins": [
+    {
+      "dayOffset": -5,
+      "synthetic": true,
+      "responses": {
+        "eating_drinking": {
+          "state": "answered",
+          "value": "About the same"
+        },
+        "energy_sleep": {
+          "state": "answered",
+          "value": "About the same"
+        },
+        "mobility_function": {
+          "state": "answered",
+          "value": "Walking with walker"
+        },
+        "mood_cognition": {
+          "state": "answered",
+          "value": "Good"
+        }
+      }
+    },
+    {
+      "dayOffset": -3,
+      "synthetic": true,
+      "responses": {
+        "mobility_function": {
+          "state": "answered",
+          "value": "Walking with walker"
+        },
+        "mood_cognition": {
+          "state": "answered",
+          "value": "Good"
+        }
+      }
+    }
+  ],
+  "handoff": {
+    "synthetic": true,
+    "draftedBy": "seed_fixture",
+    "period": {
+      "fromDayOffset": -6,
+      "toDayOffset": -3
+    },
+    "statusTimeline": [
+      {
+        "status": "draft",
+        "at": {
+          "dayOffset": -3,
+          "time": "21:00"
+        },
+        "note": "Example draft prepared for this synthetic scenario — not sent"
+      }
+    ],
+    "content": {
+      "summary": "Caregiver-reported observations for Morgan Patel (synthetic) during the first days home after surgery. This weekly draft is not how urgent concerns are handled: urgent guidance appears immediately when a note is saved.",
+      "items": [
+        {
+          "statement": "Caregiver reported Morgan walked to the kitchen and back twice with the walker on the first full day home.",
+          "support": "supported",
+          "sourceIds": [
+            "OBS-C2-01"
+          ]
+        },
+        {
+          "statement": "Caregiver reported the incision dressing looked clean and dry, and Morgan rated pain 4 out of 10 when asked.",
+          "support": "supported",
+          "sourceIds": [
+            "OBS-C2-02"
+          ]
+        },
+        {
+          "statement": "Caregiver reported a brief episode of dizziness after standing up quickly that passed after sitting down.",
+          "support": "supported",
+          "sourceIds": [
+            "OBS-C2-04"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "text": "Is brief dizziness after standing up something to bring up at the follow-up visit?",
+          "sourceIds": [
+            "OBS-C2-04",
+            "OBS-C2-05"
+          ]
+        }
+      ],
+      "missingInfo": [
+        "No observations about sleep were logged in this period.",
+        "Pain was only rated once."
+      ]
+    },
+    "receiverResponse": null
+  },
+  "expectedOutcome": {
+    "supported": [
+      {
+        "claim": "Walking with the walker as planned early in the week",
+        "sourceIds": [
+          "OBS-C2-01"
+        ]
+      }
+    ],
+    "possibleUnconfirmed": [],
+    "conflicts": [],
+    "unknowns": [
+      "Sleep was not reported"
+    ],
+    "urgent": {
+      "sourceId": "OBS-C2-08",
+      "safetyTier": "emergency",
+      "ruleIds": [
+        "EMG-BREATHING",
+        "EMG-HARD-TO-WAKE"
+      ],
+      "mustWorkWithoutAi": true
+    },
+    "mustNot": [
+      "delay urgent guidance until a summary",
+      "say the situation is safe",
+      "diagnose the cause"
+    ]
+  }
+}

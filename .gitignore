@@ -1,0 +1,42 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local database files (fallback mode)
+data/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+
+# Caches, logs, test output
+.vercel/
+.turbo/
+.cache/
+coverage/
+playwright-report/
+test-results/
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local tool settings
+.claude/
+
+# Supabase CLI scratch files
+supabase/.temp/
