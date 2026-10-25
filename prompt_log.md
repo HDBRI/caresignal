@@ -321,3 +321,7 @@
 > yes log everything unless I tell u not to
 
 > Yes, push the updated prompt log to GitHub.
+
+> did we already do this one? - Prompt 6 — Demo access, real account registration/login, terms, and patient onboarding
+> Paste this entire prompt into Claude Code after the previous prompt has completed successfully.
+> *[followed by the full Prompt 6 text again, identical to Task 7's prompt above]*
