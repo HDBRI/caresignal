@@ -319,3 +319,5 @@
 > Yes, push the commits to GitHub and redeploy the live site.
 
 > yes log everything unless I tell u not to
+
+> Yes, push the updated prompt log to GitHub.
