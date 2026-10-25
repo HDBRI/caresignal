@@ -2,6 +2,8 @@
 
 **Turn everyday observations into clearer care conversations.**
 
+**Live app:** https://caresignal-gilt.vercel.app · **Repo:** https://github.com/HDBRI/caresignal
+
 CareSignal is an AI-assisted care-coordination demo for family caregivers supporting someone through complex illness or recovery. Caregivers log observations in their own words. CareSignal keeps every original note exactly as written, runs predefined safety rules immediately, and uses AI to organize the notes into evidence-linked summaries and caregiver-reviewed handoffs for a (simulated) care team. Every insight links back to the source observations.
 
 > ⚠️ **Classroom prototype — synthetic data only.**
@@ -27,7 +29,7 @@ This README tracks what is actually built. Current stage: **demo access, account
 | Repository layer (cases, observations, alerts, check-ins, handoff/insight reads, usage) | ✅ Built + tested (incl. cross-user, cross-case and demo-visitor isolation) |
 | Synthetic data package (3 cases, 25 observations, evaluation cases), seed/copy/reset | ✅ Built + tested |
 | Screens 4–7 (Observations, Insights, Handoffs, Demo receiver), AI analysis, handoff submit/acknowledge | ⏳ Next prompts (pages show an honest "not available yet" note) |
-| Hosted deployment | ⏳ Needs Supabase + Vercel accounts and your approval |
+| Hosted deployment (Vercel + Supabase) | ✅ Live at https://caresignal-gilt.vercel.app — tested in a clean incognito session on 2026-10-25: demo entry, registration with Terms/Privacy acceptance, case creation, sign-out/sign-in, password-reset email |
 
 ---
 
@@ -79,7 +81,7 @@ Registration, sign-in, sign-out, password reset and account deletion use **Supab
 
 ### Supabase + Vercel setup checklist
 
-Done: Supabase project created (us-east-1), schema applied, demo users created, email confirmation off, local URLs configured. Remaining: Vercel deployment (step 4) and switching the Site URL to the public link.
+Done (2026-10-25): Supabase project (us-east-1, Data API off), schema applied, demo users created, email confirmation off, Site URL + redirect URLs set to the public link; Vercel project `caresignal` deployed with the environment variables below. The steps are kept here so the deployment can be reproduced.
 
 1. **Create a Supabase project** (free tier) at supabase.com.
 2. **Apply the schema:** with the project's *Transaction pooler* connection string in `.env` as `DATABASE_URL`, run `npm run db:setup`. This applies `db/migrations/*` (not `db/local/*`) and creates the three demo users (fixed IDs, random unknown passwords) with their profiles. Needs `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` too.

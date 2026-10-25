@@ -40,3 +40,6 @@ Thumbs.db
 
 # Supabase CLI scratch files
 supabase/.temp/
+
+.vercel
+.env*
