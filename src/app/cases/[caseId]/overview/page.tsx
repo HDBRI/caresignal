@@ -12,13 +12,14 @@ import { AlertIcon, CheckIcon, InfoIcon } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
 
+/** Plain-language handoff status for caregivers. The "care team" is always the simulated receiver. */
 const STATUS_LABEL: Record<string, string> = {
-  draft: "Draft — not sent",
-  reviewed: "Reviewed — ready to submit",
-  submitted: "Submitted",
-  received: "Received by the simulated receiver",
-  acknowledged: "Acknowledged in the simulated receiver",
-  failed: "Failed — can be retried",
+  draft: "Draft — not sent yet",
+  reviewed: "Reviewed — ready to send",
+  submitted: "Sent — waiting for confirmation",
+  received: "Received by the simulated care team",
+  acknowledged: "Received and acknowledged by the simulated care team",
+  failed: "Didn't go through — you can try again",
 };
 
 /** Screen 3 — Overview (access/onboarding version; the full dashboard is built in a later step). */
@@ -121,10 +122,31 @@ export default async function OverviewPage({
           <p style={{ fontSize: 26, fontWeight: 600 }}>{unseen.length}</p>
           <p className="secondary">{alerts.length} total from predefined rules</p>
         </div>
-        <div className="card">
-          <p className="secondary">Current handoff</p>
-          <p style={{ fontWeight: 600 }}>{latestHandoff ? `${latestHandoff.displayId}` : "None yet"}</p>
-          <p className="secondary">{latestHandoff ? STATUS_LABEL[latestHandoff.status] : "No handoff drafted"}</p>
+        <div className="card" style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <p className="secondary">Handoff to the care team</p>
+          {latestHandoff ? (
+            <>
+              <p style={{ fontWeight: 600 }}>{STATUS_LABEL[latestHandoff.status]}</p>
+              <p className="secondary">
+                {latestHandoff.draftedBy === "seed_fixture" ? "Example handoff from this demo scenario" : "Prepared in this case"} ·
+                not a real clinic
+              </p>
+              <details style={{ marginTop: 6 }}>
+                <summary className="muted-link" style={{ cursor: "pointer" }}>
+                  Show handoff ID
+                </summary>
+                <p style={{ marginTop: 6 }}>
+                  <code className="cred">{latestHandoff.displayId}</code>
+                </p>
+                <p className="secondary">Used to match this handoff with its receipt in the Demo receiver.</p>
+              </details>
+            </>
+          ) : (
+            <>
+              <p style={{ fontWeight: 600 }}>None yet</p>
+              <p className="secondary">No handoff has been drafted for this case.</p>
+            </>
+          )}
         </div>
       </section>
 

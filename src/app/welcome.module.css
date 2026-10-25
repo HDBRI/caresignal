@@ -25,8 +25,10 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
 }
-.choice { display: flex; flex-direction: column; gap: var(--space-3); }
-.choice .btn { margin-top: auto; }
+.choice { display: flex; flex-direction: column; gap: var(--space-3); height: 100%; }
+/* Body text grows to fill the card, so tag + button line up at the bottom of all three cards. */
+.choiceBody { flex: 1; }
+.eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: var(--text-secondary); margin-bottom: -6px; }
 .choiceIcon {
   width: 44px; height: 44px; border-radius: 12px;
   background: var(--calm); color: var(--primary);

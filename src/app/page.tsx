@@ -72,10 +72,11 @@ export default async function WelcomePage({ searchParams }: { searchParams: Prom
           <div className={styles.choiceIcon}>
             <BookIcon size={22} />
           </div>
+          <p className={styles.eyebrow}>Just looking?</p>
           <h3>Explore a demo</h3>
-          <p className="secondary">
-            Open one of three prepared fictional cases with shared demo credentials. You get your own copy to try
-            things in; it can be reset at any time.
+          <p className={`secondary ${styles.choiceBody}`}>
+            Try one of three fictional patient stories. No sign-up — the demo login is filled in for you, and you get
+            your own copy to experiment with.
           </p>
           <span className={styles.choiceTag}>Shared demo · not a private account</span>
           <Link className="btn btn-primary" href="/demo">
@@ -87,12 +88,12 @@ export default async function WelcomePage({ searchParams }: { searchParams: Prom
           <div className={styles.choiceIcon}>
             <UserPlusIcon size={22} />
           </div>
+          <p className={styles.eyebrow}>Want your own workspace?</p>
           <h3>Create an account</h3>
-          <p className="secondary">
-            Register with email and a password to keep your own fictional cases. Requires accepting the prototype
-            Terms of Use and Privacy Notice.
+          <p className={`secondary ${styles.choiceBody}`}>
+            Make a free account to create your own fictional cases and come back to them any time.
           </p>
-          <span className={styles.choiceTag}>Your own private workspace</span>
+          <span className={styles.choiceTag}>Private to you · fictional data only</span>
           {mode === "supabase" ? (
             <Link className="btn btn-secondary" href="/register">
               Create an account
@@ -108,9 +109,10 @@ export default async function WelcomePage({ searchParams }: { searchParams: Prom
           <div className={styles.choiceIcon}>
             <LogInIcon size={22} />
           </div>
+          <p className={styles.eyebrow}>Already have an account?</p>
           <h3>Sign in</h3>
-          <p className="secondary">Return to the fictional cases in your account, from any browser or device.</p>
-          <span className={styles.choiceTag}>Registered accounts</span>
+          <p className={`secondary ${styles.choiceBody}`}>Pick up where you left off, from any browser or device.</p>
+          <span className={styles.choiceTag}>For registered accounts</span>
           {mode === "supabase" ? (
             <Link className="btn btn-secondary" href="/sign-in">
               Sign in
