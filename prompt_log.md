@@ -987,3 +987,8 @@
 
 **Follow-up:**
 > done?
+
+**Follow-up:**
+> Fix the safety-rule gap (Option A), update the safety numbers in the report and slides, then push to GitHub and redeploy.
+
+**Follow-up:** *(pasted requirement: "Critical Product Requirement: Pattern Detection and Structured Care-Team Handoffs" — full text in the session; sections 1–9: longitudinal pattern detection, category pattern summaries, symptom-and-treatment timeline, Insights redesign, structured handoffs, concise output with evidence, AI output contract, evaluation/cost integrity, pattern tests)*

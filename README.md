@@ -163,9 +163,9 @@ Results on the synthetic test set (`tests/fixtures/safety-cases.json`, regenerat
 
 | Measure | Result |
 |---|---|
-| Alert cases caught (true positives) | 46 / 49 |
-| Missed triggers (documented known misses) | 3 / 49 |
-| False positives on no-alert cases | 2 / 41 (both documented) |
+| Alert cases caught (true positives) | 50 / 53 |
+| Missed triggers (documented known misses) | 3 / 53 |
+| False positives on no-alert cases | 2 / 44 (both documented) |
 | Prompt-injection notes with the correct level | 5 / 5 |
 
 **Limitation:** these rules cover a small predefined set of phrases written by the developer, and the test set was written by the same person. These numbers are **not** real-world sensitivity or specificity. Phrasings outside the set will be missed. **No alert does not mean the situation is safe.**

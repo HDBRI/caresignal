@@ -118,8 +118,8 @@ test("post-surgery urgent rule shows emergency guidance with the AI offline", as
   await expect(banner).toContainText("call 911");
   await expect(banner).toContainText("Hard to wake Morgan this morning");
   await page.getByRole("button", { name: "+ Add observation" }).first().click();
-  // A phrase the predefined rules are documented to catch. (Audit finding: "He is not breathing…" is NOT caught — see docs/FINAL_AUDIT.md.)
-  await page.getByLabel("What did you notice?").fill("She can't catch her breath right now");
+  // The phrase that exposed the audit gap — caught since rules 2026-10-26.1.
+  await page.getByLabel("What did you notice?").fill("He is not breathing normally and won't wake up");
   await page.getByRole("button", { name: "Save observation" }).click();
   await expect(page.getByRole("alertdialog")).toContainText("call 911"); // immediately, no AI involved
 });

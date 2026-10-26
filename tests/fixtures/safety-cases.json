@@ -1,5 +1,5 @@
 {
-  "_note": "Synthetic test phrases for the deterministic prototype rules, written by the developer. Results are reported with denominators (docs/SAFETY_EVALUATION.md). This is NOT a measure of real-world sensitivity or clinical safety.",
+  "_note": "Synthetic test phrases for the deterministic prototype rules, written by the developer. Results are reported with denominators (docs/SAFETY_EVALUATION.md). This is NOT a measure of real-world sensitivity or clinical safety. Added 2026-10-26 after the final audit: 4 'not/stopped breathing' emergency phrases, 1 false-trigger probe, 2 cross-clause negation phrases.",
   "emergency": [
     "Sudden difficulty breathing after lunch",
     "He's having trouble breathing right now",
@@ -19,7 +19,11 @@
     "Hard to wake him this morning and his breathing seemed difficult",
     "Passed out briefly after standing up",
     "Lips look a bit blue around the edges.",
-    "Struggling to breathe after the stairs."
+    "Struggling to breathe after the stairs.",
+    "He is not breathing",
+    "She stopped breathing for a few seconds",
+    "He isn't breathing right",
+    "He is not breathing normally and won't wake up"
   ],
   "contact_care_team": [
     "She has a fever tonight",
@@ -81,7 +85,9 @@
     "Never fainted, just sat down to rest",
     "No dizziness when standing",
     "Denied any shortness of breath",
-    "No seizure activity noticed"
+    "No seizure activity noticed",
+    "No trouble breathing, and he walked to the mailbox",
+    "Not short of breath and no chest pain"
   ],
   "known_misses": [
     "He was really out of it and I couldn't get him to talk",
@@ -95,7 +101,8 @@
     "She fell back asleep after breakfast.",
     "No bleeding at the incision today.",
     "Not confused today, chatting normally.",
-    "Did the stairs slowly without getting dizzy."
+    "Did the stairs slowly without getting dizzy.",
+    "He was not breathing hard after the short walk."
   ],
   "known_false_positives": [
     "Watched a documentary about chest pain.",

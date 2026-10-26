@@ -77,7 +77,7 @@
 <span class="tag real">Real software behavior</span> = what the running app actually did, captured from the app or its tests/logs on 2026-10-26.
 <span class="tag syn">Synthetic content</span> = fictional patients, notes and the scenario's prewritten "clinician response".
 <span class="tag est">Estimate</span> = numbers derived from stated assumptions (only in Tokenomics).
-Tested: 335 unit/integration tests (all passing) and 30 browser tests (all passing on 2026-10-26; two needed a re-run after environment hiccups), a 14-case deterministic evaluation, and one live 40-call model evaluation on synthetic notes. <strong>Unvalidated:</strong> real-world usefulness, time saved, clinical safety, and behavior on real caregiver language — no real users or patients were involved.</div>
+Tested on 2026-10-26: 348 unit/integration tests and 40 browser tests (including a final-audit suite), all passing, a 14-case deterministic evaluation, and one live 40-call model evaluation on synthetic notes. <strong>Unvalidated:</strong> real-world usefulness, time saved, clinical safety, and behavior on real caregiver language — no real users or patients were involved.</div>
 
 <!-- =============================== 2. MOTIVATION =============================== -->
 <h2 id="motivation">2. Motivation</h2>
@@ -244,15 +244,16 @@ Tested: 335 unit/integration tests (all passing) and 30 browser tests (all passi
 <h3>Deterministic rule results on the predefined synthetic set</h3>
 <table>
   <tr><th>Group</th><th class="num">Correct level</th><th class="num">Missed</th><th class="num">False positives</th></tr>
-  <tr><td>Emergency phrases</td><td class="num">19/19</td><td class="num">0</td><td class="num">—</td></tr>
+  <tr><td>Emergency phrases</td><td class="num">23/23</td><td class="num">0</td><td class="num">—</td></tr>
   <tr><td>Prompt-attention phrases</td><td class="num">16/16</td><td class="num">0</td><td class="num">—</td></tr>
   <tr><td>Review phrases</td><td class="num">8/8</td><td class="num">0</td><td class="num">—</td></tr>
-  <tr><td>Routine, negated and false-trigger notes</td><td class="num">37/37</td><td class="num">—</td><td class="num">0</td></tr>
+  <tr><td>Routine, negated and false-trigger notes</td><td class="num">40/40</td><td class="num">—</td><td class="num">0</td></tr>
   <tr><td>Prompt-injection notes</td><td class="num">5/5</td><td class="num">0</td><td class="num">0</td></tr>
   <tr><td>Known misses (documented, kept in the set)</td><td class="num">0/3</td><td class="num">3</td><td class="num">—</td></tr>
   <tr><td>Known false positives (documented)</td><td class="num">0/2</td><td class="num">—</td><td class="num">2</td></tr>
-  <tr><td><strong>Totals</strong></td><td colspan="3"><strong>46/49</strong> alert phrases caught (3 missed); <strong>2/41</strong> no-alert phrases falsely alerted.</td></tr>
+  <tr><td><strong>Totals</strong></td><td colspan="3"><strong>50/53</strong> alert phrases caught (3 missed); <strong>2/44</strong> no-alert phrases falsely alerted.</td></tr>
 </table>
+<p class="small"><strong>Fix after the final audit.</strong> Rules version 2026-10-26.1. The final audit found that “not / isn’t / stopped breathing” was not covered and that a “not” in an earlier clause could cancel a later urgent phrase (“not breathing normally <em>and</em> won’t wake up” gave no alert). We added a pattern, limited negation to the same clause, and added 4 emergency phrases, 1 false-trigger probe and 2 negated phrases to the set. Before the fix (rules 2026-10-25.2, as recorded in the evaluation run): 46/49 caught, 2/41 false alerts.</p>
 <p class="small">Known misses include “He was really out of it and I couldn't get him to talk”; known false positives include “Watched a documentary about chest pain.” The phrases were written by the same developer who wrote the rules, so these results describe this set only — <strong>not real-world sensitivity or comprehensive emergency detection.</strong></p>
 
 <!-- =============================== 7. IMPACT =============================== -->
@@ -262,7 +263,7 @@ Tested: 335 unit/integration tests (all passing) and 30 browser tests (all passi
   <div><b>50/50</b><span>key facts quoted exactly (31 notes)</span></div>
   <div><b>25/31</b><span>primary category exact match</span></div>
   <div><b>3/3</b><span>case-level summaries met expectations (sources, conflict, unknowns)</span></div>
-  <div><b>46/49</b><span>predefined urgent/attention phrases caught</span></div>
+  <div><b>50/53</b><span>predefined urgent/attention phrases caught</span></div>
 </div>
 <table>
   <tr><th style="width:24%">Indicator</th><th>Result</th><th style="width:33%">Method / sample</th></tr>

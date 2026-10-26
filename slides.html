@@ -205,14 +205,14 @@
     <div style="font-size:22px">
       <table>
         <tr><th>Test (synthetic, predefined)</th><th class="num">Result</th></tr>
-        <tr><td>Alert phrases caught</td><td class="num">46/49</td></tr>
-        <tr><td>False alerts on no-alert phrases</td><td class="num">2/41</td></tr>
+        <tr><td>Alert phrases caught</td><td class="num">50/53</td></tr>
+        <tr><td>False alerts on no-alert phrases</td><td class="num">2/44</td></tr>
         <tr><td>Urgent demo with no key / timeout / bad AI output</td><td class="num">3/3</td></tr>
         <tr><td>Injection: rules / model outputs</td><td class="num">5/5 · 4/4</td></tr>
         <tr><td>Bad AI statements removed by validator</td><td class="num">7/7</td></tr>
         <tr><td>Delivery: receipt, duplicate, failure, ack, restart</td><td class="num">5/5</td></tr>
       </table>
-      <p class="small">Rules cover a small phrase set (3 known misses, 2 known false alarms) — <strong>not</strong> comprehensive emergency detection. Isolation: row-level security; another user gets "not found".</p>
+      <p class="small">Rules 2026-10-26.1: the final audit found "not breathing" uncovered and a cross-clause negation bug — fixed and added to the set (was 46/49, 2/41). Rules cover a small phrase set (3 known misses, 2 known false alarms) — <strong>not</strong> comprehensive emergency detection. Isolation: row-level security; another user gets "not found".</p>
     </div>
   </div>
 </section>

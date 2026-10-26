@@ -31,7 +31,7 @@ export interface SafetyResult {
   rulesVersion: string;
 }
 
-export const RULES_VERSION = "2026-10-25.2";
+export const RULES_VERSION = "2026-10-26.1";
 
 export const SAFETY_LIMITATION =
   "These prototype rules cover a small predefined set of phrases. No alert does not mean the situation is safe.";
@@ -68,6 +68,8 @@ export const SAFETY_RULES: SafetyRule[] = [
       /\b(can'?t|cannot|could ?n'?t|unable to)\s+(catch\s+(his|her|their|my)\s+)?breath(e)?\b/i,
       /\bgasping\b/i,
       /\bshort(ness)? of breath\b/i,
+      // Added 2026-10-26 after the final audit: "not / isn't / stopped breathing" (but not "not breathing hard").
+      /\b(not|isn'?t|wasn'?t|stopped|stops)\s+breathing\b(?!\s+(as\s+)?(hard|heavily|fast|quickly|through)\b)/i,
     ],
   },
   {
@@ -178,11 +180,17 @@ export const SAFETY_RULES: SafetyRule[] = [
 /**
  * Negation cues checked in a short window before the match within the same
  * clause, e.g. "no trouble breathing", "denies chest pain", "without a fever".
+ * The clause ends at punctuation or at "and / but / then / so", so in "not breathing normally and won't wake up"
+ * the earlier "not" cannot cancel the later urgent phrase (fixed 2026-10-26 after the final audit).
  */
 const NEGATION = /\b(no|not|denies|denied|without|never|free of|negative for)\b[^.;,!?]{0,25}$/i;
+const CLAUSE_BREAK = /[.;,!?]|\b(and|but|then|so)\b/gi;
 
 function isNegated(text: string, index: number): boolean {
-  const window = text.slice(Math.max(0, index - 30), index);
+  let window = text.slice(Math.max(0, index - 30), index);
+  let cut = -1;
+  for (const m of window.matchAll(CLAUSE_BREAK)) cut = m.index! + m[0].length;
+  if (cut >= 0) window = window.slice(cut);
   return NEGATION.test(window);
 }
 

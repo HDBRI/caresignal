@@ -94,9 +94,10 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
         <h2 id="ai-h" className="ai-box-label" style={{ fontSize: 13 }}>
           Categories (separate from the original note)
         </h2>
-        <p>
+        {/* A <div>, not a <p>: the retry button is a <form>, which may not be nested inside a paragraph (hydration error). */}
+        <div>
           <strong>AI status:</strong> <AiStateText o={o} /> <RetryAiButton o={o} caseId={caseId} />
-        </p>
+        </div>
         {latestAi ? (
           <p>
             <strong>AI suggested:</strong>{" "}
