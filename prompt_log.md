@@ -992,3 +992,21 @@
 > Fix the safety-rule gap (Option A), update the safety numbers in the report and slides, then push to GitHub and redeploy.
 
 **Follow-up:** *(pasted requirement: "Critical Product Requirement: Pattern Detection and Structured Care-Team Handoffs" — full text in the session; sections 1–9: longitudinal pattern detection, category pattern summaries, symptom-and-treatment timeline, Insights redesign, structured handoffs, concise output with evidence, AI output contract, evaluation/cost integrity, pattern tests)*
+
+**Follow-up:**
+> I will send u data for each of the profiles for the month so we can showcase these cases better
+
+**Follow-up:**
+> are u still running the last redesign prompt in the backend or is it done
+
+**Follow-up:**
+> @"C:\Usersiavi\Downloads\CareSignal_Synthetic_Monthly_Datasets.zip" *(monthly synthetic datasets for the three profiles)*
+
+**Follow-up:**
+> idk explain what this would do, would we able to do/improve/update everything on time if we do this? will this break anything?
+
+**Follow-up:**
+> yes do that, make sure our old one is safe & we can submit that if we cant update on time, do the fixes & then do the new update
+
+**Follow-up:**
+> be as fast as u can please

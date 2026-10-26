@@ -50,6 +50,19 @@ export function EditForm({ caseId, handoffId, draft }: { caseId: string; handoff
       <input type="hidden" name="handoffId" value={handoffId} />
       <input type="hidden" name="itemCount" value={draft.items.length} />
       <input type="hidden" name="questionCount" value={draft.questions.length} />
+      {draft.patterns && <input type="hidden" name="patternCount" value={draft.patterns.length} />}
+      {(draft.patterns ?? []).map((p, i) => (
+        <div className="field" key={`p-${i}-${p.theme}`}>
+          <label htmlFor={`edit-pattern-${i}`}>
+            Pattern: {p.theme} <span className="secondary">· its supporting notes stay attached</span>
+          </label>
+          <textarea id={`edit-pattern-${i}`} name={`pattern-${i}`} className="textarea" style={{ minHeight: 56 }} defaultValue={p.change} maxLength={600} />
+          <div className="check-row">
+            <input type="checkbox" id={`edit-pattern-${i}-remove`} name={`pattern-${i}-remove`} />
+            <label htmlFor={`edit-pattern-${i}-remove`}>Remove this pattern from the handoff</label>
+          </div>
+        </div>
+      ))}
       <FormError message={state.error} />
       <FormSuccess message={state.ok} />
       {state.safety && <SafetyNotice s={state.safety} />}

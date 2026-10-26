@@ -207,6 +207,12 @@ A handoff organizes the **last 7 days** of caregiver-reported observations for a
 - **Outputs:** [docs/EVALUATION.md](docs/EVALUATION.md) (readable summary, failed cases included) and `docs/evaluation/results.json` (per-case results, per-call provider usage).
 - **Honesty rules:** metric definitions are stated in the report; token counts are the provider's own usage fields; no cost is reported because no verified price was available; no prompt comparison was run. The set is small, synthetic and developer-written — it does not show clinical effectiveness or real-world safety.
 
+## Pattern detection and the structured handoff
+
+- `src/lib/patterns.ts` (deterministic, no AI): finds recurring themes in the caregiver's own words (12 themes such as tiredness, eating less, needing help, daytime sleep), and separates **observation** (one note), **pattern** (repeated or explicitly described change), **timing after a documented care event**, and **uncertainty**. Direction comes only from the caregiver's words ("worse", "better", "first time"); "mentioned more often" is recording activity; a theme that stops appearing is "not mentioned in recent notes", never "resolved". No severity scores.
+- Care events come only from what notes document ("Treatment day at the clinic", "Visiting nurse came by", "not sure whether the evening ones were taken"); relative dates ("next Tuesday") are kept as written. The case model has no structured treatment schedule; a `care_events` table is the proposed next step.
+- Insights leads with "What appears to be changing"; the weekly handoff is structured (A summary · B key patterns table · C notable observations · D treatment timeline · E questions · F evidence with readable dates) and the simulated receiver shows exactly the submitted structure. Tests: `tests/patterns.test.ts` (17 scenarios), structured-handoff tests in `tests/handoffs.test.ts`.
+
 ## Tokenomics and cost controls
 
 - **Measured:** every attempted AI request is logged in `usage_log` with its task type (categorization, insight summary, handoff draft), timestamp, model, status and the provider's own token counts (input, cached, output, reasoning). If the provider returns no usage, the request is still counted and the tokens stay empty — never 0, never estimated. A cost is stored only if the provider itself returns one (it currently does not). No note text, prompts or keys are logged. Evaluation usage is kept in `docs/evaluation/results.json`. Settings → *AI usage* shows the measured numbers for your own case.

@@ -137,3 +137,20 @@ test("small screens: charts stack and the drawer is usable", async ({ page }) =>
   await drawer.getByRole("button", { name: "Close" }).click();
   await expect(drawer).toBeHidden();
 });
+
+test("pattern detection: changes over time with a documented treatment event, without claiming cause; structured handoff", async ({ page }) => {
+  await openInsights(page, "Jordan Lee");
+  const pat = page.locator("section.patterns");
+  await expect(pat.getByRole("heading", { name: "What appears to be changing" })).toBeVisible();
+  const card = pat.locator("article", { hasText: "Tiredness or low energy" });
+  await expect(card).toContainText("Described as worse");
+  await expect(card).toContainText(/Treatment session, Oct \d+ \(from a caregiver note\) — timing only, not a cause/);
+  await expect(pat.getByRole("heading", { name: "Treatment and care timeline" })).toBeVisible();
+  await expect(pat).toContainText("Treatment day at the clinic");
+  expect(await pat.innerText()).not.toMatch(/caused by|due to|side effect|OBS-C1-\d\d/);
+  await page.getByRole("link", { name: "Handoffs", exact: true }).first().click();
+  await page.getByRole("button", { name: "Draft this week's handoff" }).click();
+  await expect(page.getByRole("heading", { name: "B. Key patterns by category" })).toBeVisible();
+  await expect(page.getByRole("table", { name: "Key patterns by category" })).toContainText("Tiredness or low energy");
+  await expect(page.getByRole("heading", { name: "D. Treatment timeline context" })).toBeVisible();
+});

@@ -20,6 +20,8 @@ import { AlertIcon, InfoIcon, SparkIcon } from "@/components/icons";
 import { CategoryChart } from "@/components/insights/CategoryChart";
 import { EvidenceButton, EvidenceProvider } from "@/components/insights/Evidence";
 import { AddToHandoff, type HandoffFinding } from "@/components/insights/AddToHandoff";
+import { PatternSections } from "@/components/insights/PatternSections";
+import { detectPatterns } from "@/lib/patterns";
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +105,17 @@ export default async function InsightsPage({
   // Shared scale across categories; at least 3 so a single note never looks like a full-height spike.
   const maxCount = Math.max(3, ...dash.series.flatMap((s) => s.buckets.map((b) => b.count)));
   const comparison = dash.comparison;
+  // Longitudinal patterns for the selected chart period — deterministic, from stored notes; never calls the AI.
+  const patternResult = dash.period.start
+    ? detectPatterns({
+        notes: Object.values(obs)
+          .filter((o) => o.day >= dash.period.start! && o.day <= dash.period.end)
+          .map((o) => ({ id: o.displayId, day: o.day, hasEventTime: o.eventTime !== null, text: o.text, author: o.author })),
+        periodStart: dash.period.start,
+        periodEnd: dash.period.end,
+        baselines: dash.baselines.filter((b) => b.baseline).map((b) => ({ domain: b.domain, description: b.baseline! })),
+      })
+    : null;
   const withNotes = dash.series.filter((s) => s.total > 0);
   const withoutNotes = dash.series.filter((s) => s.total === 0);
   const patternFindings = dash.findings.filter((f) => f.kind === "repeated_theme" || f.kind === "frequency_change");
@@ -182,6 +195,8 @@ export default async function InsightsPage({
           {dash.metrics.undated > 0 && <> {dash.metrics.undated} note(s) have no readable date and are not charted.</>}
         </p>
       )}
+
+      {patternResult && dash.metrics.observations > 0 && <PatternSections caseId={caseId} r={patternResult} periodLabel={dash.period.label} />}
 
       {dash.metrics.observations === 0 ? (
         <section className="card" style={{ textAlign: "center", padding: "32px 24px" }}>

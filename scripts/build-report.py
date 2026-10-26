@@ -23,6 +23,8 @@ CROPS = {
     "20-urgent-banner": (0, 0, 1920, 900),
     "30-insights-top": (0, 0, 1800, 1650),
     "40-fallback-notes-only-draft": (0, 0, 1560, 1450),
+    "50-insights-patterns": (0, 0, 1728, 1300),
+    "51-structured-handoff": (0, 0, 1578, 1300),
 }
 MAX_WIDTH = 1300
 

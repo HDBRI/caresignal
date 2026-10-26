@@ -329,3 +329,18 @@ pre.payload { background: var(--bg); padding: 12px; border-radius: var(--radius-
 .group-gaps { border-left-color: #8d9ab5; }
 .finding-group .finding:first-of-type { border-top: 0; }
 .finding-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+/* Pattern detection (Task 22): cards for "changes to pay attention to", a readable timeline, structured handoff table. */
+.patterns { display: flex; flex-direction: column; gap: 10px; }
+.patterns h3 { font-size: 16px; margin-top: 6px; }
+.pattern-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.pattern-card { border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: var(--radius-sm); padding: 12px 14px; background: var(--surface); display: flex; flex-direction: column; gap: 6px; }
+.pattern-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.pattern-head h4 { font-size: 16px; }
+.pattern-line { font-size: 14px; margin: 0; }
+.pattern-list li { padding: 6px 0; border-top: 1px solid var(--border); font-size: 14px; }
+.pattern-inline { display: inline; margin-right: 10px; }
+.timeline { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.structured-handoff { display: flex; flex-direction: column; gap: 14px; }
+.structured-handoff h3 { font-size: 16px; }
+.pattern-table td, .pattern-table th { vertical-align: top; font-size: 13.5px; }

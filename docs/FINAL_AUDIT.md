@@ -57,6 +57,10 @@ Every item below was actually run on 2026-10-26 unless marked otherwise. "Pass" 
 2. **Impact has no real-user evidence** (quote, screenshot or before/after time). The rubric caps that row at half credit without it; the report says so honestly.
 3. Formatting check not run (no formatter configured).
 
+## 4b. Pattern detection added after the audit (2026-10-26)
+
+Deterministic pattern engine, treatment/care timeline from note-documented events, Insights "What appears to be changing", and the structured handoff (A–F) rendered identically on the receiver. Tests: 17 pattern scenarios + 4 structured-handoff tests + 1 browser test. No AI contract change and no new AI calls (patterns are computed from stored notes). Not covered by the earlier live model evaluation. Smallest data-model extension still needed: a `care_events` table (date, kind, date certainty, medication status).
+
 ## 5. Known limitations (unchanged)
 
 Small predefined safety rule set (3 documented misses, 2 false positives on the set; other paraphrases will be missed); synthetic data only; no clinical validation; no real EHR/care team (receiver simulated; not HIPAA compliant); AI depends on the Portkey/API availability and daily caps; model errors remain (6/40 model cases failed); one live evaluation run; no user research; cost estimates use an unverified stand-in price; Handoffs and observation detail still show internal note IDs; the "open demo" step occasionally stalls in automated tests on a slow machine (passed in the final full run).

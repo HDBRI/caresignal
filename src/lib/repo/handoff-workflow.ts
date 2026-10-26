@@ -134,6 +134,8 @@ export const handoffEditInput = z.object({
   questions: z.array(z.object({ text: text(400), remove: z.boolean() })),
   newQuestions: z.array(text(400)).max(5),
   missingInfo: z.array(text(400)).max(20),
+  /** Structured pattern rows: wording can change or a row can be removed; its evidence stays attached. */
+  patterns: z.array(z.object({ change: text(600), remove: z.boolean() })).optional(),
 });
 export type HandoffEditInput = z.infer<typeof handoffEditInput>;
 
@@ -158,6 +160,9 @@ export async function editDraft(db: Database, p: Principal, handoffId: string, r
         ...input.newQuestions.filter(Boolean).map((t) => ({ text: t, sourceIds: [] })), // written by the caregiver; no source claimed
       ],
       missingInfo: input.missingInfo.filter(Boolean),
+      ...(h.draft.patterns && input.patterns && input.patterns.length === h.draft.patterns.length
+        ? { patterns: h.draft.patterns.flatMap((row, i) => (input.patterns![i].remove || !input.patterns![i].change ? [] : [{ ...row, change: input.patterns![i].change }])) }
+        : {}),
     };
     const rows = await sql.query(
       `update handoffs set draft = $1, status = 'draft', approved_payload = null, reviewed_at = null, edited_at = now(), updated_at = now()
@@ -190,7 +195,7 @@ export const HANDOFF_PAYLOAD_SCHEMA = z.object({
 });
 
 /** Every source ID the payload mentions. */
-export function payloadSourceIds(p: Pick<HandoffPayload, "items" | "questions" | "safetyNotes" | "categories" | "urgent">): string[] {
+export function payloadSourceIds(p: Pick<HandoffPayload, "items" | "questions" | "safetyNotes" | "categories" | "urgent" | "patterns" | "notable" | "timeline">): string[] {
   return [
     ...new Set([
       ...p.items.flatMap((i) => i.sourceIds),
@@ -198,6 +203,9 @@ export function payloadSourceIds(p: Pick<HandoffPayload, "items" | "questions" |
       ...p.safetyNotes.map((s) => s.sourceId),
       ...(p.categories ?? []).flatMap((c) => c.sourceIds),
       ...(p.urgent ?? []).map((u) => u.sourceId),
+      ...(p.patterns ?? []).flatMap((x) => x.sourceIds),
+      ...(p.notable ?? []).map((x) => x.sourceId),
+      ...(p.timeline ?? []).map((x) => x.sourceId),
     ]),
   ];
 }

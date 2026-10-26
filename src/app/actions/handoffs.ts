@@ -69,6 +69,9 @@ export async function editHandoffAction(_prev: HandoffFormState, fd: FormData): 
     questions: Array.from({ length: questionCount }, (_, i) => ({ text: String(fd.get(`question-${i}`) ?? ""), remove: fd.get(`question-${i}-remove`) === "on" })),
     newQuestions: lines(fd.get("newQuestions")).slice(0, 5),
     missingInfo: lines(fd.get("missingInfo")),
+    patterns: fd.has("patternCount")
+      ? Array.from({ length: Number(fd.get("patternCount") ?? 0) }, (_, i) => ({ change: String(fd.get(`pattern-${i}`) ?? ""), remove: fd.get(`pattern-${i}-remove`) === "on" }))
+      : undefined,
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Please check the edits." };
   try {

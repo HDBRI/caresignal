@@ -12,18 +12,22 @@ test("handoff: recovery case keeps the conflicting meal reports; review, edit, a
   await expect(page.getByText("Draft regenerated from your latest notes.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Submit to the simulated receiver" })).toHaveCount(0); // not before approval
 
+  // Structured handoff: the conflict is listed under uncertainty; the validated AI interpretations are in a collapsed section.
+  await expect(page.getByRole("heading", { name: "B. Key patterns by category" })).toBeVisible();
+  await expect(page.getByText(/Conflicting reports \(eating\)/).first()).toBeVisible();
+  await page.getByText(/AI interpretations, validated against the notes/).click();
   const conflicts = page.locator("div").filter({ has: page.getByRole("heading", { name: /Conflicting reports/ }) }).last();
   await expect(conflicts.getByRole("link", { name: "OBS-C3-06" })).toBeVisible();
   await expect(conflicts.getByRole("link", { name: "OBS-C3-07" })).toBeVisible();
   await conflicts.getByText("Show the original notes (2)").click();
   await expect(conflicts.getByText(/full plate of pasta/)).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Uncertain, missing or unknown" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Uncertain, conflicting or missing" })).toBeVisible();
 
   await page.getByText("Edit the draft").click();
   await page.getByRole("textbox", { name: "Summary" }).fill("Edited summary: please see the meal reports, which disagree.");
   await page.getByRole("button", { name: "Save edits" }).click();
   await expect(page.getByText("Edits saved. Review the draft again before approving.")).toBeVisible();
-  await expect(page.getByText("Written / edited by you")).toBeVisible();
+  await expect(page.getByText("Your summary:")).toBeVisible();
 
   await page.getByLabel("I have read this draft and checked it against the source notes.").check();
   await page.getByRole("button", { name: "Approve handoff (does not send it)" }).click();
@@ -66,7 +70,7 @@ test("cancer case: the fictional outcome can be added only after acknowledgement
   await page.getByRole("link", { name: "Handoffs" }).first().click();
   await page.getByRole("button", { name: "Draft this week's handoff" }).click();
   await expect(page.getByText("Draft created. Nothing has been sent")).toBeVisible();
-  await expect(page.getByText("Supported by the notes").first()).toBeVisible();
+  await expect(page.getByRole("table", { name: "Key patterns by category" })).toContainText("Tiredness or low energy");
   await page.getByLabel("I have read this draft and checked it against the source notes.").check();
   await page.getByRole("button", { name: "Approve handoff (does not send it)" }).click();
   await page.getByRole("button", { name: "Submit to the simulated receiver" }).click();

@@ -207,6 +207,19 @@ export interface HandoffItem {
   addedFrom?: "insights";
 }
 
+export interface HandoffPattern {
+  category: string;
+  theme: string;
+  change: string; // plain-language pattern headline (editable by the caregiver)
+  level: "observation" | "pattern" | "temporal_association" | "uncertainty";
+  directions: string[];
+  timeframe: { first: string; last: string; days: number };
+  sourceIds: string[];
+  keySourceIds: string[];
+  event: string | null; // e.g. "Treatment session, Oct 20 (from a caregiver note)"
+  uncertainty: string;
+}
+
 export interface HandoffQuestion {
   text: string;
   sourceIds: string[];
@@ -222,6 +235,16 @@ export interface HandoffContent {
   categories?: { category: string; sourceIds: string[] }[];
   /** Task 13 drafts: notes in the period that triggered emergency / prompt-attention guidance when saved. */
   urgent?: { sourceId: string; tier: SafetyTier; alertedAt: string; seenAt: string | null }[];
+  /** Structured handoff (pattern detection, no AI): A. overall summary from the records. */
+  overview?: string;
+  /** The validated AI summary, kept separately when the overview is used as the main summary. */
+  aiSummary?: string | null;
+  /** B. Key patterns by category (deterministic; only categories with findings). */
+  patterns?: HandoffPattern[];
+  /** C. Important individual observations (urgent or isolated but notable). */
+  notable?: { sourceId: string; reason: string }[];
+  /** D. Care / treatment events documented in notes (never invented). */
+  timeline?: { day: string; label: string; sourceId: string; quote: string; dateCertainty: "note_day" | "relative_unresolved"; relativeText: string | null; relatedThemes: string[] }[];
 }
 
 export interface HandoffPayload extends HandoffContent {

@@ -23,6 +23,7 @@ import {
   UrgentList,
 } from "@/components/handoff/HandoffView";
 import { CheckIcon } from "@/components/icons";
+import { StructuredHandoff } from "@/components/handoff/StructuredHandoff";
 import { addFictionalResponseAction } from "@/app/actions/handoffs";
 
 export const dynamic = "force-dynamic";
@@ -112,6 +113,45 @@ export default async function HandoffDetail({
         </section>
       )}
 
+      {d.patterns ? (
+        <>
+          <section className="card" aria-labelledby="summary-h" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div className="section-head" style={{ marginBottom: 0 }}>
+              <h2 id="summary-h" style={{ fontSize: 19 }}>Weekly handoff</h2>
+              <span className="secondary">{gen && d.overview !== d.summary && d.summary !== gen.summary ? "Summary edited by you" : "Patterns from fixed rules over the caregiver's words; AI interpretations are separate below"}</span>
+            </div>
+            {gen && d.summary !== gen.summary && <p className="readable"><strong>Your summary:</strong> {d.summary}</p>}
+            <StructuredHandoff caseId={caseId} content={d} notes={notes} />
+          </section>
+      {d.items.length > 0 && (
+        <details className={`card ${h.draftedBy === "ai" ? "ai-surface" : ""}`}>
+          <summary style={{ cursor: "pointer", fontWeight: 600 }}>
+            {h.draftedBy === "ai" ? `AI interpretations, validated against the notes (${d.items.length})` : `All notes as written (${d.items.length})`}
+          </summary>
+          {h.draftedBy === "ai" && <KindTag kind="ai" />}
+          {d.aiSummary && <p className="readable secondary" style={{ marginTop: 6 }}>AI summary: {d.aiSummary}</p>}
+          <h2 id="items-h" className="sr-only">What the notes show</h2>
+          <p className="secondary">Each statement links to the caregiver notes it comes from. Statements are about what was logged — not a diagnosis or advice.</p>
+          {GROUPS.map((g) => {
+            const items = d.items.filter((i) => g.match(i.support, i.kind));
+            if (!items.length) return null;
+            return (
+              <div key={g.title} style={{ marginTop: 12 }}>
+                <h3 style={{ fontSize: 15.5 }}>{g.title}</h3>
+                <ul className="list-plain">
+                  {items.map((i) => (
+                    <ItemRow key={i.statement} caseId={caseId} item={i} notes={notes} edited={isEdited(i.statement)} />
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </details>
+      )}
+
+        </>
+      ) : (
+        <>
       <section className={`card ${h.draftedBy === "ai" && !(gen && d.summary !== gen.summary) ? "ai-surface" : ""}`} aria-labelledby="summary-h" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <div className="section-head" style={{ marginBottom: 0 }}>
           <h2 id="summary-h" style={{ fontSize: 19 }}>Summary</h2>
@@ -193,9 +233,12 @@ export default async function HandoffDetail({
         )}
       </section>
 
+        </>
+      )}
+
       <section className="card" aria-labelledby="src-h">
         <KindTag kind="caregiver">Caregiver&apos;s original notes</KindTag>
-        <h2 id="src-h" style={{ fontSize: 19 }}>Source observations ({sources.length})</h2>
+        <h2 id="src-h" style={{ fontSize: 19 }}>F. Evidence — source observations ({sources.length})</h2>
         <p className="secondary">Caregiver-reported, exactly as entered. These are the records the handoff is built from.</p>
         <ul className="list-plain" style={{ gap: 8, marginTop: 8 }}>
           {sources.map((id) => {
@@ -204,8 +247,8 @@ export default async function HandoffDetail({
             return (
               <li key={id}>
                 <blockquote className="quote">
-                  <Link href={`/cases/${caseId}/observations/${id}`}>{id}</Link>
-                  <span className="secondary"> · {o ? fmtDateTime(o.eventTime ?? o.enteredAt) : ""}{o?.authorLabel ? ` · ${o.authorLabel}` : ""}</span>
+                  <Link href={`/cases/${caseId}/observations/${id}`}>{o ? fmtDateTime(o.eventTime ?? o.enteredAt) : "Open note"}</Link>
+                  <span className="secondary">{o?.authorLabel ? ` · ${o.authorLabel}` : ""}</span>
                   <br />“{o?.originalText ?? "note not found"}”
                   {e && <span className="secondary"> — corrected wording by you: “{e.editedText}”</span>}
                 </blockquote>

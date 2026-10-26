@@ -267,3 +267,54 @@ describe("simulated receiver response (Case 1 only, labeled fictional)", () => {
     await expect(addFictionalResponse(db, p, handoff.id)).rejects.toEqual(err("no_response"));
   });
 });
+
+describe("structured handoff (pattern detection, no AI)", () => {
+  it("Case 1: key patterns cite the period's notes; tiredness sits after the documented treatment session; no cause claimed", async () => {
+    const { p, caseId } = await demo("PAT-CANCER-001");
+    const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
+    const d = handoff.draft;
+    expect(d.overview).toMatch(/notes were logged/);
+    expect(d.summary).toBe(d.overview);
+    const fatigue = d.patterns!.find((x) => x.theme === "Tiredness or low energy")!;
+    expect(fatigue.level).toBe("temporal_association");
+    expect(fatigue.event).toMatch(/^Treatment session, .* \(from a caregiver note\)$/);
+    expect(fatigue.directions).toContain("described_worse"); // "worse than last cycle" in the caregiver's words
+    for (const row of d.patterns!) for (const id of row.sourceIds) expect(handoff.sourceIds).toContain(id);
+    expect(d.timeline!.some((e) => e.label === "Treatment session")).toBe(true);
+    expect(JSON.stringify(d.patterns)).not.toMatch(/caused by|because of|due to|side effect|score/i);
+  });
+
+  it("Case 3: the conflicting meal reports and missing treatment dates are listed as uncertainty", async () => {
+    const { p, caseId } = await demo("PAT-RECOVERY-003");
+    const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
+    const missing = handoff.draft.missingInfo.join(" ");
+    expect(missing).toMatch(/Conflicting reports \(eating\)/);
+    expect(missing).toMatch(/timing relative to treatment can't be assessed/);
+    expect(handoff.draft.patterns!.map((x) => x.theme)).toEqual(expect.arrayContaining(["Needing help with daily activities", "Sleeping more in the day"]));
+  });
+
+  it("Case 2: the urgent note is an important individual observation, not a pattern", async () => {
+    const { p, caseId } = await demo("PAT-SURGERY-002");
+    const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
+    expect(handoff.draft.notable![0]).toMatchObject({ sourceId: "OBS-C2-08" });
+    expect(handoff.draft.notable![0].reason).toMatch(/emergency safety rule/);
+  });
+
+  it("the caregiver can edit or remove pattern rows; evidence stays attached; approved payload keeps the structure", async () => {
+    const { p, caseId } = await demo("PAT-CANCER-001");
+    const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
+    const rows = handoff.draft.patterns!;
+    const edited = await editDraft(db, p, handoff.id, {
+      summary: handoff.draft.summary,
+      items: handoff.draft.items.map((i) => ({ statement: i.statement, remove: false })),
+      questions: handoff.draft.questions.map((q) => ({ text: q.text, remove: false })),
+      newQuestions: [],
+      missingInfo: handoff.draft.missingInfo,
+      patterns: rows.map((r, i) => ({ change: i === 0 ? "My wording for this pattern" : r.change, remove: i === rows.length - 1 })),
+    });
+    expect(edited.draft.patterns).toHaveLength(rows.length - 1);
+    expect(edited.draft.patterns![0]).toMatchObject({ change: "My wording for this pattern", sourceIds: rows[0].sourceIds });
+    const approved = await approveHandoff(db, p, handoff.id, true);
+    expect(approved.approvedPayload!.patterns![0].change).toBe("My wording for this pattern");
+  });
+});

@@ -4,6 +4,8 @@ import { getCase } from "@/lib/repo/cases";
 import { getDb } from "@/lib/repo/db";
 import { fictionalResponseFor } from "@/lib/repo/handoff-workflow";
 import { listHandoffs } from "@/lib/repo/handoffs";
+import { listObservations } from "@/lib/repo/observations";
+import { StructuredHandoff } from "@/components/handoff/StructuredHandoff";
 import { EmptyState, fmtDateTime, KindTag } from "@/components/display";
 import { FictionalResponse, HistoryList, periodLabel, RECEIVER_BANNER, StatusBadge } from "@/components/handoff/HandoffView";
 import { AlertIcon } from "@/components/icons";
@@ -21,7 +23,8 @@ export default async function ReceiverPage({ params }: { params: Promise<{ caseI
   const actor = await requireActor();
   const db = await getDb();
   const p = principalOf(actor);
-  const [handoffs, c] = await Promise.all([listHandoffs(db, p, caseId), getCase(db, p, caseId)]);
+  const [handoffs, c, observations] = await Promise.all([listHandoffs(db, p, caseId), getCase(db, p, caseId), listObservations(db, p, caseId)]);
+  const notes = new Map(observations.map((o) => [o.displayId, o]));
   const scenarioResponse = fictionalResponseFor(c.seedKey);
   const queue = handoffs.filter((h) => h.receipt).sort((a, b) => b.receipt!.receivedAt.localeCompare(a.receipt!.receivedAt));
   const waiting = queue.filter((h) => !h.receipt!.acknowledgedAt).length;
@@ -94,6 +97,15 @@ export default async function ReceiverPage({ params }: { params: Promise<{ caseI
               {responses.map((x) => (
                 <FictionalResponse key={x.id} text={x.text} label={x.label} at={x.at} />
               ))}
+
+              {r.payload.patterns && (
+                <details open>
+                  <summary className="muted-link" style={{ cursor: "pointer" }}>
+                    The submitted handoff, exactly as approved (structured)
+                  </summary>
+                  <StructuredHandoff caseId={caseId} content={r.payload} notes={notes} />
+                </details>
+              )}
 
               <details>
                 <summary className="muted-link" style={{ cursor: "pointer" }}>

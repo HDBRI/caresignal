@@ -18,7 +18,9 @@ import { effectiveCategories } from "../dashboard";
 import type { HandoffContent, HandoffGeneration, HandoffItem, Insight, InsightRun } from "../models";
 import { listInsightRuns } from "../repo/handoffs";
 import { listAlerts, listAnalyses, listObservations } from "../repo/observations";
-import { buildInsightInput, generateInsights, type InsightInput } from "./insights";
+import { listBaselines } from "../repo/cases";
+import { detectPatterns, fmtDay as fmtPatternDay, type PatternResult } from "../patterns";
+import { buildInsightInput, generateInsights } from "./insights";
 import type { CategorizeDeps } from "./categorize";
 
 export const HANDOFF_PERIOD_DAYS = 7;
@@ -68,10 +70,6 @@ async function urgentNotes(db: Database, p: Principal, caseId: string, ids: stri
     .sort((a, b) => a.alertedAt.localeCompare(b.alertedAt));
 }
 
-function gapLine(input: InsightInput): string[] {
-  const missing = input.daysWithoutNotes.length;
-  return missing ? [`No observation was logged on ${missing} of the ${input.periodDays} days in this period (not reported — not the same as "nothing happened").`] : [];
-}
 
 function fromInsightRun(run: InsightRun, insights: Insight[]): Pick<HandoffContent, "summary" | "items" | "questions" | "missingInfo"> {
   const items: HandoffItem[] = insights
@@ -90,6 +88,47 @@ function fromInsightRun(run: InsightRun, insights: Insight[]): Pick<HandoffConte
     questions: insights.filter((i) => i.kind === "question").map((q) => ({ text: q.statement, sourceIds: q.sourceIds })),
     missingInfo: run.unknowns.map((u) => u.statement),
   };
+}
+
+/** Turns deterministic pattern results into the structured handoff sections (B–E). */
+function structuredFromPatterns(pr: PatternResult, urgent: NonNullable<HandoffContent["urgent"]>) {
+  const patterns: NonNullable<HandoffContent["patterns"]> = pr.findings
+    .filter((f) => f.level !== "observation")
+    .map((f) => ({
+      category: f.category,
+      theme: f.theme,
+      change: f.headline,
+      level: f.level,
+      directions: f.directions,
+      timeframe: f.timeframe,
+      sourceIds: f.sourceIds,
+      keySourceIds: f.keySourceIds,
+      event: f.relatedEvents[0] ? `${f.relatedEvents[0].label}, ${fmtPatternDay(f.relatedEvents[0].day)} (from a caregiver note)` : null,
+      uncertainty: f.uncertainty[0] ?? "",
+    }));
+  const notable = [
+    ...urgent.map((u) => ({
+      sourceId: u.sourceId,
+      reason: u.tier === "emergency" ? "Matched an emergency safety rule — guidance was shown immediately when it was saved" : "Matched a prompt-attention safety rule — guidance was shown when it was saved",
+    })),
+    ...pr.findings.filter((f) => f.level === "observation").slice(0, 4).map((f) => ({ sourceId: f.sourceIds[0], reason: `${f.theme} — mentioned once (not a trend)` })),
+  ].filter((x, i, a) => a.findIndex((y) => y.sourceId === x.sourceId) === i);
+  const timeline = pr.events.map((e) => ({
+    day: e.day,
+    label: e.label,
+    sourceId: e.sourceId,
+    quote: e.quote,
+    dateCertainty: e.dateCertainty,
+    relativeText: e.relativeText,
+    relatedThemes: pr.findings.filter((f) => f.relatedEvents.some((r) => r.sourceId === e.sourceId)).map((f) => f.theme),
+  }));
+  const missing = [...pr.conflicts.map((c) => `Conflicting reports (${c.theme.toLowerCase()}): ${c.detail}`), ...pr.eventNotes, ...pr.gaps];
+  return { patterns, notable, timeline, questions: pr.questions, missing };
+}
+
+function mergeQuestions(first: HandoffContent["questions"], second: HandoffContent["questions"]) {
+  const seen = new Set<string>();
+  return [...first, ...second].filter((q) => (seen.has(q.text) ? false : (seen.add(q.text), true))).slice(0, 6);
 }
 
 export async function buildHandoffDraft(db: Database, p: Principal, caseId: string, deps: CategorizeDeps): Promise<HandoffDraft> {
@@ -113,7 +152,15 @@ export async function buildHandoffDraft(db: Database, p: Principal, caseId: stri
     };
   }
 
-  const [categories, urgent] = await Promise.all([categoryGroups(db, p, caseId, ids), urgentNotes(db, p, caseId, ids)]);
+  const [categories, urgent, baselines] = await Promise.all([categoryGroups(db, p, caseId, ids), urgentNotes(db, p, caseId, ids), listBaselines(db, p, caseId)]);
+  // Deterministic pattern detection over the same notes (no AI call).
+  const pr = detectPatterns({
+    notes: input.notes.map((x) => ({ id: x.id, day: x.day, hasEventTime: x.eventTime !== null, text: x.text, author: x.author })),
+    periodStart: input.periodStart,
+    periodEnd: input.periodEnd,
+    baselines: baselines.map((b) => ({ domain: b.category, description: b.description })),
+  });
+  const structured = structuredFromPatterns(pr, urgent);
 
   // Reuse a validated run made from exactly these notes; otherwise ask for a new one (validated in insights.ts).
   let reused = true;
@@ -143,27 +190,42 @@ export async function buildHandoffDraft(db: Database, p: Principal, caseId: stri
         reusedRun: reused,
         rejectedItems: rejected,
       },
-      content: { ...ai, missingInfo: [...gapLine(input), ...ai.missingInfo], categories, urgent },
+      content: {
+        ...ai,
+        summary: pr.overview,
+        aiSummary: ai.summary,
+        questions: mergeQuestions(structured.questions, ai.questions),
+        missingInfo: [...structured.missing, ...ai.missingInfo],
+        categories,
+        urgent,
+        overview: pr.overview,
+        patterns: structured.patterns,
+        notable: structured.notable,
+        timeline: structured.timeline,
+      },
     };
   }
 
   // Notes-only draft: every note listed as the caregiver wrote it. Nothing is interpreted.
-  const n = input.notes.length;
   const reason = AI_REASON[aiStatus ?? ""] ?? "the AI summary is not available";
   return {
     ...base,
     draftedBy: "records",
     generation: { method: "records_only", aiStatus, rejectedItems: rejected },
     content: {
-      summary: `${n} ${n === 1 ? "observation was" : "observations were"} logged by the caregiver in this period. An AI summary is not available (${reason}), so this draft lists each note exactly as written. Review it and add anything the care team should know.`,
+      summary: `${pr.overview} (AI interpretation is not available: ${reason}.)`,
       items: input.notes.map((note) => ({ statement: `Caregiver reported: “${note.text}”`, support: "supported", sourceIds: [note.id], kind: "note" })),
-      questions: [],
+      questions: structured.questions,
       missingInfo: [
-        ...gapLine(input),
-        "Changes, patterns and conflicting reports were not analyzed because the AI summary was unavailable — please read the notes themselves.",
+        ...structured.missing,
+        "AI interpretation was not available: the patterns come from fixed rules over the caregiver's words, and conflicting reports were not analyzed by AI — please read the notes themselves.",
       ],
       categories,
       urgent,
+      overview: pr.overview,
+      patterns: structured.patterns,
+      notable: structured.notable,
+      timeline: structured.timeline,
     },
   };
 }
