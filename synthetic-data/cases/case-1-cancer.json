@@ -234,6 +234,8 @@
     {
       "dayOffset": -6,
       "synthetic": true,
+      "status": "noticed_change",
+      "note": null,
       "responses": {
         "eating_drinking": {
           "state": "answered",
@@ -252,6 +254,8 @@
     {
       "dayOffset": -4,
       "synthetic": true,
+      "status": "concern",
+      "note": "Worried about how little Jordan is drinking.",
       "responses": {
         "eating_drinking": {
           "state": "answered",
@@ -269,6 +273,8 @@
     {
       "dayOffset": -1,
       "synthetic": true,
+      "status": "noticed_change",
+      "note": null,
       "responses": {
         "eating_drinking": {
           "state": "answered",

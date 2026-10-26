@@ -12,6 +12,9 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["tests/**/*.test.ts"],
+    // Each DB test file boots its own in-memory Postgres (PGlite); allow for that under parallel load.
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
     // Tests never touch the real local database or Supabase.
     env: {
       CARESIGNAL_PGLITE_DIR: ":memory:",

@@ -62,3 +62,27 @@ export async function saveCaseDetails(_prev: FormState, fd: FormData): Promise<F
   await updateCaseDetails(await getDb(), principalOf(actor), caseId, input);
   return { message: "Saved." };
 }
+
+export async function saveBaselineAction(_prev: FormState, fd: FormData): Promise<FormState> {
+  const actor = await getActor();
+  if (!actor) redirect("/sign-in");
+  const caseId = str(fd, "caseId");
+  const { saveBaselines } = await import("@/lib/repo/cases");
+  await saveBaselines(
+    await getDb(),
+    principalOf(actor),
+    caseId,
+    BASELINE_DOMAINS.map((d) => ({ category: d.id, description: str(fd, `baseline_${d.id}`) })),
+  );
+  return { message: "Baseline saved. Blank areas show as “Not provided”." };
+}
+
+export async function saveReminderAction(fd: FormData): Promise<void> {
+  const actor = await getActor();
+  if (!actor) redirect("/sign-in");
+  const caseId = str(fd, "caseId");
+  const { setReminderPref } = await import("@/lib/repo/cases");
+  await setReminderPref(await getDb(), principalOf(actor), caseId, str(fd, "reminderPref") === "in_app_daily" ? "in_app_daily" : "off");
+  const { revalidatePath } = await import("next/cache");
+  revalidatePath(`/cases/${caseId}`, "layout");
+}

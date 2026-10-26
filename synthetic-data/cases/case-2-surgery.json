@@ -214,6 +214,8 @@
     {
       "dayOffset": -5,
       "synthetic": true,
+      "status": "no_change",
+      "note": null,
       "responses": {
         "eating_drinking": {
           "state": "answered",
@@ -236,6 +238,8 @@
     {
       "dayOffset": -3,
       "synthetic": true,
+      "status": "no_change",
+      "note": null,
       "responses": {
         "mobility_function": {
           "state": "answered",

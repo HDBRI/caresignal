@@ -18,7 +18,9 @@
     "env:check": "tsx scripts/env-check.ts",
     "db:setup": "tsx scripts/db.ts setup",
     "db:reset": "tsx scripts/db.ts reset",
-    "db:status": "tsx scripts/db.ts status"
+    "db:status": "tsx scripts/db.ts status",
+    "dev:local": "node scripts/dev-local.mjs",
+    "test:ui": "playwright test"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.11",
@@ -36,6 +38,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

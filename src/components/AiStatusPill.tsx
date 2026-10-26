@@ -7,7 +7,7 @@ export function AiStatusPill({ status }: { status: AiStatus }) {
     return (
       <span className="pill pill-calm">
         <SparkIcon size={14} />
-        AI analysis configured ({"gpt-6-luna"})
+        AI configured · gpt-6-luna
       </span>
     );
   }

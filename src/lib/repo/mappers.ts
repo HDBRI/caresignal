@@ -7,6 +7,7 @@ import type {
   Insight,
   InsightRun,
   Observation,
+  ObservationAnalysis,
   ObservationEdit,
   PatientCase,
   ReceiverRecord,
@@ -95,6 +96,8 @@ export const toCheckin = (r: Row): DailyCheckin => ({
   id: r.id as string,
   caseId: r.case_id as string,
   day: day(r.day),
+  status: r.status as DailyCheckin["status"],
+  note: (r.note as string) ?? null,
   responses: json(r.responses),
   origin: r.origin as DailyCheckin["origin"],
   synthetic: Boolean(r.synthetic),
@@ -170,4 +173,14 @@ export const toReceiverResponse = (r: Row): ReceiverResponse => ({
   label: r.label as string,
   synthetic: true,
   at: iso(r.at),
+});
+
+export const toAnalysis = (r: Row): ObservationAnalysis => ({
+  id: r.id as string,
+  observationId: r.observation_id as string,
+  primaryCategory: r.primary_category as ObservationAnalysis["primaryCategory"],
+  secondaryCategories: json(r.secondary_categories),
+  summary: (r.summary as string) ?? null,
+  modelReported: (r.model_reported as string) ?? null,
+  createdAt: iso(r.created_at),
 });

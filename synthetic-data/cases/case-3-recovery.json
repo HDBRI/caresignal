@@ -229,6 +229,8 @@
     {
       "dayOffset": -5,
       "synthetic": true,
+      "status": "noticed_change",
+      "note": null,
       "responses": {
         "mobility_function": {
           "state": "answered",
@@ -243,15 +245,9 @@
     {
       "dayOffset": -2,
       "synthetic": true,
-      "responses": {
-        "mood_cognition": {
-          "state": "answered",
-          "value": "Lower than usual"
-        },
-        "eating_drinking": {
-          "state": "skipped"
-        }
-      }
+      "status": "skipped",
+      "note": null,
+      "responses": {}
     }
   ],
   "handoff": {

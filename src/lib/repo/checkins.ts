@@ -12,21 +12,32 @@ const response = z.union([
   z.object({ state: z.literal("skipped") }),
 ]);
 
+export { CHECKIN_STATUSES, NO_RESPONSE_LABEL, checkinStatusLabel } from "./checkin-labels";
+
 export const checkinInput = z.object({
   caseId: z.string().uuid(),
   day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  responses: z.partialRecord(z.enum(CHECKIN_CATEGORIES as [string, ...string[]]), response),
+  status: z.enum(["no_change", "noticed_change", "concern", "skipped"]),
+  note: z
+    .string()
+    .trim()
+    .max(500)
+    .nullish()
+    .transform((v) => (v ? v : null)),
+  responses: z.partialRecord(z.enum(CHECKIN_CATEGORIES as [string, ...string[]]), response).optional(),
 });
 
-export async function upsertCheckin(db: Database, p: Principal, input: z.infer<typeof checkinInput>): Promise<DailyCheckin> {
+export async function upsertCheckin(db: Database, p: Principal, input: z.input<typeof checkinInput>): Promise<DailyCheckin> {
   const data = checkinInput.parse(input);
   await getCase(db, p, data.caseId);
   return db.asPrincipal(p, async (sql) => {
     const [row] = await sql.query(
-      `insert into checkins (case_id, owner_id, day, responses, origin, synthetic) values ($1, $2, $3, $4, 'session', true)
-       on conflict (case_id, day) do update set responses = excluded.responses, origin = 'session'
+      `insert into checkins (case_id, owner_id, day, status, note, responses, origin, synthetic)
+       values ($1, $2, $3, $4, $5, $6, 'session', true)
+       on conflict (case_id, day) do update
+         set status = excluded.status, note = excluded.note, responses = excluded.responses, origin = 'session'
        returning *`,
-      [data.caseId, p.userId, data.day, JSON.stringify(data.responses)],
+      [data.caseId, p.userId, data.day, data.status, data.note, JSON.stringify(data.responses ?? {})],
     );
     return toCheckin(row);
   });

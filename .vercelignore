@@ -8,3 +8,4 @@ node_modules/
 supabase/.temp/
 coverage/
 *.log
+.next-e2e/

@@ -126,10 +126,15 @@ export type CheckinResponse = { state: "answered"; value: string } | { state: "s
 export type CheckinResponses = Partial<Record<CategoryId, CheckinResponse>>;
 export type CheckinState = "answered" | "skipped" | "not_reported";
 
+/** Overall daily status. "No response recorded" is the absence of a check-in, never stored. */
+export type CheckinStatus = "no_change" | "noticed_change" | "concern" | "skipped";
+
 export interface DailyCheckin {
   id: string;
   caseId: string;
   day: string; // YYYY-MM-DD
+  status: CheckinStatus;
+  note: string | null;
   responses: CheckinResponses;
   origin: Origin;
   synthetic: boolean;

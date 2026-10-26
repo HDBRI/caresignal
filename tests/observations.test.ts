@@ -100,6 +100,8 @@ describe("check-ins", () => {
     await upsertCheckin(db, user, {
       caseId,
       day: "2026-10-18",
+      status: "concern",
+      note: "Worried about fluids",
       responses: { eating_drinking: { state: "answered", value: "Less than usual" }, mood_cognition: { state: "skipped" } },
     });
     const grid = checkinGrid(await listCheckins(db, user, caseId), "2026-10-17", "2026-10-19");

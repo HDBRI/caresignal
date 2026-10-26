@@ -126,3 +126,37 @@ export async function deleteUserCase(db: Database, p: Principal, caseId: string)
   if (c.kind !== "user") throw new Error("demo copies are reset, not deleted");
   await db.asPrincipal(p, (sql) => sql.query(`delete from cases where id = $1 and owner_id = $2`, [caseId, p.userId]));
 }
+
+/** Replace the caregiver-reported baseline. Blank descriptions are removed (shown as "Not provided"). */
+export async function saveBaselines(
+  db: Database,
+  p: Principal,
+  caseId: string,
+  entries: { category: string; description: string }[],
+): Promise<Baseline[]> {
+  await getCase(db, p, caseId);
+  const clean = z
+    .array(z.object({ category: z.enum(BASELINE_DOMAIN_IDS as [string, ...string[]]), description: z.string().trim().max(500) }))
+    .parse(entries);
+  return db.asPrincipal(p, async (sql) => {
+    for (const e of clean) {
+      if (!e.description) {
+        await sql.query(`delete from baselines where case_id = $1 and owner_id = $2 and category = $3`, [caseId, p.userId, e.category]);
+      } else {
+        await sql.query(
+          `insert into baselines (case_id, owner_id, category, description, origin, synthetic) values ($1, $2, $3, $4, 'session', true)
+           on conflict (case_id, category) do update set description = excluded.description, origin = 'session', reported_at = now()`,
+          [caseId, p.userId, e.category, e.description],
+        );
+      }
+    }
+    return (await sql.query(`select * from baselines where case_id = $1 and owner_id = $2 order by category`, [caseId, p.userId])).map(toBaseline);
+  });
+}
+
+/** In-app reminder preference only (no email/SMS/push). Default "off". */
+export async function setReminderPref(db: Database, p: Principal, caseId: string, pref: "off" | "in_app_daily"): Promise<void> {
+  await getCase(db, p, caseId);
+  if (pref !== "off" && pref !== "in_app_daily") throw new Error("invalid preference");
+  await db.asPrincipal(p, (sql) => sql.query(`update cases set reminder_pref = $3 where id = $1 and owner_id = $2`, [caseId, p.userId, pref]));
+}

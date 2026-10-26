@@ -167,3 +167,43 @@ details.demo-access summary { cursor: pointer; font-weight: 500; color: var(--pr
 details.demo-access table { border-collapse: collapse; margin-top: var(--space-3); font-size: 14px; }
 details.demo-access td, details.demo-access th { padding: 6px 12px 6px 0; text-align: left; }
 code.cred { background: var(--unknown-bg); padding: 2px 6px; border-radius: 6px; font-size: 13.5px; }
+
+/* ---------- Dialog ---------- */
+.cs-dialog {
+  width: min(620px, calc(100vw - 32px)); max-height: calc(100vh - 48px);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-5);
+  background: var(--surface); color: var(--text); box-shadow: 0 12px 40px rgba(28, 38, 34, 0.18);
+}
+.cs-dialog::backdrop { background: rgba(28, 38, 34, 0.45); }
+.quote { margin: 0; padding: 10px 14px; background: var(--bg); border-radius: var(--radius-sm); border-left: 3px solid var(--border); }
+
+/* ---------- Safety banner (persistent, every case screen) ---------- */
+.safety-banner { display: flex; flex-direction: column; gap: 10px; padding: var(--space-4) var(--space-5); border-radius: var(--radius); border: 1px solid; }
+.safety-emergency { background: var(--emergency-bg); border-color: #f1b8b2; border-left: 8px solid var(--emergency); }
+.safety-contact { background: var(--attention-bg); border-color: #efd9a8; border-left: 8px solid var(--attention); }
+.safety-title { display: flex; gap: 10px; align-items: center; font-size: 22px; }
+.safety-emergency .safety-title { color: var(--emergency); }
+.safety-contact .safety-title { color: var(--attention); }
+.safety-instruction { font-size: 19px; font-weight: 700; color: var(--text); }
+
+/* ---------- Dashboard pieces ---------- */
+.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.section-head h2 { font-size: 19px; }
+.grid-dash { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-4); }
+.stat-label { font-size: 13.5px; color: var(--text-secondary); }
+.stat-value { font: 600 26px/1.2 var(--font-heading); }
+.list-plain { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.list-plain > li { padding: 12px 0; border-top: 1px solid var(--border); }
+.list-plain > li:first-child { border-top: 0; padding-top: 0; }
+.meta { font-size: 13px; color: var(--text-secondary); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.ai-box { border: 1px dashed #b9c8bd; background: #f6faf7; border-radius: var(--radius-sm); padding: 8px 12px; font-size: 14px; }
+.ai-box-label { font-size: 12px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--primary); }
+.original-label { font-size: 12px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--text-secondary); }
+.chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; color: var(--text); text-decoration: none; }
+.chip[aria-current="true"] { background: var(--calm); border-color: var(--calm); color: var(--primary); font-weight: 600; }
+.radio-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-row label { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 14px; background: var(--surface); }
+.radio-row input { accent-color: var(--primary); }
+.radio-row label:has(input:checked) { background: var(--calm); border-color: var(--primary); }
+pre.payload { background: var(--bg); padding: 12px; border-radius: var(--radius-sm); overflow: auto; font-size: 12.5px; max-height: 360px; }

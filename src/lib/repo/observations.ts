@@ -9,11 +9,11 @@
 import { z } from "zod";
 import type { Database, Principal } from "../db/client";
 import { assertUuid } from "../db/client";
-import type { Observation, ObservationEdit, SafetyAlert } from "../models";
+import type { Observation, ObservationAnalysis, ObservationEdit, SafetyAlert } from "../models";
 import { evaluateSafety, type SafetyResult } from "../safety/rules";
 import { getCase, NotFoundError } from "./cases";
 import { sessionObservationDisplayId } from "./ids";
-import { toAlert, toEdit, toObservation } from "./mappers";
+import { toAlert, toAnalysis, toEdit, toObservation } from "./mappers";
 
 export const newObservationInput = z.object({
   caseId: z.string().uuid(),
@@ -21,6 +21,8 @@ export const newObservationInput = z.object({
   text: z.string().refine((s) => s.trim().length > 0, "Note cannot be empty").refine((s) => s.length <= 4000, "Note is too long"),
   eventTime: z.string().datetime({ offset: true }).optional().nullable(),
   authorLabel: z.string().trim().max(60).optional().nullable(),
+  /** "pending" only when an AI analysis will actually be attempted; otherwise "not_run" (honest default). */
+  aiState: z.enum(["pending", "not_run", "unavailable_limit", "unavailable_error"]).optional(),
 });
 export type NewObservationInput = z.infer<typeof newObservationInput>;
 
@@ -48,10 +50,10 @@ export async function addObservation(db: Database, p: Principal, input: NewObser
     const [row] = await sql.query(
       `insert into observations (case_id, owner_id, display_id, original_text, event_time, author_label, origin, synthetic,
                                  is_test_scenario, safety_tier, safety_rule_ids, safety_rules_version, ai_state)
-       values ($1, $2, $3, $4, $5, $6, 'session', true, false, $7, $8, $9, 'pending') returning *`,
+       values ($1, $2, $3, $4, $5, $6, 'session', true, false, $7, $8, $9, $10) returning *`,
       [
         data.caseId, p.userId, sessionObservationDisplayId(n + 1), data.text, data.eventTime ?? null, data.authorLabel ?? null,
-        safety.tier ?? "none", JSON.stringify(ruleIds), safety.rulesVersion,
+        safety.tier ?? "none", JSON.stringify(ruleIds), safety.rulesVersion, data.aiState ?? "not_run",
       ],
     );
     let alert: SafetyAlert | null = null;
@@ -153,4 +155,19 @@ export async function markAlertSeen(db: Database, p: Principal, alertId: string)
     if (rows.length !== 1) throw new NotFoundError("alert");
     return toAlert(rows[0]);
   });
+}
+
+// ---------------- AI-derived labels (read) ----------------
+
+/** Latest AI analysis per observation in a case (AI output is stored separately from the original note). */
+export async function listAnalyses(db: Database, p: Principal, caseId: string): Promise<Map<string, ObservationAnalysis>> {
+  await getCase(db, p, caseId);
+  const rows = await db.asPrincipal(p, (sql) =>
+    sql.query(
+      `select distinct on (observation_id) * from observation_analyses
+        where case_id = $1 and owner_id = $2 order by observation_id, created_at desc`,
+      [caseId, p.userId],
+    ),
+  );
+  return new Map(rows.map((r) => [r.observation_id as string, toAnalysis(r)]));
 }

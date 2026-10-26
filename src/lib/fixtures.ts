@@ -65,7 +65,15 @@ const caseFixture = z.object({
   baselines: z.array(z.object({ category: z.enum(BASELINE_DOMAIN_IDS as [string, ...string[]]), description: z.string() })),
   observations: z.array(observationFixture).min(1),
   missingDays: z.array(z.number().int().max(-1)),
-  checkins: z.array(z.object({ dayOffset: z.number().int().max(-1), synthetic: z.literal(true), responses })),
+  checkins: z.array(
+    z.object({
+      dayOffset: z.number().int().max(-1),
+      synthetic: z.literal(true),
+      status: z.enum(["no_change", "noticed_change", "concern", "skipped"]),
+      note: z.string().max(500).nullable(),
+      responses,
+    }),
+  ),
   handoff: z.object({
     synthetic: z.literal(true),
     draftedBy: z.literal("seed_fixture"),

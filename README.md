@@ -13,7 +13,7 @@ CareSignal is an AI-assisted care-coordination demo for family caregivers suppor
 
 ## Status
 
-This README tracks what is actually built. Current stage: **demo access, accounts, terms and onboarding** (Task 7 in `prompt_log.md`).
+This README tracks what is actually built. Current stage: **dashboard and navigation** (Task 8 in `prompt_log.md`).
 
 | Area | Status |
 |---|---|
@@ -21,14 +21,15 @@ This README tracks what is actually built. Current stage: **demo access, account
 | Demo access (3 shared demo logins → private, resettable copy per visitor) | ✅ Built + tested locally |
 | Registration / sign-in / sign-out / password reset / account deletion (Supabase Auth) | ✅ Implemented + tested **live against the project's Supabase** from a local run (register → onboarding → sign out → sign in → delete account; live provider tests pass). Public link not deployed yet |
 | Terms of Use + Privacy Notice (versioned) and stored acceptance record | ✅ Built + tested |
-| Screens 1–3 and 8 (Welcome, Choose case/Onboarding, Overview, Settings) | ✅ Built (Overview/Settings are partial) |
+| All 8 screens on real stored data: Welcome, Choose case/Onboarding, Overview dashboard, Observations timeline (+ note detail, filters, check-in history), Insights, Handoffs, Demo receiver, Settings | ✅ Built + browser-tested (8 Playwright UI tests) |
+| Add observation (every screen), daily check-in (5 explicit states), emergency banner on every screen until marked seen | ✅ Built + tested |
 | `.env` loading (project folder, then parent) | ✅ Built + tested |
 | AI client (`gpt-6-luna` via Portkey, honest failure states, provider-reported token usage) | ✅ Built + tested (no live calls yet) |
 | Deterministic safety rules | ✅ Built + tested (73 synthetic phrases) |
 | Postgres schema, migrations, Row Level Security | ✅ Built + tested locally (PGlite) **and applied to Supabase**; demo-visitor isolation re-checked live on Supabase |
 | Repository layer (cases, observations, alerts, check-ins, handoff/insight reads, usage) | ✅ Built + tested (incl. cross-user, cross-case and demo-visitor isolation) |
 | Synthetic data package (3 cases, 25 observations, evaluation cases), seed/copy/reset | ✅ Built + tested |
-| Screens 4–7 (Observations, Insights, Handoffs, Demo receiver), AI analysis, handoff submit/acknowledge | ⏳ Next prompts (pages show an honest "not available yet" note) |
+| AI categories/insights, handoff drafting/review/submit, receiver acknowledge | ⏳ Next prompts (screens state honestly that these are not built yet; no placeholder AI output) |
 | Hosted deployment (Vercel + Supabase) | ✅ Live at https://caresignal-gilt.vercel.app — tested in a clean incognito session on 2026-10-25: demo entry, registration with Terms/Privacy acceptance, case creation, sign-out/sign-in, password-reset email |
 
 ---
@@ -97,7 +98,9 @@ Done (2026-10-25): Supabase project (us-east-1, Data API off), schema applied, d
 
 | Command | What it does |
 |---|---|
-| `npm run dev` | Start the development server on http://localhost:3000 |
+| `npm run dev` | Start the development server on http://localhost:3000 (uses Supabase if `.env` has its settings) |
+| `npm run dev:local` | Same, but always on the local database — safe for development even when `.env` points at the live Supabase |
+| `npm run test:ui` | Browser UI tests (Playwright) on a separate local server (port 3100, fresh local database). First run: `npx playwright install chromium` |
 | `npm run build` / `npm start` | Production build / serve it |
 | `npm test` | Run the automated tests (Vitest) |
 | `npm run typecheck` | TypeScript check |
