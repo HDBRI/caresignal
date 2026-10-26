@@ -840,3 +840,6 @@
 
 **Follow-up:**
 > are u done
+
+**Follow-up:**
+> Yes, push to GitHub and redeploy the live site.
