@@ -1031,3 +1031,6 @@
 
 **Follow-up:**
 > how much longer
+
+**Follow-up:**
+> Yes, push to GitHub and redeploy the live site.
