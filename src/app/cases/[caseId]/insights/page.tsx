@@ -10,15 +10,16 @@ import type { Insight } from "@/lib/models";
 import { loadDashboard } from "@/lib/repo/dashboard";
 import { getDb } from "@/lib/repo/db";
 import { localDate } from "@/lib/time";
-import { listInsightRuns } from "@/lib/repo/handoffs";
+import { listHandoffs, listInsightRuns } from "@/lib/repo/handoffs";
 import { listAlerts } from "@/lib/repo/observations";
 import { aiCallsToday } from "@/lib/repo/usage";
 import { TIER_GUIDANCE } from "@/lib/safety/rules";
-import { fmtDateTime } from "@/components/display";
+import { fmtDateTime, KindTag } from "@/components/display";
 import { GenerateInsightsForm } from "@/components/GenerateInsightsForm";
 import { AlertIcon, InfoIcon, SparkIcon } from "@/components/icons";
 import { CategoryChart } from "@/components/insights/CategoryChart";
 import { EvidenceButton, EvidenceProvider } from "@/components/insights/Evidence";
+import { AddToHandoff, type HandoffFinding } from "@/components/insights/AddToHandoff";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,13 @@ const RUN_STATUS_MESSAGE: Record<string, string> = {
     "The AI's answer didn't pass CareSignal's checks (for example, it cited a note that doesn't exist or added something the notes don't say), so it was discarded. Nothing is shown in its place.",
   unavailable_error: "AI analysis is currently unavailable. You can continue logging notes and using the prototype's predefined safety rules.",
   unavailable_limit: "AI analysis is temporarily unavailable because the daily limit was reached. Notes, charts and safety rules are not affected.",
+};
+
+/** Short, honest titles for AI items; the full AI sentence follows as body text. */
+const AI_TITLE: Record<string, string> = {
+  pattern: "Repeated in several notes",
+  change: "A reported change",
+  possible_pattern: "Possible pattern — not confirmed",
 };
 
 const SUPPORT_LABEL: Record<Insight["support"], string> = {
@@ -64,11 +72,13 @@ export default async function InsightsPage({
   const actor = await requireActor();
   const db = await getDb();
   const p = principalOf(actor);
-  const [dash, runs, usedToday, alerts] = await Promise.all([
+  // Reads only: rendering this page or changing the chart period never calls the AI.
+  const [dash, runs, usedToday, alerts, handoffs] = await Promise.all([
     loadDashboard(db, p, caseId, range),
     listInsightRuns(db, p, caseId),
     aiCallsToday(db, p.userId),
     listAlerts(db, p, caseId),
+    listHandoffs(db, p, caseId),
   ]);
   const obs = dash.observations;
   const byInternalId = new Map(Object.values(obs).map((o) => [o.id, o]));
@@ -90,9 +100,20 @@ export default async function InsightsPage({
     r.run.periodStart && r.run.periodEnd
       ? `${fmtShortDay(localDate(new Date(r.run.periodStart)))}–${fmtShortDay(localDate(new Date(r.run.periodEnd)))}`
       : "an earlier period";
-  const maxCount = Math.max(1, ...dash.series.flatMap((s) => s.buckets.map((b) => b.count)));
-  const shownFindings = dash.findings.filter((f) => f.kind !== "single_mention");
+  // Shared scale across categories; at least 3 so a single note never looks like a full-height spike.
+  const maxCount = Math.max(3, ...dash.series.flatMap((s) => s.buckets.map((b) => b.count)));
+  const comparison = dash.comparison;
+  const withNotes = dash.series.filter((s) => s.total > 0);
+  const withoutNotes = dash.series.filter((s) => s.total === 0);
+  const patternFindings = dash.findings.filter((f) => f.kind === "repeated_theme" || f.kind === "frequency_change");
+  const sparseFindings = dash.findings.filter((f) => f.kind === "insufficient");
   const singleMentions = dash.findings.filter((f) => f.kind === "single_mention");
+  const aiInterpretations = aiItems.filter((i) => i.support !== "conflicting");
+  const aiConflicts = aiItems.filter((i) => i.support === "conflicting");
+  const aiUnknowns = ai ? ai.run.unknowns : [];
+  const gapCount = aiConflicts.length + sparseFindings.length + aiUnknowns.length;
+  const open = handoffs.find((b) => b.handoff.status === "draft" || b.handoff.status === "reviewed");
+  const openDraft = open ? { displayId: open.handoff.displayId, sourceIds: open.handoff.sourceIds } : null;
   const fmtRange = dash.metrics.firstDay
     ? dash.metrics.firstDay === dash.metrics.lastDay
       ? fmtShortDay(dash.metrics.firstDay)
@@ -101,13 +122,15 @@ export default async function InsightsPage({
 
   return (
     <EvidenceProvider caseId={caseId} observations={obs}>
+      <div className="insights-page">
       {/* ---------------- A. Header ---------------- */}
       <header style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
           <div>
             <h1>Care insights</h1>
-            <p className="secondary" style={{ fontSize: 15 }}>
-              Explore patterns in the observations recorded over time.
+            <p className="secondary readable" style={{ fontSize: 15 }}>
+              Recorded activity from saved notes{dash.metrics.firstDay ? ` · notes from ${fmtRange}` : ""}. Counts show how much was written down — not
+              how anyone is doing. Synthetic data; not medical advice.
             </p>
           </div>
           <span className={`pill ${aiAvailable && !capReached ? "pill-calm" : "pill-unknown"}`}>
@@ -121,52 +144,44 @@ export default async function InsightsPage({
             </Link>
           ))}
         </nav>
-        <p className="secondary">
-          Charts and counts come from saved notes only and measure how much was written down — not how anyone is doing. Synthetic data; not
-          medical advice.
-        </p>
       </header>
 
-      {/* ---------------- B. At a glance ---------------- */}
-      <section aria-labelledby="glance-h">
+      {/* ---------------- B. At a glance (compact) ---------------- */}
+      <section aria-labelledby="glance-h" className="glance">
         <h2 id="glance-h" className="sr-only">
           At a glance
         </h2>
-        <div className="metric-row">
-          <div className="metric">
-            <p className="stat-label">Observations · {dash.period.label.toLowerCase()}</p>
-            <p className="metric-value" data-testid="metric-observations">
-              {dash.metrics.observations}
-            </p>
-          </div>
-          <div className="metric">
-            <p className="stat-label">Categories with notes</p>
-            <p className="metric-value">{dash.metrics.categoriesRepresented} of 7</p>
-          </div>
-          <div className="metric">
-            <p className="stat-label">Dates covered by these notes</p>
-            <p className="metric-value" style={{ fontSize: 19 }}>
-              {fmtRange}
-            </p>
-          </div>
-          <div className="metric">
-            <p className="stat-label">Safety notices not yet marked seen</p>
-            <p className="metric-value">{dash.metrics.needReview}</p>
-          </div>
+        <div className="glance-item">
+          <span className="stat-label">Notes logged · {dash.period.label.toLowerCase()}</span>
+          <span className="glance-value" data-testid="metric-observations">
+            {dash.metrics.observations}
+          </span>
+          {comparison.status === "comparable" && <span className="secondary">{comparison.previous} in {comparison.previousLabel}</span>}
         </div>
-        {(dash.metrics.uncategorized > 0 || dash.metrics.undated > 0) && (
-          <p className="secondary" style={{ marginTop: 8 }}>
-            {dash.metrics.uncategorized > 0 && (
-              <>
-                {dash.metrics.uncategorized} note{dash.metrics.uncategorized === 1 ? " has" : "s have"} no category yet, so{" "}
-                {dash.metrics.uncategorized === 1 ? "it isn't" : "they aren't"} in the charts below.{" "}
-                <EvidenceButton ids={dash.uncategorizedIds} title="Notes without a category yet" label="See them" />
-              </>
-            )}
-            {dash.metrics.undated > 0 && <> {dash.metrics.undated} note(s) have no readable date and are not charted.</>}
-          </p>
-        )}
+        <div className="glance-item">
+          <span className="stat-label">Categories with notes</span>
+          <span className="glance-value">{dash.metrics.categoriesRepresented} of 7</span>
+        </div>
+        <div className="glance-item">
+          <span className="stat-label">Safety notices not yet marked seen</span>
+          <span className="glance-value">{dash.metrics.needReview}</span>
+        </div>
       </section>
+      <p className="secondary readable" data-testid="comparison-note">
+        <strong>Compared with the previous period:</strong> {comparison.explanation}
+      </p>
+      {(dash.metrics.uncategorized > 0 || dash.metrics.undated > 0) && (
+        <p className="secondary readable">
+          {dash.metrics.uncategorized > 0 && (
+            <>
+              {dash.metrics.uncategorized} note{dash.metrics.uncategorized === 1 ? " has" : "s have"} no category yet, so{" "}
+              {dash.metrics.uncategorized === 1 ? "it isn't" : "they aren't"} in the charts below.{" "}
+              <EvidenceButton ids={dash.uncategorizedIds} title="Notes without a category yet" label="Review supporting notes" />
+            </>
+          )}
+          {dash.metrics.undated > 0 && <> {dash.metrics.undated} note(s) have no readable date and are not charted.</>}
+        </p>
+      )}
 
       {dash.metrics.observations === 0 ? (
         <section className="card" style={{ textAlign: "center", padding: "32px 24px" }}>
@@ -181,114 +196,207 @@ export default async function InsightsPage({
           <section aria-labelledby="cats-h" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <div className="section-head" style={{ marginBottom: 0 }}>
               <h2 id="cats-h">Recorded activity by category</h2>
-              <span className="secondary">
-                Bars = logged observations per {dash.period.bucket}. One note can belong to more than one category, so category counts can add up to
-                more than the total.
+              <span className="secondary readable">
+                Notes logged per {dash.period.bucket}. One note can belong to more than one category, so category counts can add up to more than the
+                total.
               </span>
             </div>
             <div className="chart-grid">
-              {dash.series.map((s) => (
-                <CategoryChart key={s.id} s={s} bucket={dash.period.bucket} maxCount={maxCount} periodLabel={dash.period.label} />
+              {withNotes.map((s) => (
+                <CategoryChart
+                  key={s.id}
+                  s={s}
+                  bucket={dash.period.bucket}
+                  maxCount={maxCount}
+                  periodLabel={dash.period.label}
+                  caseId={caseId}
+                  previousLabel={comparison.status === "comparable" ? comparison.previousLabel : null}
+                />
               ))}
             </div>
+            {withoutNotes.length > 0 && (
+              <div className="empty-cats" data-testid="empty-categories">
+                <span className="stat-label">No notes in this period:</span>
+                {withoutNotes.map((s) => (
+                  <Link key={s.id} className="chip" href={`/cases/${caseId}/observations?category=${s.id}`}>
+                    {s.label}
+                  </Link>
+                ))}
+                <span className="secondary">“No notes” means not reported — not “no problems”.</span>
+              </div>
+            )}
           </section>
 
           {/* ---------------- D. Changes worth reviewing ---------------- */}
-          <section className="card" aria-labelledby="changes-h">
-            <div className="section-head">
+          <section className="card" aria-labelledby="changes-h" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div className="section-head" style={{ marginBottom: 0 }}>
               <h2 id="changes-h">Changes worth reviewing</h2>
-              <span className="secondary">Each item says where it comes from: your records, a safety rule, or the AI.</span>
+              <span className="secondary readable">
+                Grouped by where each item comes from. {openDraft ? "Evidence-linked items can be added to this week's handoff draft — nothing is sent." : (
+                  <>
+                    To carry items into a handoff, <Link href={`/cases/${caseId}/handoffs`}>start this week&apos;s draft</Link> first.
+                  </>
+                )}
+              </span>
             </div>
-            <ul className="list-plain">
-              {periodAlerts.map((a) => {
-                const o = byInternalId.get(a.observationId)!;
-                const g = TIER_GUIDANCE[a.tier];
-                const urgent = urgentTiers.has(a.tier);
-                return (
-                  <li key={a.id} className="finding">
-                    <span>
-                      <SourceTag kind={urgent ? "rule-urgent" : "rule"} />
-                    </span>
-                    <h4 style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                      <AlertIcon size={15} /> {g.title} — {readableLabel(o)}
-                    </h4>
-                    <p>{g.body}</p>
-                    <p className="meta">
-                      <span>{a.seenAt ? `Marked as seen ${fmtDateTime(a.seenAt)} (seen is not “resolved”)` : "Not yet marked as seen"}</span>
-                    </p>
-                    <span>
-                      <EvidenceButton ids={[o.displayId]} title={g.title} label="Review the note" />
-                    </span>
-                  </li>
-                );
-              })}
-              {shownFindings.map((f) => (
-                <li key={f.kind + f.title} className="finding">
-                  <span>
-                    <SourceTag kind="records" />
-                  </span>
-                  <h4>{f.title}</h4>
-                  <p>{f.detail}</p>
-                  <p className="meta">
-                    <span>Period: {f.periodLabel}</span>
-                    {f.categories.length > 0 && <span>· {f.categories.map(categoryLabel).join(", ")}</span>}
-                    {f.comparisonBasis && <span>· Compared with: {f.comparisonBasis}</span>}
-                  </p>
-                  {f.uncertainty && <p className="secondary">{f.uncertainty}</p>}
-                  <span>
-                    <EvidenceButton ids={f.sourceIds} title={f.title} context={f.periodLabel} />
-                  </span>
-                </li>
-              ))}
-              {aiItems.map((i) => (
-                <li key={i.id} className="finding">
-                  <span>
-                    <SourceTag kind="ai" />
-                  </span>
-                  <h4>{humanizeText(i.statement, obs)}</h4>
-                  <p className="meta">
-                    <span>{SUPPORT_LABEL[i.support]}</span>
-                    {ai && <span>· AI analysis of {runPeriod(ai)}</span>}
-                    {i.comparesToBaseline && <span>· compared with the caregiver-reported baseline</span>}
-                  </p>
-                  {i.uncertainty && (
-                    <p className="secondary">
-                      <strong>Uncertain:</strong> {humanizeText(i.uncertainty, obs)}
-                    </p>
-                  )}
-                  {i.sourceIds.some((id) => urgentTiers.has(obs[id]?.safetyTier ?? "")) && (
-                    <p className="pill pill-emergency" style={{ alignSelf: "flex-start", whiteSpace: "normal" }}>
-                      <AlertIcon size={13} /> A note behind this matched an urgent safety rule. If this is happening now, call 911. This summary does not
-                      replace that guidance.
-                    </p>
-                  )}
-                  <span>
-                    <EvidenceButton ids={i.sourceIds} title="Notes behind this AI interpretation" />
-                  </span>
-                </li>
-              ))}
-            </ul>
-            {periodAlerts.length === 0 && shownFindings.length === 0 && aiItems.length === 0 && (
-              <p className="secondary">
-                Nothing stands out from the records in this period. That is not the same as “nothing to review” — no rule, count or AI can confirm
-                that someone is fine.
-              </p>
-            )}
-            {singleMentions.length > 0 && (
-              <details style={{ marginTop: 8 }}>
-                <summary className="muted-link" style={{ cursor: "pointer" }}>
-                  Topics mentioned only once ({singleMentions.length})
-                </summary>
-                <ul className="list-plain" style={{ marginTop: 6 }}>
-                  {singleMentions.map((f) => (
-                    <li key={f.title} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                      <SourceTag kind="records" /> {f.title}
-                      <EvidenceButton ids={f.sourceIds} title={f.title} label="Review the note" />
+
+            <div className="finding-group group-safety" aria-labelledby="g-safety">
+              <h3 id="g-safety"><KindTag kind="safety">Safety notices · predefined rules, not AI</KindTag></h3>
+              {periodAlerts.length === 0 ? (
+                <p className="secondary">No safety rule matched a note in this period. That does not mean the situation is safe.</p>
+              ) : (
+                <ul className="list-plain">
+                  {periodAlerts.map((a) => {
+                    const o = byInternalId.get(a.observationId)!;
+                    const g = TIER_GUIDANCE[a.tier];
+                    return (
+                      <li key={a.id} className="finding">
+                        <h4 style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                          <AlertIcon size={15} /> {g.title} — {readableLabel(o)}
+                        </h4>
+                        <p className="readable">{g.body}</p>
+                        <p className="meta">{a.seenAt ? `Marked as seen ${fmtDateTime(a.seenAt)} (seen is not “resolved”)` : "Not yet marked as seen"}</p>
+                        <span>
+                          <EvidenceButton ids={[o.displayId]} title={g.title} />
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+
+            <div className="finding-group group-records" aria-labelledby="g-records">
+              <h3 id="g-records"><KindTag kind="caregiver">From your records · counts, not health measures</KindTag></h3>
+              {patternFindings.length === 0 ? (
+                <p className="secondary">No repeated topics or reliable changes in recording activity in this period.</p>
+              ) : (
+                <ul className="list-plain">
+                  {patternFindings.map((f) => (
+                    <li key={f.kind + f.title} className="finding">
+                      <h4>{f.title}</h4>
+                      <p className="readable">
+                        {f.detail} {f.comparisonBasis && <span className="secondary">Compared with {f.comparisonBasis.toLowerCase()}.</span>}
+                      </p>
+                      {f.uncertainty && <p className="secondary readable">{f.uncertainty}</p>}
+                      <div className="finding-actions">
+                        <EvidenceButton ids={f.sourceIds} title={f.title} context={f.periodLabel} />
+                        <AddToHandoff
+                          caseId={caseId}
+                          draft={openDraft}
+                          finding={{ statement: `${f.title}: ${f.detail}`, support: "supported", kind: "recording_activity", uncertainty: f.uncertainty, sourceIds: f.sourceIds }}
+                        />
+                      </div>
                     </li>
                   ))}
                 </ul>
-              </details>
-            )}
+              )}
+              {singleMentions.length > 0 && (
+                <details>
+                  <summary className="muted-link" style={{ cursor: "pointer" }}>
+                    Topics mentioned only once ({singleMentions.length})
+                  </summary>
+                  <ul className="list-plain" style={{ marginTop: 6 }}>
+                    {singleMentions.map((f) => (
+                      <li key={f.title} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                        {f.title}
+                        <EvidenceButton ids={f.sourceIds} title={f.title} />
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+            </div>
+
+            <div className="finding-group group-ai ai-surface" aria-labelledby="g-ai">
+              <h3 id="g-ai"><KindTag kind="ai">AI interpretations · check them against the notes</KindTag></h3>
+              {!ai ? (
+                <p className="secondary">No AI analysis yet. Charts and the items above do not need AI.</p>
+              ) : aiInterpretations.length === 0 ? (
+                <p className="secondary">The latest AI analysis has no interpretations beyond the conflicts and gaps listed below.</p>
+              ) : (
+                <ul className="list-plain">
+                  {aiInterpretations.map((i) => (
+                    <li key={i.id} className="finding">
+                      <h4>{AI_TITLE[i.kind] ?? "AI interpretation"}{i.comparesToBaseline ? " compared with the usual baseline" : ""}</h4>
+                      <p className="readable">{humanizeText(i.statement, obs)}</p>
+                      <p className="meta">
+                        <span>{SUPPORT_LABEL[i.support]}</span>
+                        <span>· AI analysis of {runPeriod(ai)}</span>
+                        {i.comparesToBaseline && <span>· compared with the caregiver-reported baseline</span>}
+                      </p>
+                      {i.uncertainty && (
+                        <p className="secondary readable">
+                          <strong>Uncertain:</strong> {humanizeText(i.uncertainty, obs)}
+                        </p>
+                      )}
+                      {i.sourceIds.some((id) => urgentTiers.has(obs[id]?.safetyTier ?? "")) && (
+                        <p className="pill pill-emergency" style={{ alignSelf: "flex-start", whiteSpace: "normal" }}>
+                          <AlertIcon size={13} /> A note behind this matched an urgent safety rule. If this is happening now, call 911. This summary does not
+                          replace that guidance.
+                        </p>
+                      )}
+                      <div className="finding-actions">
+                        <EvidenceButton ids={i.sourceIds} title="Notes behind this AI interpretation" />
+                        <AddToHandoff
+                          caseId={caseId}
+                          draft={openDraft}
+                          finding={{ statement: i.statement, support: i.support, kind: i.kind as HandoffFinding["kind"], uncertainty: i.uncertainty, sourceIds: i.sourceIds }}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="finding-group group-gaps" aria-labelledby="g-gaps">
+              <h3 id="g-gaps"><KindTag kind="question">Conflicting or missing information</KindTag></h3>
+              {gapCount === 0 ? (
+                <p className="secondary">Nothing conflicting or missing was identified. That does not mean nothing is missing.</p>
+              ) : (
+                <ul className="list-plain">
+                  {aiConflicts.map((i) => (
+                    <li key={i.id} className="finding">
+                      <h4>Reports conflict — both are kept</h4>
+                      <p className="readable">{humanizeText(i.statement, obs)}</p>
+                      {i.uncertainty && <p className="secondary readable">What is unclear: {humanizeText(i.uncertainty, obs)}</p>}
+                      <p className="meta">AI interpretation · CareSignal does not pick which report is right</p>
+                      <div className="finding-actions">
+                        <EvidenceButton ids={i.sourceIds} title="The conflicting notes" />
+                        <AddToHandoff
+                          caseId={caseId}
+                          draft={openDraft}
+                          finding={{ statement: i.statement, support: "conflicting", kind: "conflict", uncertainty: i.uncertainty, sourceIds: i.sourceIds }}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                  {sparseFindings.map((f) => (
+                    <li key={f.title} className="finding">
+                      <h4>{f.title}</h4>
+                      <p className="readable">{f.detail}</p>
+                      {f.uncertainty && <p className="secondary readable">{f.uncertainty}</p>}
+                      <span>
+                        <EvidenceButton ids={f.sourceIds} title={f.title} />
+                      </span>
+                    </li>
+                  ))}
+                  {aiUnknowns.map((u, k) => (
+                    <li key={`u-${k}`} className="finding">
+                      <h4>Not known from the notes</h4>
+                      <p className="readable">{humanizeText(u.statement, obs)}</p>
+                      <p className="meta">Listed by the AI analysis of {runPeriod(ai!)}</p>
+                      {u.sourceIds.length > 0 && (
+                        <span>
+                          <EvidenceButton ids={u.sourceIds} title="Notes this gap refers to" />
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </section>
 
           {/* ---------------- E. Baseline comparison ---------------- */}
@@ -349,7 +457,7 @@ export default async function InsightsPage({
             {aiQuestions.map((q) => (
               <li key={q.id} style={{ display: "flex", gap: 10, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
                 <span>
-                  <SourceTag kind="ai" /> {humanizeText(q.statement, obs)}
+                  <KindTag kind="question">Question · AI-drafted</KindTag> {humanizeText(q.statement, obs)}
                 </span>
                 <EvidenceButton ids={q.sourceIds} title="Notes behind this question" />
               </li>
@@ -501,6 +609,7 @@ export default async function InsightsPage({
           and 911 guidance at the top of every screen, not by this analysis.
         </p>
       </section>
+      </div>
     </EvidenceProvider>
   );
 }

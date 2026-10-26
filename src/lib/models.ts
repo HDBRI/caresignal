@@ -200,9 +200,11 @@ export interface HandoffItem {
   support: Support;
   sourceIds: string[];
   /** Task 13 drafts: what kind of statement this is (an AI insight, or a caregiver note listed as-is). */
-  kind?: "pattern" | "change" | "possible_pattern" | "conflict" | "note";
+  kind?: "pattern" | "change" | "possible_pattern" | "conflict" | "note" | "recording_activity";
   uncertainty?: string | null;
   comparesToBaseline?: boolean;
+  /** Set when the caregiver carried this finding over from the Insights page. */
+  addedFrom?: "insights";
 }
 
 export interface HandoffQuestion {

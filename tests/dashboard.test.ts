@@ -155,12 +155,29 @@ describe("findings never overstate", () => {
     const recent = ["2026-10-20", "2026-10-22", "2026-10-24"].map((d) => obs(d));
     const sparse = computeDashboard(input(recent, recent.map((o) => label(o, "mobility_daily_functioning"))), "7d", NOW);
     expect(sparse.findings.some((f) => f.kind === "frequency_change")).toBe(false); // no history before this week
+    expect(sparse.comparison.status).toBe("no_previous_history");
+    expect(sparse.comparison.explanation).toMatch(/reliable comparison can't be made/);
+
+    // History reaches back, but only 3 notes across both periods: too sparse to compare.
     const old = obs("2026-10-10");
-    const withHistory = computeDashboard(input([old, ...recent], [old, ...recent].map((o) => label(o, "mobility_daily_functioning"))), "7d", NOW);
+    const thin = computeDashboard(input([old, ...recent], [old, ...recent].map((o) => label(o, "mobility_daily_functioning"))), "7d", NOW);
+    expect(thin.comparison.status).toBe("too_few_notes");
+    expect(thin.findings.some((f) => f.kind === "frequency_change")).toBe(false);
+    expect(thin.series.every((s) => s.previous === null)).toBe(true);
+
+    // Enough notes in both periods: the difference is described as recording activity.
+    const prevWeek = obs("2026-10-15");
+    const all = [old, prevWeek, ...recent];
+    const withHistory = computeDashboard(input(all, all.map((o) => label(o, "mobility_daily_functioning"))), "7d", NOW);
+    expect(withHistory.comparison).toMatchObject({ status: "comparable", current: 3, previous: 1 });
+    expect(withHistory.comparison.explanation).toMatch(/recording activity, not necessarily changes in health/);
+    expect(withHistory.series.find((s) => s.id === "mobility_daily_functioning")!.previous).toBe(1);
     const f = withHistory.findings.find((x) => x.kind === "frequency_change")!;
     expect(f.title).toBe("More notes about mobility and daily functioning were recorded");
-    expect(f.detail).toBe("3 in this period compared with 0 in the 7 days before it.");
+    expect(f.detail).toBe("3 in this period compared with 1 in the 7 days before it.");
     expect(f.uncertainty).toMatch(/not necessarily a change in the person's condition/);
+
+    expect(computeDashboard(input(all, all.map((o) => label(o, "mobility_daily_functioning"))), "all", NOW).comparison.status).toBe("not_applicable");
   });
 });
 

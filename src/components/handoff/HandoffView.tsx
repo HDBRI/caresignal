@@ -133,9 +133,10 @@ export function ItemRow({ caseId, item, notes, edited }: { caseId: string; item:
   return (
     <li className="finding">
       <div className="chip-row" style={{ alignItems: "center" }}>
-        {item.kind !== "note" && <span className={`pill ${s.cls}`}>{s.label}</span>}
+        {item.kind !== "note" && item.kind !== "recording_activity" && <span className={`pill ${s.cls}`}>{s.label}</span>}
         {item.comparesToBaseline && <span className="pill pill-unknown">Compared with the baseline you reported</span>}
-        {edited && <span className="pill pill-unknown">Edited by you</span>}
+        {edited && !item.addedFrom && <span className="pill pill-unknown">Edited by you</span>}
+        {item.addedFrom === "insights" && <span className="pill pill-unknown">Added by you from Insights</span>}
       </div>
       <p>{item.statement}</p>
       {item.uncertainty && (

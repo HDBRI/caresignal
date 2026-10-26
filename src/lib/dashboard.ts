@@ -10,6 +10,10 @@
  *  - CATEGORY COUNTS count each observation at most once per category. One note can belong to several
  *    categories, so category counts may add up to more than the total. The TOTAL counts unique observations.
  *  - Counts measure recorded activity (how many notes were logged), never severity or health.
+ *  - PERIOD COMPARISON (7 / 30 days only): the same number of days immediately before the selected period.
+ *    It is shown only when the records reach back to the start of that earlier period AND the two periods
+ *    together hold at least MIN_NOTES_TO_COMPARE notes; otherwise the dashboard says a reliable comparison
+ *    can't be made. A difference is a change in recording activity, not necessarily in health.
  */
 import { CATEGORIES, type CategoryId } from "./categories";
 import type { Baseline, Observation, ObservationAnalysis, ObservationEdit, SafetyAlert } from "./models";
@@ -54,6 +58,21 @@ export interface CategorySeries {
   total: number;
   days: number; // distinct days with at least one note in this category
   buckets: Bucket[];
+  /** Notes in this category in the previous equal-length period — only when the comparison is reliable. */
+  previous: number | null;
+}
+
+/** Notes needed across both periods before CareSignal describes any difference. */
+export const MIN_NOTES_TO_COMPARE = 4;
+
+export interface PeriodComparison {
+  status: "comparable" | "not_applicable" | "no_previous_history" | "too_few_notes";
+  /** e.g. "the previous 7 days (Oct 12–Oct 18)" */
+  previousLabel: string | null;
+  current: number;
+  previous: number | null;
+  /** Plain-language explanation of what can (or can't) be said. */
+  explanation: string;
 }
 
 export type FindingKind = "repeated_theme" | "single_mention" | "frequency_change" | "insufficient";
@@ -91,6 +110,7 @@ export interface Dashboard {
     undated: number;
   };
   series: CategorySeries[];
+  comparison: PeriodComparison;
   uncategorizedIds: string[];
   findings: DescriptiveFinding[];
   baselines: BaselineComparison[];
@@ -206,6 +226,40 @@ export function computeDashboard(input: DashboardInput, period: ChartPeriod, now
   const inPeriod = range.start ? all.filter((o) => o.day >= range.start! && o.day <= range.end) : [];
   const { bucket, ranges } = range.start ? makeBuckets(range.start, range.end) : { bucket: "day" as const, ranges: [] };
 
+  // ---- Previous equal-length period (only for 7d/30d, only if records reach back that far, only if not sparse) ----
+  const prevStart = period !== "all" && range.start ? addDays(range.start, -range.days) : null;
+  const prevEnd = period !== "all" && range.start ? addDays(range.start, -1) : null;
+  const hasPrevHistory = Boolean(prevStart && earliest && earliest <= prevStart);
+  const prev = prevStart && prevEnd ? all.filter((o) => o.day >= prevStart && o.day <= prevEnd) : [];
+  const previousLabel = prevStart && prevEnd ? `the previous ${range.days} days (${fmtShortDay(prevStart)}–${fmtShortDay(prevEnd)})` : null;
+  const comparison: PeriodComparison =
+    period === "all"
+      ? { status: "not_applicable", previousLabel: null, current: inPeriod.length, previous: null, explanation: "All history has no earlier period to compare with." }
+      : !hasPrevHistory
+        ? {
+            status: "no_previous_history",
+            previousLabel,
+            current: inPeriod.length,
+            previous: null,
+            explanation: `Notes don't go back far enough to cover ${previousLabel}, so a reliable comparison can't be made.`,
+          }
+        : inPeriod.length + prev.length < MIN_NOTES_TO_COMPARE
+          ? {
+              status: "too_few_notes",
+              previousLabel,
+              current: inPeriod.length,
+              previous: prev.length,
+              explanation: `Only ${inPeriod.length + prev.length} note${inPeriod.length + prev.length === 1 ? "" : "s"} across both periods — too few for a reliable comparison.`,
+            }
+          : {
+              status: "comparable",
+              previousLabel,
+              current: inPeriod.length,
+              previous: prev.length,
+              explanation: "Differences show how much was written down in each period. They are changes in recording activity, not necessarily changes in health.",
+            };
+  const comparable = comparison.status === "comparable";
+
   const series: CategorySeries[] = CATEGORIES.map((c) => {
     const notes = inPeriod.filter((o) => o.categories.includes(c.id));
     return {
@@ -217,17 +271,12 @@ export function computeDashboard(input: DashboardInput, period: ChartPeriod, now
         const inBucket = notes.filter((o) => o.day >= r.start && o.day <= r.end).sort((a, b) => a.day.localeCompare(b.day));
         return { ...r, count: inBucket.length, observationIds: inBucket.map((o) => o.displayId) };
       }),
+      previous: comparable ? prev.filter((o) => o.categories.includes(c.id)).length : null,
     };
   });
 
   const uncategorizedIds = inPeriod.filter((o) => o.categories.length === 0).map((o) => o.displayId);
   const days = inPeriod.map((o) => o.day).sort();
-
-  // ---- Previous equal-length period (only for 7d/30d, only if records reach back that far) ----
-  const prevStart = period !== "all" && range.start ? addDays(range.start, -range.days) : null;
-  const prevEnd = range.start ? addDays(range.start, -1) : null;
-  const hasPrevHistory = Boolean(prevStart && earliest && earliest <= prevStart);
-  const prev = prevStart && prevEnd ? all.filter((o) => o.day >= prevStart && o.day <= prevEnd) : [];
 
   const findings: DescriptiveFinding[] = [];
   if (inPeriod.length > 0 && inPeriod.length < 3) {
@@ -267,8 +316,8 @@ export function computeDashboard(input: DashboardInput, period: ChartPeriod, now
         uncertainty: "One note is not a pattern.",
       });
     }
-    if (hasPrevHistory) {
-      const before = prev.filter((o) => o.categories.includes(s.id)).length;
+    if (comparable) {
+      const before = s.previous ?? 0;
       if (Math.abs(s.total - before) >= 2) {
         findings.push({
           kind: "frequency_change",
@@ -312,6 +361,7 @@ export function computeDashboard(input: DashboardInput, period: ChartPeriod, now
       undated,
     },
     series,
+    comparison,
     uncategorizedIds,
     findings,
     baselines,

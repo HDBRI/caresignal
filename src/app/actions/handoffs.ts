@@ -4,8 +4,10 @@ import { redirect } from "next/navigation";
 import { aiStatus, chatJson } from "@/lib/ai/client";
 import { getActor, principalOf } from "@/lib/auth/session";
 import { getDb } from "@/lib/repo/db";
+import { z } from "zod";
 import {
   acknowledgeHandoff,
+  addFindingToDraft,
   addFictionalResponse,
   approveHandoff,
   createOrRegenerateDraft,
@@ -116,4 +118,32 @@ export async function addFictionalResponseAction(fd: FormData): Promise<void> {
     // Not available for this case/status: the page shows the current state.
   }
   done(caseId);
+}
+
+const findingInput = z.object({
+  statement: z.string().min(1).max(800),
+  support: z.enum(["supported", "possible_unconfirmed", "conflicting", "unknown"]),
+  kind: z.enum(["pattern", "change", "possible_pattern", "conflict", "recording_activity"]),
+  uncertainty: z.string().max(400).nullable().optional(),
+  sourceIds: z.array(z.string().regex(/^OBS-[A-Z0-9-]{2,12}$/)).min(1).max(40),
+});
+
+/** Insights -> weekly draft. Appends to the open draft only; never calls the AI and never submits. */
+export async function addFindingToHandoffAction(_prev: HandoffFormState, fd: FormData): Promise<HandoffFormState> {
+  const p = await principal();
+  const caseId = String(fd.get("caseId") ?? "");
+  let parsed;
+  try {
+    parsed = findingInput.safeParse(JSON.parse(String(fd.get("finding") ?? "{}")));
+  } catch {
+    return { error: "This finding can't be added." };
+  }
+  if (!parsed.success) return { error: "This finding can't be added." };
+  try {
+    const r = await addFindingToDraft(await getDb(), p, caseId, parsed.data);
+    done(caseId);
+    return { ok: r.added ? `Added to this week's draft (${r.handoff.displayId}). Nothing was sent — review it on the Handoffs page.` : "Already in this week's draft." };
+  } catch (e) {
+    return { error: message(e, "This finding couldn't be added. Nothing was changed.") };
+  }
 }

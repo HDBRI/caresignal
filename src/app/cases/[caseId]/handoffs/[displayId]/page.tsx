@@ -28,7 +28,8 @@ import { addFictionalResponseAction } from "@/app/actions/handoffs";
 export const dynamic = "force-dynamic";
 
 const GROUPS = [
-  { title: "Changes and patterns supported by the notes", match: (s: string, k?: string) => s === "supported" && k !== "note" },
+  { title: "Changes and patterns supported by the notes", match: (s: string, k?: string) => s === "supported" && k !== "note" && k !== "recording_activity" },
+  { title: "Recording activity (how often things were written down — not a health measure)", match: (_s: string, k?: string) => k === "recording_activity" },
   { title: "Possible — not confirmed", match: (s: string) => s === "possible_unconfirmed" },
   { title: "Conflicting reports (kept as reported — CareSignal does not pick one)", match: (s: string) => s === "conflicting" },
   { title: "Notes as written", match: (_s: string, k?: string) => k === "note" },

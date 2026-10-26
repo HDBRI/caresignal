@@ -284,3 +284,48 @@ pre.payload { background: var(--bg); padding: 12px; border-radius: var(--radius-
 .demo-switch > summary { list-style: none; cursor: pointer; }
 .demo-switch > summary::-webkit-details-marker { display: none; }
 .demo-switch-panel { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; width: min(340px, 90vw); display: flex; flex-direction: column; gap: 8px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 8px 24px rgba(37, 61, 56, 0.12); }
+
+/* ---------------- Insights page refinement (Task 18) ---------------- */
+/* The shell caps content at 1100px for forms; the Insights dashboard uses the full main column (up to 1520px). */
+[class*="content"]:has(> .insights-page) { max-width: 1520px; }
+.insights-page { display: flex; flex-direction: column; gap: var(--space-5); }
+.insights-page .readable { max-width: 78ch; }
+
+.glance { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.glance-item { display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; }
+.glance-item + .glance-item { border-left: 1px solid var(--border); }
+.glance-value { font: 600 24px/1.2 var(--font-heading); }
+
+/* Category grid: 3 columns on wide screens, 2 on laptops/tablets, 1 on phones. */
+.insights-page .chart-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1360px) { .insights-page .chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) {
+  .insights-page .chart-grid { grid-template-columns: 1fr; }
+  .glance { grid-template-columns: 1fr; }
+  .glance-item + .glance-item { border-left: 0; border-top: 1px solid var(--border); }
+}
+.insights-page .chart-card { gap: 12px; }
+.chart-total { font-size: 13.5px; color: var(--text-secondary); white-space: nowrap; }
+.insights-page .bars { height: 176px; grid-template-columns: 26px 1fr; }
+.insights-page .bars-axis { font-size: 12.5px; padding-bottom: 22px; }
+.insights-page .bars-plot { background-image: linear-gradient(to top, var(--border) 1px, transparent 1px); background-size: 100% 50%; background-position: 0 calc(100% - 22px); background-repeat: no-repeat; }
+.insights-page .bar-label { font-size: 12.5px; height: 18px; line-height: 18px; color: var(--text); }
+.insights-page .bar-count { font-size: 12px; }
+.chart-compare { font-size: 13px; }
+/* Tooltip on hover and keyboard focus (the aria-label carries the same text for screen readers). */
+.bar[data-tip] { position: relative; }
+.bar[data-tip]:hover::after, .bar[data-tip]:focus-visible::after {
+  content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: var(--text); color: #fff; font-size: 12px; font-weight: 500; padding: 4px 8px; border-radius: 6px; white-space: nowrap; z-index: 5; pointer-events: none;
+}
+.empty-cats { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 14px; border: 1px dashed var(--border); border-radius: var(--radius); background: var(--surface); }
+
+/* Changes worth reviewing: four visually separate groups (tag + left rule + words, never color alone). */
+.finding-group { display: flex; flex-direction: column; gap: 6px; padding: 12px 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--border); background: var(--surface); }
+.finding-group > h3 { font-size: 15px; }
+.group-safety { border-left-color: var(--emergency); background: #fffafa; }
+.group-records { border-left-color: var(--primary); }
+.group-ai { border-left-color: #b9c8bd; }
+.group-gaps { border-left-color: #8d9ab5; }
+.finding-group .finding:first-of-type { border-top: 0; }
+.finding-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
