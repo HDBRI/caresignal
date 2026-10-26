@@ -807,6 +807,8 @@
 > All numbers and charts must be grounded in actual stored data. All AI claims must remain traceable to their sources. The application must preserve safety behavior, user and case isolation, existing note persistence, and AI usage limits.
 > The final experience should feel like a polished, trustworthy caregiver insights dashboard, with implementation complexity kept behind the scenes.
 
+> Yes, push to GitHub and redeploy the live site.
+
 ## Task 11: Optional daily check-in and reminder preferences
 
 **Prompt:**
