@@ -971,3 +971,19 @@
 
 **Follow-up:**
 > Yes, push to GitHub and redeploy the live site.
+
+**Follow-up:**
+> okay remind me later at the end once
+
+## Task 21: Build slides.html, then final end-to-end audit
+
+**Prompt:**
+> Prompt 19 — Build `slides.html`, then final end-to-end audit
+> During the final audit, explicitly verify the locked visual design and safety behavior: all eight screens/navigation routes work; welcome does not ask for real identifiers; persistent synthetic labels are visible; AI content is distinguished from original notes; emergency guidance fires immediately even with AI offline; status is never communicated by color alone; the demo receiver is clearly labeled simulated; and there are no "patient safe/all clear" messages or fake health scores.
+> Create a self-contained slides.html presentation with no more than 10 slides, using Reveal.js or a similarly reliable local/self-contained slide approach. Embed required images/diagrams or provide local assets so the deck does not break when opened from the repository. Prefer a simple offline-capable version over a remote dependency.
+> Suggested slide structure (maximum 10): 1. Title, project, and one-line value proposition. 2. Problem and motivation. 3. What is new and how CareSignal differs from adjacent tools. 4. Architecture and actual workflow/agent responsibilities. 5. Live-product screenshots and the three synthetic demo cases. 6. End-to-end handoff trace with source IDs and simulated receipt. 7. Tokenomics: measured usage versus cost estimates. 8. Safety design, urgent-rule demonstration, and test evidence. 9. Impact framework and prototype evaluation results. 10. Limitations, next steps, repository/report links.
+> Do not exceed 10 slides. Do not invent performance or impact numbers. Any fictional clinician response, medication-plan change, or urgent event must be labeled as a synthetic scenario. Distinguish actual app behavior from proposed future capabilities.
+> Then perform a final end-to-end audit: - Run formatting/lint/type checks, unit tests, integration tests, and production build. - Run the app from the documented clean setup path where feasible. - Test all three synthetic cases. - Verify that original notes remain unchanged and source IDs resolve. - Verify that the post-surgery urgent rule displays guidance even with the AI API unavailable. - Verify that no handoff is sent before caregiver review, that backend receipts follow persistence, that duplicate retries do not create duplicates, and that acknowledgement is a separate explicit action. - Verify patient data isolation, synthetic flags, reset behavior, and absence of secrets in tracked files. - Verify .env is ignored and .env.example contains placeholders only. - Verify the README setup instructions and report/slides links. - Verify report.html print page count and slides.html slide count; state the actual verification method. - Capture genuine screenshots from the running application and use them in report/slides. - Review git status and scan tracked files for accidental secrets. Do not push to GitHub or publish anything without my explicit approval. - Produce a final checklist of completed items, failed items, known limitations, commands to run, and any steps that still require my decision. Do not say a test passed unless it was actually run and passed.
+
+**Follow-up:**
+> done?

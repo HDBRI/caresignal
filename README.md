@@ -43,6 +43,13 @@ This README tracks what is actually built. Current stage: **optional daily check
 
 ---
 
+## Deliverables
+
+- **Report:** [`report.html`](report.html) — self-contained (screenshots embedded); open it by double-clicking. Prints to 14 US-letter pages (checked with `node scripts/report-pdf.mjs`).
+- **Slides:** [`slides.html`](slides.html) — self-contained Reveal.js deck (Reveal.js inlined, works offline), 10 slides. Arrow keys to navigate; checked with `node scripts/slides-check.mjs`.
+- **Final audit checklist:** [`docs/FINAL_AUDIT.md`](docs/FINAL_AUDIT.md).
+- Rebuild after edits: `python scripts/build-report.py` and `python scripts/build-slides.py` (templates in `docs/report/`; screenshots in `docs/report/img/` were captured from the running app by `scripts/report-capture*.mjs`).
+
 ## Quick start (local)
 
 Requirements: **Node.js 22 or newer** (tested on Node 24). No database install needed.
