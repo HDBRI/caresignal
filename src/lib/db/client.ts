@@ -81,7 +81,21 @@ async function createPglite(dataDir: string | null): Promise<Database> {
 async function createPostgres(url: string): Promise<Database> {
   const { default: postgres } = await import("postgres");
   // prepare:false is required by Supabase's transaction pooler.
-  const sql = postgres(url, { prepare: false, max: 3, idle_timeout: 20, connect_timeout: 10, onnotice: () => {} });
+  // Repositories pass JSON columns as already-serialized strings (as PGlite expects). postgres.js would
+  // JSON.stringify them again and store a quoted string instead of an array/object, so strings are
+  // passed through unchanged and only real objects are serialized.
+  const jsonSerialize = (x: unknown) => (typeof x === "string" ? x : JSON.stringify(x));
+  const sql = postgres(url, {
+    prepare: false,
+    max: 3,
+    idle_timeout: 20,
+    connect_timeout: 10,
+    onnotice: () => {},
+    types: {
+      json: { to: 114, from: [114], serialize: jsonSerialize, parse: (x: string) => JSON.parse(x) },
+      jsonb: { to: 3802, from: [3802], serialize: jsonSerialize, parse: (x: string) => JSON.parse(x) },
+    },
+  });
 
   type Tx = { unsafe: (t: string, p?: unknown[]) => Promise<unknown[]> };
   const wrap = (tx: Tx): Sql => ({
