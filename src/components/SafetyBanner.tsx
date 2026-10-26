@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Observation, SafetyAlert } from "@/lib/models";
 import { explainMatches, SAFETY_LIMITATION, TIER_GUIDANCE } from "@/lib/safety/rules";
 import { markSeen } from "@/app/actions/alerts";
+import { KindTag } from "./display";
 import { AlertIcon } from "./icons";
 
 /**
@@ -31,6 +32,7 @@ export function SafetyBanner({ caseId, alerts, observations }: { caseId: string;
                 Synthetic test scenario — example data, not a real emergency involving you
               </span>
             )}
+            <KindTag kind="safety" />
             <h2 className="safety-title">
               <AlertIcon size={emergency ? 26 : 20} /> {g.title}
             </h2>

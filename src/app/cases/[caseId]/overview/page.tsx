@@ -15,6 +15,7 @@ import { CheckinCard } from "@/components/CheckinCard";
 import { AutoRefreshWhilePending } from "@/components/ObservationTools";
 import { EmptyState, fmtDateTime, fmtDay, ObservationItem } from "@/components/display";
 import { CheckIcon, InfoIcon } from "@/components/icons";
+import { SEED_CASES } from "@/lib/fixtures";
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +84,7 @@ export default async function OverviewPage({
       openQuestions.push({ text: i.statement, sourceIds: i.sourceIds, from: "AI insight" });
   }
 
+  const scenario = SEED_CASES.find((f) => f.seedKey === c.seedKey) ?? null;
   return (
     <>
       {flags.reset && (
@@ -110,6 +112,13 @@ export default async function OverviewPage({
         </div>
         <AddObservationButton label="Add observation" className="btn btn-primary" />
       </header>
+      {scenario && (
+        <details className="card" style={{ padding: "12px 16px" }} open>
+          <summary style={{ cursor: "pointer", fontWeight: 600 }}>What this case demonstrates</summary>
+          <p style={{ marginTop: 8 }}>{scenario.demonstrates}</p>
+          <p className="secondary">Fictional scenario prepared for the course demo — not a real person, and not evidence that CareSignal improves care.</p>
+        </details>
+      )}
 
       {/* Non-urgent "please review" notices (urgent ones are in the banner on every screen). */}
       {reviewAlerts.length > 0 && (

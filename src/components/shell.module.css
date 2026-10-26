@@ -35,6 +35,8 @@
   .shell { grid-template-columns: 1fr; }
   .sidebar { display: none; }
   .mobileMenu { display: block; }
+  /* On phones the top bar scrolls away instead of covering a third of the screen. */
+  .topbar { position: static; padding: var(--space-3) var(--space-4); gap: var(--space-2); }
   .statusRow { padding: var(--space-3) var(--space-4) 0; }
   .content { padding: var(--space-5) var(--space-4) var(--space-7); }
 }

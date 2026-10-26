@@ -10,6 +10,10 @@ import { AiStatusPill } from "@/components/AiStatusPill";
 import { CaseSwitcher } from "@/components/CaseSwitcher";
 import { SafetyBanner } from "@/components/SafetyBanner";
 import { SideNav } from "@/components/SideNav";
+import { InfoIcon } from "@/components/icons";
+import { DemoSwitchButton } from "@/app/demo/DemoEntryForm";
+import { demoCredentials } from "@/lib/auth/demo";
+import { SEED_CASES } from "@/lib/fixtures";
 import styles from "@/components/shell.module.css";
 
 export const dynamic = "force-dynamic";
@@ -57,7 +61,9 @@ export default async function CaseLayout({ children, params }: { children: React
           <div className={styles.caseInfo}>
             <span className="secondary">Case</span>
             <strong>{current.pseudonym}</strong>
-            <span className="pill pill-unknown">Synthetic · {current.patientRef}</span>
+            <span className="pill synthetic-label" title="Every person and event in CareSignal is fictional">
+              <InfoIcon size={13} /> Synthetic demo data · {current.patientRef}
+            </span>
             {actor.kind === "registered" && cases.length > 1 && (
               <CaseSwitcher current={current.id} cases={cases.map((c) => ({ id: c.id, label: `${c.pseudonym} (${c.patientRef})` }))} />
             )}
@@ -67,9 +73,27 @@ export default async function CaseLayout({ children, params }: { children: React
               </Link>
             )}
             {actor.kind === "demo" && (
-              <Link href="/demo" className="muted-link">
-                Switch demo case
-              </Link>
+              <details className="demo-switch">
+                <summary className="muted-link">Switch demo case ▾</summary>
+                <div className="demo-switch-panel">
+                  <p className="secondary">Each case opens your own private copy.</p>
+                  {SEED_CASES.map((f) => {
+                    const cred = demoCredentials().find((x) => x.seedKey === f.seedKey)!;
+                    return (
+                      <DemoSwitchButton
+                        key={f.seedKey}
+                        username={cred.username}
+                        password={cred.password}
+                        label={`${f.patient.pseudonym} — ${f.title.split(" — ")[0]}`}
+                        current={f.seedKey === current.seedKey}
+                      />
+                    );
+                  })}
+                  <Link href="/demo" className="muted-link">
+                    What each case demonstrates
+                  </Link>
+                </div>
+              </details>
             )}
           </div>
           <div className={styles.account}>

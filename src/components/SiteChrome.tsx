@@ -3,11 +3,12 @@ import { LEGAL_LAST_UPDATED } from "@/lib/legal";
 
 export function BrandLink() {
   return (
-    <Link href="/" className="brand-row" aria-label="CareSignal home">
+    <Link href="/" className="brand-row">
       <span className="brand-mark" aria-hidden="true">
         CS
       </span>
       <span className="brand-name">CareSignal</span>
+      <span className="sr-only"> home</span>
     </Link>
   );
 }

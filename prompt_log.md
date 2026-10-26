@@ -871,3 +871,23 @@
 
 **Follow-up:**
 > Yes: apply the new migration to Supabase, push to GitHub, and redeploy the live site.
+
+## Task 15: Visual polish, accessibility, and demo readiness
+
+**Prompt:**
+> Prompt 14 — Visual polish, accessibility, and demo readiness
+> Treat the global visual design and navigation specification as acceptance criteria, not inspiration. Review each of the eight screens for consistent typography, spacing, color, hierarchy, and interactions. Ensure no urgent alert is buried, no status relies on color alone, and the app is usable by keyboard and screen reader. Use the exact product copy specified globally where relevant. The app must feel calm and polished without suggesting clinical validation.
+> Polish the working app without changing its safety boundaries or inventing features.
+> Requirements: - Use consistent typography, spacing, restrained color, clear hierarchy, and calm visual language. Avoid alarmist styling except for clearly differentiated safety notices. - Ensure responsive layouts and usable behavior on a laptop and a narrower screen. - Provide accessible labels, keyboard focus states, semantic headings, readable contrast, and non-color indicators for status. - Make synthetic content unmistakable with a persistent "Synthetic demo data" label. - Make AI-generated text visually distinct from original caregiver notes. - Make source observation IDs clickable or otherwise easy to inspect. - Clearly distinguish safety notice, AI insight, clinician question, simulated receiver status, and simulated clinician response. - Ensure the three demo cases are easy to switch between and each has a short "What this case demonstrates" explanation. - Provide meaningful loading, empty, error, and API-unavailable states. - Do not add fake notifications, charts, testimonials, outcome statistics, hospital logos, real clinical credentials, or unsupported integration claims. - Ensure the app remains usable when the AI service is unavailable. - Add or update accessibility/UI tests and run the full test suite.
+
+**Follow-up:**
+> whats happeing, you already took 30 mins
+
+**Follow-up:**
+> okay do it
+
+**Follow-up:**
+> done?
+
+**Follow-up:**
+> can u pls do it fast & give me status updates every couple of mins, I dont see anything

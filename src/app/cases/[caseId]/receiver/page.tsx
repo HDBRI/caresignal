@@ -4,7 +4,7 @@ import { getCase } from "@/lib/repo/cases";
 import { getDb } from "@/lib/repo/db";
 import { fictionalResponseFor } from "@/lib/repo/handoff-workflow";
 import { listHandoffs } from "@/lib/repo/handoffs";
-import { EmptyState, fmtDateTime } from "@/components/display";
+import { EmptyState, fmtDateTime, KindTag } from "@/components/display";
 import { FictionalResponse, HistoryList, periodLabel, RECEIVER_BANNER, StatusBadge } from "@/components/handoff/HandoffView";
 import { AlertIcon } from "@/components/icons";
 import { acknowledgeHandoffAction, addFictionalResponseAction } from "@/app/actions/handoffs";
@@ -56,6 +56,7 @@ export default async function ReceiverPage({ params }: { params: Promise<{ caseI
           const status = r.acknowledgedAt ? "acknowledged" : "received";
           return (
             <article key={h.id} className="card" aria-labelledby={`r-${h.displayId}`} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <KindTag kind="receiver" />
               <div className="section-head" style={{ marginBottom: 0 }}>
                 <h2 id={`r-${h.displayId}`}>
                   Handoff {h.displayId} · version {h.version}

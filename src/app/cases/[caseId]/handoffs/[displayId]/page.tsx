@@ -7,7 +7,7 @@ import { getDb } from "@/lib/repo/db";
 import { fictionalResponseFor, getHandoffByDisplayId } from "@/lib/repo/handoff-workflow";
 import { listHandoffs } from "@/lib/repo/handoffs";
 import { latestEdits, listObservations } from "@/lib/repo/observations";
-import { fmtDateTime } from "@/components/display";
+import { fmtDateTime, KindTag } from "@/components/display";
 import { ApproveForm, DraftButton, EditForm, SubmitForm } from "@/components/handoff/HandoffForms";
 import {
   CategoryGroups,
@@ -103,6 +103,7 @@ export default async function HandoffDetail({
 
       {(d.urgent ?? []).length > 0 && (
         <section className="card" aria-labelledby="urgent-h">
+          <KindTag kind="safety" />
           <h2 id="urgent-h" style={{ fontSize: 19, marginBottom: 8 }}>
             Urgent notes in this period
           </h2>
@@ -110,7 +111,7 @@ export default async function HandoffDetail({
         </section>
       )}
 
-      <section className="card" aria-labelledby="summary-h" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <section className={`card ${h.draftedBy === "ai" && !(gen && d.summary !== gen.summary) ? "ai-surface" : ""}`} aria-labelledby="summary-h" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <div className="section-head" style={{ marginBottom: 0 }}>
           <h2 id="summary-h" style={{ fontSize: 19 }}>Summary</h2>
           <span className={`source-tag ${h.draftedBy === "ai" ? "source-ai" : "source-records"}`}>
@@ -124,7 +125,8 @@ export default async function HandoffDetail({
       </section>
 
       {d.items.length > 0 && (
-        <section className="card" aria-labelledby="items-h">
+        <section className={`card ${h.draftedBy === "ai" ? "ai-surface" : ""}`} aria-labelledby="items-h">
+          {h.draftedBy === "ai" && <KindTag kind="ai" />}
           <h2 id="items-h" style={{ fontSize: 19 }}>What the notes show</h2>
           <p className="secondary">Each statement links to the caregiver notes it comes from. Statements are about what was logged — not a diagnosis or advice.</p>
           {GROUPS.map((g) => {
@@ -166,6 +168,7 @@ export default async function HandoffDetail({
       </section>
 
       <section className="card" aria-labelledby="q-h">
+        <KindTag kind="question">Questions for the care team · drafted for you to ask</KindTag>
         <h2 id="q-h" style={{ fontSize: 19 }}>Questions you may want to raise with the care team</h2>
         {d.questions.length ? (
           <ul className="list-plain">
@@ -190,6 +193,7 @@ export default async function HandoffDetail({
       </section>
 
       <section className="card" aria-labelledby="src-h">
+        <KindTag kind="caregiver">Caregiver&apos;s original notes</KindTag>
         <h2 id="src-h" style={{ fontSize: 19 }}>Source observations ({sources.length})</h2>
         <p className="secondary">Caregiver-reported, exactly as entered. These are the records the handoff is built from.</p>
         <ul className="list-plain" style={{ gap: 8, marginTop: 8 }}>
@@ -250,6 +254,7 @@ export default async function HandoffDetail({
 
       {receipt && (
         <section className="card" aria-labelledby="receipt-h" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <KindTag kind="receiver" />
           <h2 id="receipt-h" style={{ fontSize: 19 }}>Receipt (simulated receiver)</h2>
           <p>
             Saved by the simulated receiver {fmtDateTime(receipt.receivedAt)}. No real care team was contacted.{" "}

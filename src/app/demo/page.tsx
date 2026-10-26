@@ -52,6 +52,9 @@ export default function DemoPage() {
               </span>
               <h2 style={{ fontSize: 19 }}>{c.patient.pseudonym}</h2>
               <p style={{ fontWeight: 500 }}>{c.title}</p>
+              <h3 style={{ fontSize: 14.5 }}>What this case demonstrates</h3>
+              <p className="secondary" style={{ marginTop: -6 }}>{c.demonstrates}</p>
+              <p className="stat-label" style={{ fontWeight: 600 }}>What you&apos;ll see</p>
               <ul className="secondary" style={{ paddingLeft: 18, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
                 {WHAT_YOU_SEE[c.seedKey].map((line) => (
                   <li key={line}>{line}</li>

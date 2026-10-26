@@ -65,8 +65,9 @@ test("case switching never mixes patients' records", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: "Observations" })).toBeVisible();
   await expect(page.getByRole("link", { name: "OBS-C1-01", exact: true })).toBeVisible();
 
-  await page.getByRole("link", { name: "Switch demo case" }).click();
-  await openDemo(page, "Alex Rivera");
+  await page.getByText("Switch demo case").click();
+  await page.getByRole("button", { name: /^Alex Rivera — / }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Alex Rivera" })).toBeVisible();
   await page.getByRole("link", { name: "Observations" }).first().click();
   await expect(page.getByRole("heading", { level: 1, name: "Observations" })).toBeVisible();
   await expect(page.getByRole("link", { name: "OBS-C3-06", exact: true }).first()).toBeVisible();

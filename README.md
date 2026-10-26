@@ -38,6 +38,7 @@ This README tracks what is actually built. Current stage: **optional daily check
 | Care insights dashboard: chart period (7 / 30 days / all history) separate from the AI window; metrics and 7 category charts from stored records; "Changes worth reviewing" labeled by source (records / safety rule / AI); baseline comparison; evidence drawer; raw IDs hidden (kept internally) | ✅ Built + tested |
 | Weekly handoff: draft from stored notes + validated AI output (or notes only when AI is unavailable), caregiver edit, approve, versions and full status history | ✅ Built + tested |
 | Backend delivery `POST /api/handoffs`: exact approved snapshot, server-side validation, receipts, Failed + safe retry, idempotent duplicates, simulated receiver queue, separate acknowledge, fictional outcome after acknowledgement (Case 1) | ✅ Built + tested |
+| Accessibility and demo polish: axe-core WCAG 2.1 A/AA checks on every screen, keyboard and focus checks, no sideways scrolling at 375px, persistent "Synthetic demo data" label, labeled content kinds (caregiver note / safety notice / AI-drafted / question / simulated receiver / fictional outcome), one-click demo case switching with "What this case demonstrates" | ✅ Built + tested (automated checks are a floor, not a full accessibility audit) |
 | Hosted deployment (Vercel + Supabase) | ✅ Live at https://caresignal-gilt.vercel.app — tested in a clean incognito session on 2026-10-25: demo entry, registration with Terms/Privacy acceptance, case creation, sign-out/sign-in, password-reset email |
 
 ---

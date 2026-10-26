@@ -29,3 +29,19 @@ export function DemoEntryForm({ username, password, label }: { username: string;
     </form>
   );
 }
+
+/** One-click switch to another demo case from inside the app (same public demo login, same server-side check). */
+export function DemoSwitchButton({ username, password, label, current }: { username: string; password: string; label: string; current: boolean }) {
+  const [state, action] = useActionState<FormState, FormData>(enterDemo, {});
+  return (
+    <form action={action}>
+      <FormError message={state.errors?.form} />
+      <input type="hidden" name="username" value={username} />
+      <input type="hidden" name="password" value={password} />
+      <SubmitButton pendingText="Opening…" className={`btn ${current ? "btn-secondary" : "btn-ghost"} btn-block`}>
+        {label}
+        {current ? " (current)" : ""}
+      </SubmitButton>
+    </form>
+  );
+}

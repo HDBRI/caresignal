@@ -167,3 +167,23 @@ export function EmptyState({ title, children }: { title: string; children?: Reac
     </div>
   );
 }
+
+/** What kind of content this is. Each kind has its own glyph, words and style — never color alone. */
+export const CONTENT_KIND = {
+  caregiver: { glyph: "❝", label: "Caregiver's original note" },
+  safety: { glyph: "⚠", label: "Safety notice · predefined rule, not AI" },
+  ai: { glyph: "✦", label: "AI-drafted · check it against the notes" },
+  question: { glyph: "?", label: "Question for the care team" },
+  receiver: { glyph: "⇄", label: "Simulated receiver status" },
+  outcome: { glyph: "◇", label: "Synthetic scenario outcome · fictional" },
+} as const;
+
+export function KindTag({ kind, children }: { kind: keyof typeof CONTENT_KIND; children?: React.ReactNode }) {
+  const k = CONTENT_KIND[kind];
+  return (
+    <span className={`kind-tag kind-${kind}`}>
+      <span aria-hidden="true">{k.glyph}</span>
+      {children ?? k.label}
+    </span>
+  );
+}
