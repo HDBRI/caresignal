@@ -856,3 +856,6 @@
 
 **Follow-up:**
 > are u done with the last prompt
+
+**Follow-up:**
+> Yes: apply the new migration to Supabase, push to GitHub, and redeploy the live site.
