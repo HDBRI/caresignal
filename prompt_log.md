@@ -1016,3 +1016,12 @@
 
 **Follow-up:**
 > great
+
+**Follow-up:**
+> okay before u do, can u double check if everything is working, & if everything is fixed
+
+**Follow-up:**
+> I am getting stressed, where are we?
+
+**Follow-up:**
+> Yes: apply migration 0013 to Supabase, push to GitHub, and redeploy the live site.
