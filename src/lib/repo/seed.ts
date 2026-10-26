@@ -79,8 +79,8 @@ export async function materializeSeedCase(sql: Sql, fixture: CaseFixture, anchor
 
   for (const c of fixture.checkins) {
     await sql.query(
-      `insert into checkins (case_id, owner_id, day, status, note, responses, origin, synthetic, created_at)
-       values ($1, $2, $3, $4, $5, $6, 'seeded', true, $7)`,
+      `insert into checkins (case_id, owner_id, day, status, note, responses, origin, synthetic, created_at, responded_at)
+       values ($1, $2, $3, $4, $5, $6, 'seeded', true, $7, $7)`,
       [
         caseId, target.ownerId, resolveSeedDay(anchor, c.dayOffset), c.status, c.note, JSON.stringify(c.responses),
         t({ dayOffset: c.dayOffset, time: "21:00" }),
