@@ -942,3 +942,10 @@
 
 **Follow-up:**
 > Yes, push to GitHub and redeploy the live site.
+
+## Task 19: Novelty, impact framework, and product comparison research
+
+**Prompt:**
+> Prompt 17 — Novelty, impact framework, and product comparison research
+> Prepare evidence for the report's "What is new here?" and "Impact" sections. Do not write unsupported marketing claims.
+> Requirements: - Identify the specific product gap CareSignal is designed to address: transforming scattered caregiver observations into evidence-linked, caregiver-reviewed handoffs while preserving uncertainty and keeping urgent safety guidance independent of AI. - Compare CareSignal with a small, relevant set of existing categories/tools such as patient portals, symptom trackers, caregiver journals, and general-purpose AI chatbots. Research current products only if web access is available. Cite the actual sources, dates accessed, and factual claims. Do not claim CareSignal is the first or uniquely capable unless evidence supports that statement. - Explain what is genuinely novel in this prototype and what is standard or borrowed. - Propose measurable impact indicators suitable for a classroom prototype, for example time to assemble a handoff, source traceability, key-fact preservation, uncertainty retention, caregiver review completion, and safe handling of predefined urgent scenarios. - Do not claim real patient benefit or clinical effectiveness. Use synthetic usability/evaluation results only, with sample size and methods clearly stated. - Distinguish intended impact, prototype evidence, and future hypotheses. - Include limitations: narrow deterministic safety coverage, synthetic-only data, no clinical validation, no real EHR integration, dependence on model/API availability, possible model errors, and small evaluation set. - Save a concise, cited research/evidence file for use in the report. Do not fabricate citations, product features, user research, interviews, or impact metrics.
