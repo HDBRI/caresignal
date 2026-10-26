@@ -20,7 +20,9 @@
     "db:reset": "tsx scripts/db.ts reset",
     "db:status": "tsx scripts/db.ts status",
     "dev:local": "node scripts/dev-local.mjs",
-    "test:ui": "playwright test"
+    "test:ui": "playwright test",
+    "seed:ai": "tsx --conditions react-server scripts/seed-ai.ts",
+    "test:live": "node scripts/test-live.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.11",

@@ -47,7 +47,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mobility_function",
+        "primaryCategory": "mobility_daily_functioning",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -67,7 +67,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "energy_sleep",
+        "primaryCategory": "sleep_nutrition_hydration",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -87,7 +87,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mobility_function",
+        "primaryCategory": "mobility_daily_functioning",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -107,7 +107,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "energy_sleep",
+        "primaryCategory": "sleep_nutrition_hydration",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -127,7 +127,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mobility_function",
+        "primaryCategory": "mobility_daily_functioning",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -150,7 +150,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "eating_drinking",
+        "primaryCategory": "sleep_nutrition_hydration",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -170,7 +170,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "eating_drinking",
+        "primaryCategory": "sleep_nutrition_hydration",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -191,9 +191,9 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mood_cognition",
+        "primaryCategory": "emotional_wellbeing_behavior",
         "secondaryCategories": [
-          "mobility_function"
+          "mobility_daily_functioning"
         ],
         "safetyTier": "none",
         "tags": [
@@ -214,7 +214,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "care_coordination",
+        "primaryCategory": "treatment_care_coordination",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [

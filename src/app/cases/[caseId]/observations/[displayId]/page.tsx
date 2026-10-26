@@ -108,6 +108,19 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
         ) : (
           <p className="secondary">No AI suggestion stored for this note.</p>
         )}
+        {latestAi && latestAi.facts.length > 0 && (
+          <div>
+            <strong>Facts the AI found in the note</strong>
+            <span className="secondary"> (each must quote the note exactly, or it is discarded)</span>
+            <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
+              {latestAi.facts.map((f, k) => (
+                <li key={k}>
+                  {f.fact} <span className="secondary">— from “{f.quote}”</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {latestCaregiver && (
           <p>
             <strong>Your correction (in use):</strong>{" "}

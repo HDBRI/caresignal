@@ -3,7 +3,7 @@
  * Imports the JSON statically so it is bundled for the hosted app as well.
  */
 import { z } from "zod";
-import { CATEGORY_IDS } from "./categories";
+import { CATEGORY_IDS, CHECKIN_TOPICS } from "./categories";
 import { AGE_RANGES, BASELINE_DOMAIN_IDS, CARE_PHASES, CARE_SETTINGS } from "./onboarding";
 import case1 from "../../synthetic-data/cases/case-1-cancer.json";
 import case2 from "../../synthetic-data/cases/case-2-surgery.json";
@@ -33,7 +33,7 @@ const observationFixture = z.object({
 });
 
 const responses = z.partialRecord(
-  category,
+  z.enum(CHECKIN_TOPICS as unknown as [string, ...string[]]),
   z.union([z.object({ state: z.literal("answered"), value: z.string() }), z.object({ state: z.literal("skipped") })]),
 );
 

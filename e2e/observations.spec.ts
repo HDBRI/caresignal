@@ -34,11 +34,13 @@ test("correcting categories and wording keeps the original note", async ({ page 
   await openDemo(page, "Jordan Lee");
   await page.goto(page.url().replace("/overview", "/observations/OBS-C1-04"));
   await expect(page.getByRole("heading", { level: 1, name: "OBS-C1-04" })).toBeVisible();
-  await expect(page.getByText("Not analyzed — seeded example")).toBeVisible();
+  // Seeded notes carry real labels generated once with the demo (npm run seed:ai), shown as AI output.
+  await expect(page.getByText("AI suggested:")).toBeVisible();
+  await expect(page.getByText(/gpt-6-luna/).first()).toBeVisible();
 
-  await page.getByText("Set the categories yourself").click();
-  await page.getByRole("radio", { name: "Eating & drinking" }).check();
-  await page.getByRole("checkbox", { name: "Symptoms & comfort" }).check();
+  await page.getByText("Correct the categories").click();
+  await page.getByRole("radio", { name: "Sleep, nutrition and hydration" }).check();
+  await page.getByRole("checkbox", { name: "Physical symptoms and comfort" }).check();
   await page.getByRole("button", { name: "Save my categories" }).click();
   await expect(page.getByText("Categories updated. The original note and the AI's suggestion are unchanged.")).toBeVisible();
   await expect(page.getByText("Your correction (in use):")).toBeVisible();
@@ -65,4 +67,15 @@ test("timeline separates 'no observation logged' from 'caregiver reported no mea
   await expect(today).toContainText("No note was written, but the caregiver’s check-in reported no meaningful change.");
   // Day -2 in the Jordan Lee scenario has neither a note nor a check-in
   await expect(page.getByText("No response recorded").first()).toBeVisible();
+});
+
+test("Insights: pre-generated AI output is labeled, sourced, and urgent notes carry deterministic 911 guidance", async ({ page }) => {
+  await openDemo(page, "Morgan Patel");
+  await page.getByRole("link", { name: "Insights" }).first().click();
+  await expect(page.getByRole("heading", { level: 1, name: "Insights" })).toBeVisible();
+  await expect(page.getByText("AI-generated insights — derived from caregiver notes, not written by the caregiver")).toBeVisible();
+  await expect(page.getByText(/Generated once when this demo example was prepared/)).toBeVisible();
+  await expect(page.getByText(/OBS-C2-08 matched an emergency safety rule\. If this is happening now, call 911\./).first()).toBeVisible();
+  // AI is disabled on the UI-test server: generating must say so honestly instead of producing anything.
+  await expect(page.getByText("AI analysis is currently unavailable. You can continue logging notes and using the prototype's predefined safety rules.")).toBeVisible();
 });

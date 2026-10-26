@@ -9,6 +9,7 @@
 import type { Database, Principal, Sql } from "../db/client";
 import { assertUuid } from "../db/client";
 import { seedCase, type CaseFixture } from "../fixtures";
+import { GENERATED, generatedFor } from "../generated";
 import type { HandoffPayload } from "../models";
 import { evaluateSafety } from "../safety/rules";
 import { resolveSeedDay, resolveSeedTime } from "../time";
@@ -74,6 +75,8 @@ export async function materializeSeedCase(sql: Sql, fixture: CaseFixture, anchor
     }
   }
 
+  await materializeGeneratedAi(sql, fixture, anchor, caseId, target.ownerId, obsIdByFixture);
+
   for (const c of fixture.checkins) {
     await sql.query(
       `insert into checkins (case_id, owner_id, day, status, note, responses, origin, synthetic, created_at)
@@ -87,6 +90,63 @@ export async function materializeSeedCase(sql: Sql, fixture: CaseFixture, anchor
 
   await materializeHandoff(sql, fixture, anchor, caseId, target.ownerId);
   return caseId;
+}
+
+/**
+ * Copy the real AI output that was generated once for this demo case (npm run seed:ai), if any.
+ * It is stored with its original generation time and model, and shown as "prepared with the demo".
+ */
+async function materializeGeneratedAi(
+  sql: Sql,
+  fixture: CaseFixture,
+  anchor: Date,
+  caseId: string,
+  ownerId: string,
+  obsIdByFixture: Map<string, string>,
+) {
+  const gen = generatedFor(fixture.seedKey);
+  if (!gen) return;
+  const generatedAt = GENERATED.generatedAt ?? anchor.toISOString();
+  for (const [fixtureId, n] of Object.entries(gen.notes)) {
+    const obsId = obsIdByFixture.get(fixtureId);
+    if (!obsId) continue;
+    await sql.query(
+      `insert into observation_analyses (observation_id, case_id, owner_id, primary_category, secondary_categories, facts, model_reported, source, prompt_version, created_at)
+       values ($1, $2, $3, $4, $5, $6, $7, 'ai', $8, $9)`,
+      [obsId, caseId, ownerId, n.primary, JSON.stringify(n.secondary), JSON.stringify(n.facts), n.modelReported, GENERATED.promptVersions?.categorize ?? null, generatedAt],
+    );
+    await sql.query(`update observations set ai_state = 'complete' where id = $1`, [obsId]);
+  }
+  const ins = gen.insights;
+  if (!ins) return;
+  const [{ id: runId }] = await sql.query<{ id: string }>(
+    `insert into insight_runs (case_id, owner_id, status, period_start, period_end, origin, model_reported, generated_at, summary, unknowns,
+                               questions, input_source_ids, rejected_items, prompt_version, created_at)
+     values ($1, $2, 'complete', $3, $4, 'seeded', $5, $6, $7, $8, $9, $10, $11, $12, $6) returning id`,
+    [
+      caseId, ownerId, resolveSeedTime(anchor, { dayOffset: -7, time: "00:00" }), anchor.toISOString(), ins.modelReported, generatedAt,
+      ins.value.summary, JSON.stringify(ins.value.unknowns), JSON.stringify(ins.value.questions), JSON.stringify(ins.inputSourceIds),
+      ins.rejected, GENERATED.promptVersions?.insights ?? null,
+    ],
+  );
+  let pos = 0;
+  for (const i of ins.value.insights) {
+    await sql.query(
+      `insert into insights (run_id, case_id, owner_id, position, kind, statement, support, source_ids, evidence, uncertainty, compares_to_baseline)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [
+        runId, caseId, ownerId, pos++, i.kind, i.statement, i.support, JSON.stringify(i.sourceIds),
+        JSON.stringify(i.evidence.map((e) => ({ source_id: e.sourceId, quote: e.quote }))), i.uncertainty, i.comparesToBaseline,
+      ],
+    );
+  }
+  for (const q of ins.value.questions) {
+    await sql.query(
+      `insert into insights (run_id, case_id, owner_id, position, kind, statement, support, source_ids, evidence, uncertainty)
+       values ($1, $2, $3, $4, 'question', $5, 'unknown', $6, '[]'::jsonb, null)`,
+      [runId, caseId, ownerId, pos++, q.text, JSON.stringify(q.sourceIds)],
+    );
+  }
 }
 
 async function materializeHandoff(sql: Sql, fixture: CaseFixture, anchor: Date, caseId: string, ownerId: string) {

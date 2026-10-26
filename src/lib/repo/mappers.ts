@@ -115,6 +115,11 @@ export const toInsightRun = (r: Row): InsightRun => ({
   modelReported: (r.model_reported as string) ?? null,
   generatedAt: isoOrNull(r.generated_at),
   errorReason: (r.error_reason as string) ?? null,
+  summary: (r.summary as string) ?? null,
+  unknowns: r.unknowns ? json(r.unknowns) : [],
+  inputSourceIds: r.input_source_ids ? json(r.input_source_ids) : [],
+  rejectedItems: Number(r.rejected_items ?? 0),
+  promptVersion: (r.prompt_version as string) ?? null,
   createdAt: iso(r.created_at),
 });
 
@@ -126,8 +131,12 @@ export const toInsight = (r: Row): Insight => ({
   statement: r.statement as string,
   support: r.support as Insight["support"],
   sourceIds: json<string[]>(r.source_ids),
-  evidence: json(r.evidence),
+  evidence: (json<{ source_id?: string; sourceId?: string; quote: string }[]>(r.evidence) ?? []).map((e) => ({
+    sourceId: (e.source_id ?? e.sourceId) as string,
+    quote: e.quote,
+  })),
   uncertainty: (r.uncertainty as string) ?? null,
+  comparesToBaseline: Boolean(r.compares_to_baseline),
 });
 
 export const toHandoff = (r: Row): Handoff => ({
@@ -182,6 +191,7 @@ export const toAnalysis = (r: Row): ObservationAnalysis => ({
   source: ((r.source as string) ?? "ai") as ObservationAnalysis["source"],
   primaryCategory: r.primary_category as ObservationAnalysis["primaryCategory"],
   secondaryCategories: json(r.secondary_categories),
+  facts: r.facts ? json(r.facts) : [],
   summary: (r.summary as string) ?? null,
   modelReported: (r.model_reported as string) ?? null,
   createdAt: iso(r.created_at),

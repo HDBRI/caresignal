@@ -13,7 +13,7 @@ CareSignal is an AI-assisted care-coordination demo for family caregivers suppor
 
 ## Status
 
-This README tracks what is actually built. Current stage: **observation logging and traceable timeline** (Task 9 in `prompt_log.md`).
+This README tracks what is actually built. Current stage: **AI categorization, structured insights and evidence traceability** (Task 10 in `prompt_log.md`).
 
 | Area | Status |
 |---|---|
@@ -31,7 +31,9 @@ This README tracks what is actually built. Current stage: **observation logging 
 | Synthetic data package (3 cases, 25 observations, evaluation cases), seed/copy/reset | ✅ Built + tested |
 | Per-note AI categories (gpt-6-luna, background, allowlisted, validated, daily caps, provider token usage logged); states pending / complete / unavailable / failed with retry | ✅ Built + tested (stand-in AI in tests; verified with a live call) |
 | Caregiver category corrections and wording edits (original kept, versioned, safety re-checked); timeline search | ✅ Built + tested |
-| AI insights, handoff drafting/review/submit, receiver acknowledge | ⏳ Next prompts (screens say so honestly; no placeholder AI output) |
+| Period insights (summary, supported / possible / conflicting findings with exact-quote evidence, unknowns, neutral questions); strict schema + per-statement claim checks; deterministic 911 notice on items citing urgent notes | ✅ Built + tested (deterministic tests; separate live smoke test `npm run test:live`) |
+| Real AI output pre-generated once for the 3 demo cases (`npm run seed:ai`), labeled "prepared with the demo" | ✅ 25/25 notes + 3/3 insight runs passed all checks |
+| Handoff drafting/review/submit, receiver acknowledge | ⏳ Next prompts |
 | Hosted deployment (Vercel + Supabase) | ✅ Live at https://caresignal-gilt.vercel.app — tested in a clean incognito session on 2026-10-25: demo entry, registration with Terms/Privacy acceptance, case creation, sign-out/sign-in, password-reset email |
 
 ---
@@ -102,6 +104,8 @@ Done (2026-10-25): Supabase project (us-east-1, Data API off), schema applied, d
 |---|---|
 | `npm run dev` | Start the development server on http://localhost:3000 (uses Supabase if `.env` has its settings) |
 | `npm run dev:local` | Same, but always on the local database — safe for development even when `.env` points at the live Supabase |
+| `npm run test:live` | LIVE smoke test: real gpt-6-luna calls on synthetic data (needs `PORTKEY_API_KEY`). Separate from the deterministic tests |
+| `npm run seed:ai` | Regenerate the real AI output stored for the demo cases (validated before it is saved) |
 | `npm run test:ui` | Browser UI tests (Playwright) on a separate local server (port 3100, fresh local database). First run: `npx playwright install chromium` |
 | `npm run build` / `npm start` | Production build / serve it |
 | `npm test` | Run the automated tests (Vitest) |

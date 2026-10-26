@@ -3,7 +3,7 @@
  * Data dictionary: docs/DATA_MODEL.md. All timestamps are ISO-8601 UTC strings.
  * `null` always means "not provided / not reported" — never "normal".
  */
-import type { CategoryId } from "./categories";
+import type { CategoryId, CheckinTopic } from "./categories";
 import type { SafetyTier } from "./safety/rules";
 import type { BaselineDomain } from "./onboarding";
 
@@ -105,6 +105,8 @@ export interface ObservationAnalysis {
   source: "ai" | "caregiver";
   primaryCategory: CategoryId;
   secondaryCategories: CategoryId[];
+  /** AI-extracted facts, each with the exact words from the note that support it. */
+  facts: { fact: string; quote: string }[];
   summary: string | null;
   modelReported: string | null;
   createdAt: string;
@@ -126,7 +128,7 @@ export interface SafetyAlert {
 // ---------- Check-ins ----------
 export type CheckinResponse = { state: "answered"; value: string } | { state: "skipped" };
 /** Missing category key = not reported. */
-export type CheckinResponses = Partial<Record<CategoryId, CheckinResponse>>;
+export type CheckinResponses = Partial<Record<CheckinTopic, CheckinResponse>>;
 export type CheckinState = "answered" | "skipped" | "not_reported";
 
 /** Overall daily status. "No response recorded" is the absence of a check-in, never stored. */
@@ -163,6 +165,7 @@ export interface Insight {
   sourceIds: string[]; // >= 1, all in the same case
   evidence: Evidence[];
   uncertainty: string | null;
+  comparesToBaseline: boolean;
 }
 
 export type InsightRunStatus = "complete" | "failed" | "failed_validation" | "unavailable_error" | "unavailable_limit";
@@ -177,6 +180,11 @@ export interface InsightRun {
   modelReported: string | null;
   generatedAt: string | null;
   errorReason: string | null;
+  summary: string | null;
+  unknowns: { statement: string; sourceIds: string[] }[];
+  inputSourceIds: string[];
+  rejectedItems: number;
+  promptVersion: string | null;
   createdAt: string;
 }
 

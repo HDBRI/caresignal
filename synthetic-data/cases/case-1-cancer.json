@@ -51,9 +51,9 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mobility_function",
+        "primaryCategory": "mobility_daily_functioning",
         "secondaryCategories": [
-          "eating_drinking"
+          "sleep_nutrition_hydration"
         ],
         "safetyTier": "none",
         "tags": [
@@ -75,10 +75,10 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "energy_sleep",
+        "primaryCategory": "physical_symptoms_comfort",
         "secondaryCategories": [
-          "eating_drinking",
-          "care_coordination"
+          "sleep_nutrition_hydration",
+          "treatment_care_coordination"
         ],
         "safetyTier": "none",
         "tags": [
@@ -98,10 +98,10 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "energy_sleep",
+        "primaryCategory": "physical_symptoms_comfort",
         "secondaryCategories": [
-          "mobility_function",
-          "eating_drinking"
+          "mobility_daily_functioning",
+          "sleep_nutrition_hydration"
         ],
         "safetyTier": "none",
         "tags": [
@@ -122,9 +122,9 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "eating_drinking",
+        "primaryCategory": "sleep_nutrition_hydration",
         "secondaryCategories": [
-          "symptoms_comfort"
+          "physical_symptoms_comfort"
         ],
         "safetyTier": "none",
         "tags": [
@@ -148,7 +148,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mobility_function",
+        "primaryCategory": "mobility_daily_functioning",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -168,10 +168,10 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "care_coordination",
+        "primaryCategory": "treatment_care_coordination",
         "secondaryCategories": [
-          "energy_sleep",
-          "eating_drinking"
+          "physical_symptoms_comfort",
+          "sleep_nutrition_hydration"
         ],
         "safetyTier": "none",
         "tags": [
@@ -192,9 +192,9 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "eating_drinking",
+        "primaryCategory": "sleep_nutrition_hydration",
         "secondaryCategories": [
-          "medications_treatment"
+          "treatment_care_coordination"
         ],
         "safetyTier": "review",
         "tags": [
@@ -216,9 +216,9 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mood_cognition",
+        "primaryCategory": "emotional_wellbeing_behavior",
         "secondaryCategories": [
-          "energy_sleep"
+          "physical_symptoms_comfort"
         ],
         "safetyTier": "none",
         "tags": [

@@ -1,15 +1,15 @@
 /**
- * The seven observation categories (allowlist). AI output may only use these ids.
+ * The seven observation categories (allowlist, locked in Task 10). AI output may only use these ids.
  * Categories describe WHAT a note is about — they are not clinical judgments.
  */
 export const CATEGORIES = [
-  { id: "eating_drinking", label: "Eating & drinking", hint: "Meals, appetite, fluids" },
-  { id: "energy_sleep", label: "Energy & sleep", hint: "Tiredness, naps, night sleep" },
-  { id: "mobility_function", label: "Mobility & daily function", hint: "Walking, dressing, everyday tasks" },
-  { id: "symptoms_comfort", label: "Symptoms & comfort", hint: "Pain, nausea, breathing, wound, dizziness" },
-  { id: "mood_cognition", label: "Mood & thinking", hint: "Mood, worry, confusion, alertness" },
-  { id: "medications_treatment", label: "Medications & treatment", hint: "What was taken or done, as reported — never advice" },
-  { id: "care_coordination", label: "Care coordination", hint: "Visits, calls, appointments, questions" },
+  { id: "mobility_daily_functioning", label: "Mobility and daily functioning", hint: "Walking, transfers, dressing, everyday tasks" },
+  { id: "physical_symptoms_comfort", label: "Physical symptoms and comfort", hint: "Pain, nausea, tiredness, breathing, dizziness, wounds" },
+  { id: "cognition_communication", label: "Cognition and communication", hint: "Alertness, confusion, memory, speaking, understanding" },
+  { id: "emotional_wellbeing_behavior", label: "Emotional wellbeing and behavior", hint: "Mood, worry, frustration, social contact" },
+  { id: "sleep_nutrition_hydration", label: "Sleep, nutrition and hydration", hint: "Sleep and naps, meals, appetite, fluids" },
+  { id: "treatment_care_coordination", label: "Treatment and care coordination", hint: "Medicines taken (as reported), visits, calls, appointments" },
+  { id: "other", label: "Other", hint: "Anything that fits none of the above" },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]["id"];
@@ -24,5 +24,11 @@ export function categoryLabel(id: string): string {
   return CATEGORIES.find((c) => c.id === id)?.label ?? "Unknown category";
 }
 
-/** Daily check-in asks about four of the categories. Unanswered = not reported. */
-export const CHECKIN_CATEGORIES: CategoryId[] = ["eating_drinking", "energy_sleep", "mobility_function", "mood_cognition"];
+/**
+ * Optional per-topic detail keys inside a check-in (legacy detail; the daily status is the main signal).
+ * Kept separate from observation categories on purpose.
+ */
+export const CHECKIN_TOPICS = ["eating_drinking", "energy_sleep", "mobility_function", "mood_cognition"] as const;
+export type CheckinTopic = (typeof CHECKIN_TOPICS)[number];
+/** @deprecated use CHECKIN_TOPICS */
+export const CHECKIN_CATEGORIES = CHECKIN_TOPICS;

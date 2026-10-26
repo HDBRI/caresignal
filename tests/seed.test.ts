@@ -48,7 +48,9 @@ describe("seeding demo copies", () => {
       expect(obs).toHaveLength(fixture.observations.length);
       expect(obs.every((o) => o.synthetic && o.origin === "seeded")).toBe(true);
       expect(obs.map((o) => o.originalText).sort()).toEqual(fixture.observations.map((o) => o.text).sort());
-      expect(obs.every((o) => o.aiState === "not_run")).toBe(true); // no fake AI result
+      // Real pre-generated labels (npm run seed:ai) make a note "complete"; otherwise it is honestly "not_run".
+      const gen = (await import("@/lib/generated")).generatedFor(fixture.seedKey);
+      for (const o of obs) expect(o.aiState, o.displayId).toBe(gen?.notes[o.displayId] ? "complete" : "not_run");
       const c = await getCase(db, p, caseId);
       expect(c.synthetic).toBe(true);
       expect(c.patientRef).toBe(fixture.patient.patientRef);

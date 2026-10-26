@@ -47,7 +47,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mobility_function",
+        "primaryCategory": "mobility_daily_functioning",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -68,7 +68,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "symptoms_comfort",
+        "primaryCategory": "physical_symptoms_comfort",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -88,7 +88,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "eating_drinking",
+        "primaryCategory": "sleep_nutrition_hydration",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -111,9 +111,9 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "symptoms_comfort",
+        "primaryCategory": "physical_symptoms_comfort",
         "secondaryCategories": [
-          "mobility_function"
+          "mobility_daily_functioning"
         ],
         "safetyTier": "review",
         "tags": [
@@ -133,7 +133,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "care_coordination",
+        "primaryCategory": "treatment_care_coordination",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -153,8 +153,10 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mood_cognition",
-        "secondaryCategories": [],
+        "primaryCategory": "emotional_wellbeing_behavior",
+        "secondaryCategories": [
+          "other"
+        ],
         "safetyTier": "none",
         "tags": [
           "ordinary",
@@ -174,7 +176,7 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "medications_treatment",
+        "primaryCategory": "treatment_care_coordination",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -197,9 +199,9 @@
       "isTestScenario": true,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "symptoms_comfort",
+        "primaryCategory": "physical_symptoms_comfort",
         "secondaryCategories": [
-          "mood_cognition"
+          "cognition_communication"
         ],
         "safetyTier": "emergency",
         "tags": [

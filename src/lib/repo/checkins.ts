@@ -1,6 +1,6 @@
 /** Daily check-ins. A day with no row, or a category with no answer, is "not reported" — never "fine". */
 import { z } from "zod";
-import { CHECKIN_CATEGORIES, type CategoryId } from "../categories";
+import { CHECKIN_TOPICS, type CheckinTopic } from "../categories";
 import type { Database, Principal } from "../db/client";
 import type { CheckinState, DailyCheckin } from "../models";
 import { addDays } from "../time";
@@ -24,7 +24,7 @@ export const checkinInput = z.object({
     .max(500)
     .nullish()
     .transform((v) => (v ? v : null)),
-  responses: z.partialRecord(z.enum(CHECKIN_CATEGORIES as [string, ...string[]]), response).optional(),
+  responses: z.partialRecord(z.enum(CHECKIN_TOPICS as unknown as [string, ...string[]]), response).optional(),
 });
 
 export async function upsertCheckin(db: Database, p: Principal, input: z.input<typeof checkinInput>): Promise<DailyCheckin> {
@@ -55,14 +55,14 @@ export function checkinGrid(
   checkins: DailyCheckin[],
   fromDay: string,
   toDay: string,
-): { day: string; states: Record<CategoryId, CheckinState> }[] {
+): { day: string; states: Record<CheckinTopic, CheckinState> }[] {
   const byDay = new Map(checkins.map((c) => [c.day, c]));
-  const out: { day: string; states: Record<CategoryId, CheckinState> }[] = [];
+  const out: { day: string; states: Record<CheckinTopic, CheckinState> }[] = [];
   for (let d = fromDay; d <= toDay; d = addDays(d, 1)) {
     const c = byDay.get(d);
     const states = Object.fromEntries(
-      CHECKIN_CATEGORIES.map((cat) => [cat, c?.responses[cat]?.state ?? "not_reported"]),
-    ) as Record<CategoryId, CheckinState>;
+      CHECKIN_TOPICS.map((cat) => [cat, c?.responses[cat]?.state ?? "not_reported"]),
+    ) as Record<CheckinTopic, CheckinState>;
     out.push({ day: d, states });
   }
   return out;

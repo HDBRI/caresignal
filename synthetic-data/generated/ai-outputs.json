@@ -1,0 +1,1040 @@
+{
+  "synthetic": true,
+  "_note": "Real gpt-6-luna output generated once by `npm run seed:ai` for the synthetic demo cases, validated by the same checks as live output. Empty until generated.",
+  "generatedAt": "2026-10-26T01:00:22.938Z",
+  "cases": {
+    "PAT-CANCER-001": {
+      "notes": {
+        "OBS-C1-01": {
+          "primary": "mobility_daily_functioning",
+          "secondary": [
+            "sleep_nutrition_hydration"
+          ],
+          "facts": [
+            {
+              "fact": "Caregiver reported that Jordan walked the dog around the block this morning like usual.",
+              "quote": "Jordan walked the dog around the block this morning like usual."
+            },
+            {
+              "fact": "Caregiver reported that Jordan ate oatmeal and half a banana.",
+              "quote": "Ate oatmeal and half a banana."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 410,
+            "cachedTokens": 0,
+            "completionTokens": 133,
+            "totalTokens": 543
+          }
+        },
+        "OBS-C1-02": {
+          "primary": "treatment_care_coordination",
+          "secondary": [
+            "physical_symptoms_comfort",
+            "sleep_nutrition_hydration"
+          ],
+          "facts": [
+            {
+              "fact": "Caregiver reported it was a treatment day at the clinic.",
+              "quote": "Treatment day at the clinic."
+            },
+            {
+              "fact": "Caregiver reported the person came home tired.",
+              "quote": "Came home tired"
+            },
+            {
+              "fact": "Caregiver reported the person went straight to bed.",
+              "quote": "went straight to bed"
+            },
+            {
+              "fact": "Caregiver reported the person ate only a few bites of soup.",
+              "quote": "only a few bites of soup"
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 413,
+            "cachedTokens": 0,
+            "completionTokens": 228,
+            "totalTokens": 641
+          }
+        },
+        "OBS-C1-03": {
+          "primary": "physical_symptoms_comfort",
+          "secondary": [
+            "mobility_daily_functioning",
+            "sleep_nutrition_hydration"
+          ],
+          "facts": [
+            {
+              "fact": "Caregiver reported the person was too tired to walk the dog today.",
+              "quote": "Too tired to walk the dog today"
+            },
+            {
+              "fact": "Caregiver reported the person sat on the porch instead.",
+              "quote": "sat on the porch instead."
+            },
+            {
+              "fact": "Caregiver reported the person said food tasted like metal.",
+              "quote": "Said food \"tastes like metal\""
+            },
+            {
+              "fact": "Caregiver reported the person left most of lunch.",
+              "quote": "left most of lunch."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 419,
+            "cachedTokens": 0,
+            "completionTokens": 295,
+            "totalTokens": 714
+          }
+        },
+        "OBS-C1-04": {
+          "primary": "physical_symptoms_comfort",
+          "secondary": [
+            "sleep_nutrition_hydration"
+          ],
+          "facts": [
+            {
+              "fact": "Caregiver reported feeling queasy after lunch.",
+              "quote": "Felt queasy after lunch."
+            },
+            {
+              "fact": "Caregiver reported only drinking about 2 glasses of water all day.",
+              "quote": "Only drank about 2 glasses of water all day."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 409,
+            "cachedTokens": 0,
+            "completionTokens": 154,
+            "totalTokens": 563
+          }
+        },
+        "OBS-C1-05": {
+          "primary": "mobility_daily_functioning",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported needing to help with dressing this morning, for the first time.",
+              "quote": "Needed help getting dressed this morning — first time I've had to help with that."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 407,
+            "cachedTokens": 0,
+            "completionTokens": 118,
+            "totalTokens": 525
+          }
+        },
+        "OBS-C1-06": {
+          "primary": "physical_symptoms_comfort",
+          "secondary": [
+            "treatment_care_coordination",
+            "sleep_nutrition_hydration"
+          ],
+          "facts": [
+            {
+              "fact": "Caregiver reported that a visiting nurse came by.",
+              "quote": "Visiting nurse came by."
+            },
+            {
+              "fact": "Caregiver reported that Jordan told the nurse the tiredness is worse than last cycle.",
+              "quote": "Jordan told her the tiredness is \"worse than last cycle.\""
+            },
+            {
+              "fact": "Caregiver reported that the nurse asked them to write down how much Jordan eats and drinks each day.",
+              "quote": "Nurse asked us to write down how much Jordan eats and drinks each day."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 426,
+            "cachedTokens": 0,
+            "completionTokens": 244,
+            "totalTokens": 670
+          }
+        },
+        "OBS-C1-07": {
+          "primary": "sleep_nutrition_hydration",
+          "secondary": [
+            "treatment_care_coordination"
+          ],
+          "facts": [
+            {
+              "fact": "Caregiver reported that the person ate half a sandwich at lunch.",
+              "quote": "Ate half a sandwich at lunch"
+            },
+            {
+              "fact": "Caregiver reported that the person skipped dinner.",
+              "quote": "skipped dinner"
+            },
+            {
+              "fact": "Caregiver reported that the person took the morning pills from the weekly box.",
+              "quote": "Took the morning pills from the weekly box"
+            },
+            {
+              "fact": "Caregiver reported uncertainty about whether the evening pills were taken.",
+              "quote": "not sure whether the evening ones were taken"
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 420,
+            "cachedTokens": 0,
+            "completionTokens": 238,
+            "totalTokens": 658
+          }
+        },
+        "OBS-C1-08": {
+          "primary": "physical_symptoms_comfort",
+          "secondary": [
+            "emotional_wellbeing_behavior"
+          ],
+          "facts": [
+            {
+              "fact": "Caregiver reported they were quieter than usual tonight.",
+              "quote": "Quieter than usual tonight"
+            },
+            {
+              "fact": "Caregiver reported they said they were \"just worn out.\"",
+              "quote": "said they're \"just worn out.\""
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 404,
+            "cachedTokens": 0,
+            "completionTokens": 224,
+            "totalTokens": 628
+          }
+        }
+      },
+      "insights": {
+        "modelReported": "gpt-6-luna-2026-09-22",
+        "usage": {
+          "promptTokens": 1157,
+          "cachedTokens": 0,
+          "completionTokens": 2851,
+          "totalTokens": 4008
+        },
+        "rejected": 1,
+        "inputSourceIds": [
+          "OBS-C1-02",
+          "OBS-C1-03",
+          "OBS-C1-04",
+          "OBS-C1-05",
+          "OBS-C1-06",
+          "OBS-C1-07",
+          "OBS-C1-08"
+        ],
+        "value": {
+          "summary": "Caregiver reported tiredness on multiple occasions, reduced amounts eaten in several notes, and one report of drinking about 2 glasses of water (OBS-C1-02, OBS-C1-03, OBS-C1-04, OBS-C1-06, OBS-C1-07, OBS-C1-08). Caregiver also reported needing to help with dressing and uncertainty about whether evening pills were taken (OBS-C1-05, OBS-C1-07).",
+          "insights": [
+            {
+              "kind": "pattern",
+              "statement": "Caregiver reported tiredness or being worn out in notes from multiple occasions, compared with the baseline description of usually being active most of the day.",
+              "support": "supported",
+              "sourceIds": [
+                "OBS-C1-02",
+                "OBS-C1-03",
+                "OBS-C1-06",
+                "OBS-C1-08"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C1-02",
+                  "quote": "Came home tired and went straight to bed after only a few bites of soup."
+                },
+                {
+                  "sourceId": "OBS-C1-03",
+                  "quote": "Too tired to walk the dog today, sat on the porch instead."
+                },
+                {
+                  "sourceId": "OBS-C1-06",
+                  "quote": "Jordan told her the tiredness is \"worse than last cycle.\""
+                },
+                {
+                  "sourceId": "OBS-C1-08",
+                  "quote": "Quieter than usual tonight, said they're \"just worn out.\""
+                }
+              ],
+              "uncertainty": null,
+              "comparesToBaseline": true
+            },
+            {
+              "kind": "pattern",
+              "statement": "Caregiver reported small amounts eaten or meals skipped in notes from multiple occasions, compared with the baseline of usually eating three small meals.",
+              "support": "supported",
+              "sourceIds": [
+                "OBS-C1-02",
+                "OBS-C1-03",
+                "OBS-C1-07"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C1-02",
+                  "quote": "Came home tired and went straight to bed after only a few bites of soup."
+                },
+                {
+                  "sourceId": "OBS-C1-03",
+                  "quote": "Said food \"tastes like metal\" and left most of lunch."
+                },
+                {
+                  "sourceId": "OBS-C1-07",
+                  "quote": "Ate half a sandwich at lunch and skipped dinner."
+                }
+              ],
+              "uncertainty": null,
+              "comparesToBaseline": true
+            },
+            {
+              "kind": "change",
+              "statement": "Caregiver reported drinking about 2 glasses of water in one note, compared with the baseline of about six glasses of fluid a day.",
+              "support": "supported",
+              "sourceIds": [
+                "OBS-C1-04"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C1-04",
+                  "quote": "Only drank about 2 glasses of water all day."
+                }
+              ],
+              "uncertainty": null,
+              "comparesToBaseline": true
+            },
+            {
+              "kind": "change",
+              "statement": "Caregiver reported needing to help with dressing, compared with the baseline description of dressing without help.",
+              "support": "supported",
+              "sourceIds": [
+                "OBS-C1-05"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C1-05",
+                  "quote": "Needed help getting dressed this morning — first time I've had to help with that."
+                }
+              ],
+              "uncertainty": null,
+              "comparesToBaseline": true
+            }
+          ],
+          "unknowns": [
+            {
+              "statement": "The evening pills' status is unclear in the note.",
+              "sourceIds": [
+                "OBS-C1-07"
+              ]
+            },
+            {
+              "statement": "The notes do not provide a full account of eating and drinking for every documented occasion.",
+              "sourceIds": [
+                "OBS-C1-02",
+                "OBS-C1-03",
+                "OBS-C1-04",
+                "OBS-C1-05",
+                "OBS-C1-06",
+                "OBS-C1-07",
+                "OBS-C1-08"
+              ]
+            },
+            {
+              "statement": "No observation was logged for two days in the period.",
+              "sourceIds": []
+            },
+            {
+              "statement": "Event time is not provided in these notes.",
+              "sourceIds": [
+                "OBS-C1-02",
+                "OBS-C1-03",
+                "OBS-C1-04",
+                "OBS-C1-06",
+                "OBS-C1-07",
+                "OBS-C1-08"
+              ]
+            },
+            {
+              "statement": "The check-ins mention a change or concern but do not specify what each refers to.",
+              "sourceIds": []
+            }
+          ],
+          "questions": [
+            {
+              "text": "What details about Jordan's eating and drinking would be most useful for us to record?",
+              "sourceIds": [
+                "OBS-C1-06"
+              ]
+            },
+            {
+              "text": "Could we discuss the tiredness Jordan described as \"worse than last cycle\"?",
+              "sourceIds": [
+                "OBS-C1-06"
+              ]
+            },
+            {
+              "text": "Could we clarify whether the evening pills were taken?",
+              "sourceIds": [
+                "OBS-C1-07"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "PAT-SURGERY-002": {
+      "notes": {
+        "OBS-C2-01": {
+          "primary": "mobility_daily_functioning",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported that the person walked to the kitchen and back twice with the walker.",
+              "quote": "Walked to the kitchen and back twice with the walker."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 408,
+            "cachedTokens": 0,
+            "completionTokens": 176,
+            "totalTokens": 584
+          }
+        },
+        "OBS-C2-02": {
+          "primary": "physical_symptoms_comfort",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported that the incision dressing looked clean and dry.",
+              "quote": "Incision dressing looks clean and dry."
+            },
+            {
+              "fact": "Caregiver reported that Morgan rated the pain 4 out of 10 when asked.",
+              "quote": "Pain is manageable — Morgan rated it 4 out of 10 when I asked."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 416,
+            "cachedTokens": 0,
+            "completionTokens": 179,
+            "totalTokens": 595
+          }
+        },
+        "OBS-C2-03": {
+          "primary": "sleep_nutrition_hydration",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported that the person had soup and crackers for lunch and kept sipping water through the afternoon.",
+              "quote": "Had soup and crackers for lunch and kept sipping water through the afternoon."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 405,
+            "cachedTokens": 0,
+            "completionTokens": 90,
+            "totalTokens": 495
+          }
+        },
+        "OBS-C2-04": {
+          "primary": "physical_symptoms_comfort",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported feeling a little dizzy after standing up too fast.",
+              "quote": "A little dizzy after standing up too fast."
+            },
+            {
+              "fact": "Caregiver reported sitting down and that the dizziness passed after a minute.",
+              "quote": "Sat down and it passed after a minute."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 409,
+            "cachedTokens": 0,
+            "completionTokens": 212,
+            "totalTokens": 621
+          }
+        },
+        "OBS-C2-05": {
+          "primary": "treatment_care_coordination",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported that the surgeon's office called and the follow-up visit moved to next Tuesday.",
+              "quote": "Surgeon's office called — the follow-up visit moved to next Tuesday."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 406,
+            "cachedTokens": 0,
+            "completionTokens": 138,
+            "totalTokens": 544
+          }
+        },
+        "OBS-C2-06": {
+          "primary": "emotional_wellbeing_behavior",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported being in good spirits.",
+              "quote": "In good spirits"
+            },
+            {
+              "fact": "Caregiver reported watching the game with their neighbor.",
+              "quote": "watched the game with our neighbor."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 402,
+            "cachedTokens": 0,
+            "completionTokens": 163,
+            "totalTokens": 565
+          }
+        },
+        "OBS-C2-07": {
+          "primary": "treatment_care_coordination",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported taking the evening medicines as listed on the discharge sheet.",
+              "quote": "Took the evening medicines as listed on the discharge sheet."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 403,
+            "cachedTokens": 0,
+            "completionTokens": 105,
+            "totalTokens": 508
+          }
+        },
+        "OBS-C2-08": {
+          "primary": "physical_symptoms_comfort",
+          "secondary": [
+            "cognition_communication"
+          ],
+          "facts": [
+            {
+              "fact": "Caregiver reported that Morgan was hard to wake this morning.",
+              "quote": "Hard to wake Morgan this morning"
+            },
+            {
+              "fact": "Caregiver reported that Morgan's breathing seemed difficult.",
+              "quote": "Morgan's breathing seemed difficult"
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 405,
+            "cachedTokens": 0,
+            "completionTokens": 127,
+            "totalTokens": 532
+          }
+        }
+      },
+      "insights": {
+        "modelReported": "gpt-6-luna-2026-09-22",
+        "usage": {
+          "promptTokens": 1113,
+          "cachedTokens": 0,
+          "completionTokens": 3199,
+          "totalTokens": 4312
+        },
+        "rejected": 0,
+        "inputSourceIds": [
+          "OBS-C2-01",
+          "OBS-C2-02",
+          "OBS-C2-03",
+          "OBS-C2-04",
+          "OBS-C2-05",
+          "OBS-C2-06",
+          "OBS-C2-07",
+          "OBS-C2-08"
+        ],
+        "value": {
+          "summary": "Caregiver reported that Morgan walked to the kitchen and back with the walker, had soup and crackers for lunch, and was in good spirits during the period (OBS-C2-01, OBS-C2-03, OBS-C2-06). Caregiver also reported dizziness after standing, and later reported difficulty waking Morgan and that Morgan's breathing seemed difficult (OBS-C2-04, OBS-C2-08).",
+          "insights": [
+            {
+              "kind": "possible_pattern",
+              "statement": "Caregiver reported Morgan walked to the kitchen and back twice with the walker. This is one mobility report and does not establish how it compares across the period.",
+              "support": "possible_unconfirmed",
+              "sourceIds": [
+                "OBS-C2-01"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C2-01",
+                  "quote": "Walked to the kitchen and back twice with the walker."
+                }
+              ],
+              "uncertainty": "Only one note reports mobility, so a pattern over time is not confirmed.",
+              "comparesToBaseline": true
+            },
+            {
+              "kind": "possible_pattern",
+              "statement": "Caregiver reported Morgan was in good spirits while watching the game with a neighbor. This is one mood report and does not establish a pattern.",
+              "support": "possible_unconfirmed",
+              "sourceIds": [
+                "OBS-C2-06"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C2-06",
+                  "quote": "In good spirits, watched the game with our neighbor."
+                }
+              ],
+              "uncertainty": "Only one note reports mood, so a pattern over time is not confirmed.",
+              "comparesToBaseline": true
+            },
+            {
+              "kind": "possible_pattern",
+              "statement": "Caregiver reported the incision dressing looked clean and dry and that Morgan rated the pain 4 out of 10 when asked.",
+              "support": "possible_unconfirmed",
+              "sourceIds": [
+                "OBS-C2-02"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C2-02",
+                  "quote": "Incision dressing looks clean and dry. Pain is manageable — Morgan rated it 4 out of 10 when I asked."
+                }
+              ],
+              "uncertainty": "This is one report; the note does not provide a comparison across time.",
+              "comparesToBaseline": false
+            },
+            {
+              "kind": "possible_pattern",
+              "statement": "Caregiver reported Morgan had soup and crackers for lunch and kept sipping water through the afternoon.",
+              "support": "possible_unconfirmed",
+              "sourceIds": [
+                "OBS-C2-03"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C2-03",
+                  "quote": "Had soup and crackers for lunch and kept sipping water through the afternoon."
+                }
+              ],
+              "uncertainty": "This is one report and does not describe intake at other meals or across the period.",
+              "comparesToBaseline": false
+            },
+            {
+              "kind": "possible_pattern",
+              "statement": "Caregiver reported Morgan felt a little dizzy after standing up too fast, then sat down and the dizziness passed after a minute.",
+              "support": "possible_unconfirmed",
+              "sourceIds": [
+                "OBS-C2-04"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C2-04",
+                  "quote": "A little dizzy after standing up too fast. Sat down and it passed after a minute."
+                }
+              ],
+              "uncertainty": "Only one note reports dizziness, so whether it happened at other times is not reported.",
+              "comparesToBaseline": false
+            },
+            {
+              "kind": "possible_pattern",
+              "statement": "Caregiver reported Morgan was hard to wake and that Morgan's breathing seemed difficult.",
+              "support": "possible_unconfirmed",
+              "sourceIds": [
+                "OBS-C2-08"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C2-08",
+                  "quote": "Hard to wake Morgan this morning, and Morgan's breathing seemed difficult."
+                }
+              ],
+              "uncertainty": "This is one report; the note does not say whether this happened at other times.",
+              "comparesToBaseline": false
+            },
+            {
+              "kind": "possible_pattern",
+              "statement": "Caregiver reported Morgan took the evening medicines as listed on the discharge sheet.",
+              "support": "possible_unconfirmed",
+              "sourceIds": [
+                "OBS-C2-07"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C2-07",
+                  "quote": "Took the evening medicines as listed on the discharge sheet."
+                }
+              ],
+              "uncertainty": "This is one report and does not describe other medication-taking times.",
+              "comparesToBaseline": false
+            },
+            {
+              "kind": "possible_pattern",
+              "statement": "Caregiver reported the surgeon's office called and moved the follow-up visit.",
+              "support": "possible_unconfirmed",
+              "sourceIds": [
+                "OBS-C2-05"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C2-05",
+                  "quote": "Surgeon's office called — the follow-up visit moved to next Tuesday."
+                }
+              ],
+              "uncertainty": "The note does not give further details about the updated visit arrangements.",
+              "comparesToBaseline": false
+            }
+          ],
+          "unknowns": [
+            {
+              "statement": "An observation was not logged for one day in the period.",
+              "sourceIds": []
+            },
+            {
+              "statement": "Event times were not provided in OBS-C2-01, OBS-C2-02, OBS-C2-03, OBS-C2-05, OBS-C2-06, and OBS-C2-07.",
+              "sourceIds": [
+                "OBS-C2-01",
+                "OBS-C2-02",
+                "OBS-C2-03",
+                "OBS-C2-05",
+                "OBS-C2-06",
+                "OBS-C2-07"
+              ]
+            },
+            {
+              "statement": "The notes do not report whether the dizziness or the difficulty waking and breathing occurred at other times.",
+              "sourceIds": [
+                "OBS-C2-04",
+                "OBS-C2-08"
+              ]
+            }
+          ],
+          "questions": [
+            {
+              "text": "What details about the reported difficulty waking and breathing would be useful to discuss with the care team?",
+              "sourceIds": [
+                "OBS-C2-08"
+              ]
+            },
+            {
+              "text": "What details about the reported dizziness after standing would be useful to discuss with the care team?",
+              "sourceIds": [
+                "OBS-C2-04"
+              ]
+            },
+            {
+              "text": "What is the updated timing for the follow-up visit?",
+              "sourceIds": [
+                "OBS-C2-05"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "PAT-RECOVERY-003": {
+      "notes": {
+        "OBS-C3-01": {
+          "primary": "mobility_daily_functioning",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported that he walked from the bedroom to the kitchen on his own, slowly, holding the counter at the end.",
+              "quote": "Walked from the bedroom to the kitchen on his own, slowly, holding the counter at the end."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 412,
+            "cachedTokens": 0,
+            "completionTokens": 112,
+            "totalTokens": 524
+          }
+        },
+        "OBS-C3-02": {
+          "primary": "sleep_nutrition_hydration",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported that they napped for about two hours after lunch.",
+              "quote": "Napped for about two hours after lunch."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 400,
+            "cachedTokens": 0,
+            "completionTokens": 93,
+            "totalTokens": 493
+          }
+        },
+        "OBS-C3-03": {
+          "primary": "mobility_daily_functioning",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported needing an arm to get from the bed to the bathroom this morning.",
+              "quote": "Needed my arm to get from the bed to the bathroom this morning."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 405,
+            "cachedTokens": 0,
+            "completionTokens": 102,
+            "totalTokens": 507
+          }
+        },
+        "OBS-C3-04": {
+          "primary": "sleep_nutrition_hydration",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported that they slept most of the afternoon and went to bed early, around 8.",
+              "quote": "Slept most of the afternoon and went to bed early, around 8."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 408,
+            "cachedTokens": 0,
+            "completionTokens": 109,
+            "totalTokens": 517
+          }
+        },
+        "OBS-C3-05": {
+          "primary": "mobility_daily_functioning",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported needing help walking to the bathroom and leaning on the hallway wall.",
+              "quote": "Needed help walking to the bathroom again and leaned on the hallway wall."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 405,
+            "cachedTokens": 0,
+            "completionTokens": 104,
+            "totalTokens": 509
+          }
+        },
+        "OBS-C3-06": {
+          "primary": "sleep_nutrition_hydration",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported eating a full plate of pasta at dinner.",
+              "quote": "Ate a full plate of pasta at dinner."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 401,
+            "cachedTokens": 0,
+            "completionTokens": 106,
+            "totalTokens": 507
+          }
+        },
+        "OBS-C3-07": {
+          "primary": "sleep_nutrition_hydration",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported that Alex barely touched dinner, maybe having a few bites.",
+              "quote": "Alex barely touched dinner — maybe a few bites."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 401,
+            "cachedTokens": 0,
+            "completionTokens": 101,
+            "totalTokens": 502
+          }
+        },
+        "OBS-C3-08": {
+          "primary": "emotional_wellbeing_behavior",
+          "secondary": [
+            "mobility_daily_functioning"
+          ],
+          "facts": [
+            {
+              "fact": "Caregiver reported he seemed a bit down.",
+              "quote": "Seemed a bit down"
+            },
+            {
+              "fact": "Caregiver reported he said he's frustrated about needing help.",
+              "quote": "said he's frustrated about needing help"
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 404,
+            "cachedTokens": 0,
+            "completionTokens": 230,
+            "totalTokens": 634
+          }
+        },
+        "OBS-C3-09": {
+          "primary": "treatment_care_coordination",
+          "secondary": [],
+          "facts": [
+            {
+              "fact": "Caregiver reported asking whether the physical therapy visit is this week or next and being unable to find the letter.",
+              "quote": "Asked whether the physical therapy visit is this week or next — I couldn't find the letter."
+            }
+          ],
+          "modelReported": "gpt-6-luna-2026-09-22",
+          "usage": {
+            "promptTokens": 409,
+            "cachedTokens": 0,
+            "completionTokens": 183,
+            "totalTokens": 592
+          }
+        }
+      },
+      "insights": {
+        "modelReported": "gpt-6-luna-2026-09-22",
+        "usage": {
+          "promptTokens": 1104,
+          "cachedTokens": 0,
+          "completionTokens": 1798,
+          "totalTokens": 2902
+        },
+        "rejected": 0,
+        "inputSourceIds": [
+          "OBS-C3-02",
+          "OBS-C3-03",
+          "OBS-C3-04",
+          "OBS-C3-05",
+          "OBS-C3-06",
+          "OBS-C3-07",
+          "OBS-C3-08",
+          "OBS-C3-09"
+        ],
+        "value": {
+          "summary": "Caregiver reported daytime sleep in two notes, compared with the baseline report of usually not napping (OBS-C3-02, OBS-C3-04). Caregiver also reported needing help walking on two occasions, compared with the baseline report of walking around the house without help (OBS-C3-03, OBS-C3-05). Two dinner notes report different amounts eaten, and it is unclear whether they describe the same meal (OBS-C3-06, OBS-C3-07).",
+          "insights": [
+            {
+              "kind": "pattern",
+              "statement": "Caregiver reported daytime sleeping on two separate logged days; this differs from the baseline report of usually not napping.",
+              "support": "supported",
+              "sourceIds": [
+                "OBS-C3-02",
+                "OBS-C3-04"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C3-02",
+                  "quote": "Napped for about two hours after lunch."
+                },
+                {
+                  "sourceId": "OBS-C3-04",
+                  "quote": "Slept most of the afternoon and went to bed early, around 8."
+                }
+              ],
+              "uncertainty": null,
+              "comparesToBaseline": true
+            },
+            {
+              "kind": "pattern",
+              "statement": "Caregiver reported needing help walking to the bathroom on two separate logged days; this differs from the baseline report of walking around the house without help.",
+              "support": "supported",
+              "sourceIds": [
+                "OBS-C3-03",
+                "OBS-C3-05"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C3-03",
+                  "quote": "Needed my arm to get from the bed to the bathroom this morning."
+                },
+                {
+                  "sourceId": "OBS-C3-05",
+                  "quote": "Needed help walking to the bathroom again and leaned on the hallway wall."
+                }
+              ],
+              "uncertainty": null,
+              "comparesToBaseline": true
+            },
+            {
+              "kind": "conflict",
+              "statement": "The notes report different amounts eaten for dinner.",
+              "support": "conflicting",
+              "sourceIds": [
+                "OBS-C3-06",
+                "OBS-C3-07"
+              ],
+              "evidence": [
+                {
+                  "sourceId": "OBS-C3-06",
+                  "quote": "Ate a full plate of pasta at dinner."
+                },
+                {
+                  "sourceId": "OBS-C3-07",
+                  "quote": "Alex barely touched dinner — maybe a few bites."
+                }
+              ],
+              "uncertainty": "It is unclear whether these notes describe the same dinner; the event time for OBS-C3-07 is not provided.",
+              "comparesToBaseline": false
+            }
+          ],
+          "unknowns": [
+            {
+              "statement": "The event time is not provided for OBS-C3-07, so it is unclear when that dinner account refers to.",
+              "sourceIds": [
+                "OBS-C3-07"
+              ]
+            },
+            {
+              "statement": "No observation was logged for the later day identified as day 7.",
+              "sourceIds": []
+            },
+            {
+              "statement": "The check-in saying a change was noticed does not specify what changed.",
+              "sourceIds": []
+            }
+          ],
+          "questions": [
+            {
+              "text": "Could we clarify whether the two dinner notes refer to the same meal?",
+              "sourceIds": [
+                "OBS-C3-06",
+                "OBS-C3-07"
+              ]
+            },
+            {
+              "text": "What would be useful for the care team to know about the reported need for help walking to the bathroom?",
+              "sourceIds": [
+                "OBS-C3-03",
+                "OBS-C3-05"
+              ]
+            },
+            {
+              "text": "Could we clarify whether the physical therapy visit is this week or next?",
+              "sourceIds": [
+                "OBS-C3-09"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "promptVersions": {
+    "categorize": "categorize-2026-10-25.2",
+    "insights": "insights-2026-10-25.2"
+  }
+}
