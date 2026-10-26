@@ -13,7 +13,7 @@ CareSignal is an AI-assisted care-coordination demo for family caregivers suppor
 
 ## Status
 
-This README tracks what is actually built. Current stage: **AI categorization, structured insights and evidence traceability** (Task 10 in `prompt_log.md`).
+This README tracks what is actually built. Current stage: **optional daily check-in and reminder preference** (Task 11 in `prompt_log.md`).
 
 | Area | Status |
 |---|---|
@@ -33,6 +33,8 @@ This README tracks what is actually built. Current stage: **AI categorization, s
 | Caregiver category corrections and wording edits (original kept, versioned, safety re-checked); timeline search | ✅ Built + tested |
 | Period insights (summary, supported / possible / conflicting findings with exact-quote evidence, unknowns, neutral questions); strict schema + per-statement claim checks; deterministic 911 notice on items citing urgent notes | ✅ Built + tested (deterministic tests; separate live smoke test `npm run test:live`) |
 | Real AI output pre-generated once for the 3 demo cases (`npm run seed:ai`), labeled "prepared with the demo" | ✅ 25/25 notes + 3/3 insight runs passed all checks |
+| Optional daily check-in: 4 explicit answers (incl. "Skip today"), response timestamp, optional note for change/concern that can be saved as an observation; "No response recorded" never read as fine | ✅ Built + tested |
+| In-app reminder preference: off by default, one daily local time, shown only inside the app (no email/SMS/push), never blocks logging | ✅ Built + tested |
 | Handoff drafting/review/submit, receiver acknowledge | ⏳ Next prompts |
 | Hosted deployment (Vercel + Supabase) | ✅ Live at https://caresignal-gilt.vercel.app — tested in a clean incognito session on 2026-10-25: demo entry, registration with Terms/Privacy acceptance, case creation, sign-out/sign-in, password-reset email |
 

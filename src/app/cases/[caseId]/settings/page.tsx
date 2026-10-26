@@ -5,8 +5,8 @@ import { aiLimits, MODEL_NAME } from "@/lib/config";
 import { getCase, listBaselines } from "@/lib/repo/cases";
 import { getDb } from "@/lib/repo/db";
 import { resetMyDemo } from "@/app/actions/auth";
-import { saveReminderAction } from "@/app/actions/cases";
 import { BaselineForm } from "@/components/BaselineForm";
+import { ReminderForm } from "@/components/ReminderForm";
 import { CaseForm } from "@/components/CaseForm";
 import { DeleteAccountForm } from "@/components/AccountForms";
 import { AiStatusPill } from "@/components/AiStatusPill";
@@ -57,24 +57,8 @@ export default async function SettingsPage({ params }: { params: Promise<{ caseI
       </section>
 
       <section id="reminders" className="card" aria-labelledby="rem-h" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        <h2 id="rem-h">Reminders</h2>
-        <p className="secondary">
-          In-app reminder preference only. CareSignal does <strong>not</strong> send email, text messages or push notifications.
-          When turned on, the Overview simply prompts you for the day&apos;s check-in.
-        </p>
-        <form action={saveReminderAction} className="radio-row">
-          <input type="hidden" name="caseId" value={caseId} />
-          <label>
-            <input type="radio" name="reminderPref" value="off" defaultChecked={c.reminderPref === "off"} /> Off (default)
-          </label>
-          <label>
-            <input type="radio" name="reminderPref" value="in_app_daily" defaultChecked={c.reminderPref === "in_app_daily"} /> In-app daily
-            check-in prompt
-          </label>
-          <button className="btn btn-secondary" type="submit">
-            Save
-          </button>
-        </form>
+        <h2 id="rem-h">In-app reminder preference</h2>
+        <ReminderForm caseId={caseId} pref={c.reminderPref} time={c.reminderTime} />
       </section>
 
       <section id="ai" className="card" aria-labelledby="ai-h" style={{ display: "flex", flexDirection: "column", gap: 10 }}>

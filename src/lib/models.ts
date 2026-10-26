@@ -47,6 +47,8 @@ export interface PatientCase {
   caregiverName: string | null;
   caregiverRelationship: string | null;
   reminderPref: "off" | "in_app_daily";
+  reminderTime: string | null; // "HH:MM" local, only when the in-app reminder is on
+  reminderTz: string | null; // IANA time zone captured from the caregiver's browser
   synthetic: true;
   seedAnchor: string | null;
   createdAt: string;
@@ -140,6 +142,8 @@ export interface DailyCheckin {
   day: string; // YYYY-MM-DD
   status: CheckinStatus;
   note: string | null;
+  /** When the caregiver last answered (updated each time the day's answer changes). */
+  respondedAt: string;
   responses: CheckinResponses;
   origin: Origin;
   synthetic: boolean;

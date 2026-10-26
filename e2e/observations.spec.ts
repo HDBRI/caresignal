@@ -59,7 +59,7 @@ test("timeline separates 'no observation logged' from 'caregiver reported no mea
   await page.getByRole("button", { name: "No meaningful change" }).waitFor({ state: "detached" }).catch(() => undefined);
   await page.getByRole("radio", { name: "No meaningful change" }).check();
   await page.getByRole("button", { name: "Save check-in" }).click();
-  await expect(page.getByText("Check-in saved for today.")).toBeVisible();
+  await expect(page.getByText("Saved: No meaningful change.")).toBeVisible();
   await page.getByRole("link", { name: "Observations" }).first().click();
   const today = page.locator("li").filter({ has: page.getByRole("heading", { name: /^Today/ }) });
   await expect(today).toContainText("No observation logged");

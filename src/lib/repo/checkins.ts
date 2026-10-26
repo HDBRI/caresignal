@@ -13,6 +13,7 @@ const response = z.union([
 ]);
 
 export { CHECKIN_STATUSES, NO_RESPONSE_LABEL, checkinStatusLabel } from "./checkin-labels";
+import { STATUSES_WITH_NOTE } from "./checkin-labels";
 
 export const checkinInput = z.object({
   caseId: z.string().uuid(),
@@ -30,14 +31,17 @@ export const checkinInput = z.object({
 export async function upsertCheckin(db: Database, p: Principal, input: z.input<typeof checkinInput>): Promise<DailyCheckin> {
   const data = checkinInput.parse(input);
   await getCase(db, p, data.caseId);
+  // Free text belongs only to "I noticed a change" / "I have a concern or question".
+  const note = (STATUSES_WITH_NOTE as string[]).includes(data.status) ? data.note : null;
   return db.asPrincipal(p, async (sql) => {
     const [row] = await sql.query(
-      `insert into checkins (case_id, owner_id, day, status, note, responses, origin, synthetic)
-       values ($1, $2, $3, $4, $5, $6, 'session', true)
+      `insert into checkins (case_id, owner_id, day, status, note, responses, origin, synthetic, responded_at)
+       values ($1, $2, $3, $4, $5, $6, 'session', true, now())
        on conflict (case_id, day) do update
-         set status = excluded.status, note = excluded.note, responses = excluded.responses, origin = 'session'
+         set status = excluded.status, note = excluded.note, responses = excluded.responses, origin = 'session',
+             responded_at = now()
        returning *`,
-      [data.caseId, p.userId, data.day, data.status, data.note, JSON.stringify(data.responses ?? {})],
+      [data.caseId, p.userId, data.day, data.status, note, JSON.stringify(data.responses ?? {})],
     );
     return toCheckin(row);
   });

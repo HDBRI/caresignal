@@ -7,6 +7,7 @@ import { getDb } from "@/lib/repo/db";
 import { listHandoffs, listInsightRuns } from "@/lib/repo/handoffs";
 import { listAlerts, listAnalyses, listObservations } from "@/lib/repo/observations";
 import { addDays, localDate } from "@/lib/time";
+import { formatTime12, isReminderDue } from "@/lib/reminder";
 import { TIER_GUIDANCE } from "@/lib/safety/rules";
 import { markSeen } from "@/app/actions/alerts";
 import { AddObservationButton } from "@/components/AddObservation";
@@ -70,6 +71,7 @@ export default async function OverviewPage({
     recorded: byDay.has(d),
   }));
   const todayCheckin = byDay.get(today);
+  const reminderDue = isReminderDue(c, new Date(), Boolean(todayCheckin));
 
   // ---- Unresolved questions: from the latest handoff not yet acknowledged, plus AI question insights ----
   const openQuestions: { text: string; sourceIds: string[]; from: string }[] = [];
@@ -188,10 +190,20 @@ export default async function OverviewPage({
         </div>
       </section>
 
+      {reminderDue && c.reminderTime && (
+        <p className="card" role="status" style={{ display: "flex", gap: 8, alignItems: "center", borderLeft: "6px solid var(--calm)" }}>
+          <InfoIcon size={16} />
+          <span>
+            <strong>In-app reminder ({formatTime12(c.reminderTime)}):</strong> today&apos;s optional check-in isn&apos;t recorded yet. This
+            note is the only reminder CareSignal shows — no email, text or push. Change it in Settings.
+          </span>
+        </p>
+      )}
+
       <CheckinCard
         caseId={caseId}
         today={today}
-        current={todayCheckin ? { status: todayCheckin.status, note: todayCheckin.note } : null}
+        current={todayCheckin ? { status: todayCheckin.status, note: todayCheckin.note, respondedAtLabel: `answered ${fmtDateTime(todayCheckin.respondedAt)}` } : null}
         week={week}
       />
 

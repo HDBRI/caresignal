@@ -154,9 +154,38 @@ export async function saveBaselines(
   });
 }
 
-/** In-app reminder preference only (no email/SMS/push). Default "off". */
-export async function setReminderPref(db: Database, p: Principal, caseId: string, pref: "off" | "in_app_daily"): Promise<void> {
+/**
+ * In-app reminder preference only (no email/SMS/push). Default "off".
+ * When on, one daily time (HH:MM) in the caregiver's own time zone is required.
+ */
+export async function setReminder(
+  db: Database,
+  p: Principal,
+  caseId: string,
+  r: { pref: "off" | "in_app_daily"; time?: string | null; timeZone?: string | null },
+): Promise<void> {
   await getCase(db, p, caseId);
-  if (pref !== "off" && pref !== "in_app_daily") throw new Error("invalid preference");
-  await db.asPrincipal(p, (sql) => sql.query(`update cases set reminder_pref = $3 where id = $1 and owner_id = $2`, [caseId, p.userId, pref]));
+  if (r.pref !== "off" && r.pref !== "in_app_daily") throw new Error("invalid preference");
+  const { TIME_RE, isValidTimeZone } = await import("../reminder");
+  let time: string | null = null;
+  let tz: string | null = null;
+  if (r.pref === "in_app_daily") {
+    if (!r.time || !TIME_RE.test(r.time)) throw new Error("Choose a reminder time");
+    time = r.time;
+    tz = r.timeZone && isValidTimeZone(r.timeZone) ? r.timeZone : "America/New_York";
+  }
+  await db.asPrincipal(p, (sql) =>
+    sql.query(`update cases set reminder_pref = $3, reminder_time = $4, reminder_tz = $5 where id = $1 and owner_id = $2`, [
+      caseId,
+      p.userId,
+      r.pref,
+      time,
+      tz,
+    ]),
+  );
+}
+
+/** @deprecated kept for callers that only switch the preference off/on with a default time. */
+export async function setReminderPref(db: Database, p: Principal, caseId: string, pref: "off" | "in_app_daily"): Promise<void> {
+  await setReminder(db, p, caseId, { pref, time: pref === "in_app_daily" ? "20:00" : null });
 }

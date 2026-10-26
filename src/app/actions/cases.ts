@@ -77,12 +77,18 @@ export async function saveBaselineAction(_prev: FormState, fd: FormData): Promis
   return { message: "Baseline saved. Blank areas show as “Not provided”." };
 }
 
-export async function saveReminderAction(fd: FormData): Promise<void> {
+export async function saveReminderAction(_prev: FormState, fd: FormData): Promise<FormState> {
   const actor = await getActor();
   if (!actor) redirect("/sign-in");
   const caseId = str(fd, "caseId");
-  const { setReminderPref } = await import("@/lib/repo/cases");
-  await setReminderPref(await getDb(), principalOf(actor), caseId, str(fd, "reminderPref") === "in_app_daily" ? "in_app_daily" : "off");
+  const pref = str(fd, "reminderPref") === "in_app_daily" ? "in_app_daily" : "off";
+  const { setReminder } = await import("@/lib/repo/cases");
+  try {
+    await setReminder(await getDb(), principalOf(actor), caseId, { pref, time: str(fd, "reminderTime") || null, timeZone: str(fd, "timeZone") || null });
+  } catch {
+    return { errors: { reminderTime: "Choose a time for the daily in-app reminder." } };
+  }
   const { revalidatePath } = await import("next/cache");
   revalidatePath(`/cases/${caseId}`, "layout");
+  return { message: pref === "off" ? "In-app reminder turned off." : "In-app reminder saved." };
 }

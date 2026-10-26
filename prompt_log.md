@@ -375,3 +375,18 @@
 
 **Follow-up prompts:**
 > Yes: apply the new migration to Supabase, push to GitHub, and redeploy the live site.
+
+## Task 11: Optional daily check-in and reminder preferences
+
+**Prompt:**
+> Prompt 10 — Optional daily check-in and reminder preferences
+>
+> Paste this entire prompt into Claude Code after the previous prompt has completed successfully.
+>
+> Implement the optional check-in workflow.
+>
+> The caregiver should be able to choose one of four explicit states: - "No meaningful change" - "I noticed a change" - "I have a concern or question" - "Skip today"
+>
+> If the caregiver selects "I noticed a change" or "I have a concern or question," allow a free-text note and offer to save it as an observation. Do not force a check-in before observations can be logged.
+>
+> Requirements: - Make check-ins optional and quick. - Persist the explicit response and timestamp. - Keep "No meaningful change" distinct from "Skip today" and from no response. - Never infer wellbeing from a missed check-in. - Reminder is off by default. If enabled, allow one daily reminder at a chosen local time. - Do not claim email, SMS, browser push, or phone notifications exist unless actually implemented and tested. If reliable notifications are not supported in this prototype, call it an in-app reminder preference and explain its limitation. - Do not let reminders block or limit note logging. - Include a concise "not a substitute for urgent care" notice. - Add tests for each response state, optional free text, persistence, reminder off-by-default, and missing response semantics.
