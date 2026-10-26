@@ -210,7 +210,7 @@ describe("caching and invalidation", () => {
     await addObservation(db, u, { caseId: c.id, text: "Ate half of dinner." });
     const chat = vi.fn(async (_m: ChatMessage[], _o?: { maxOutputTokens?: number }) => insightsReply());
     await generateInsights(db, u, c.id, "last7", { chat, available: () => true });
-    expect(chat.mock.calls[0][1]).toEqual({ maxOutputTokens: 6000 });
+    expect(chat.mock.calls[0][1]).toEqual({ maxOutputTokens: 6000, timeoutMs: 60_000 });
   });
 
   it("bounded input: older notes beyond the character budget are left out and counted", async () => {

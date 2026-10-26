@@ -8,6 +8,8 @@ loadEnv();
 export const MODEL_NAME = "gpt-6-luna";
 export const PORTKEY_BASE_URL = "https://api.portkey.ai/v1";
 export const AI_TIMEOUT_MS = 20_000;
+/** Insight / handoff summaries produce ~2,000–3,000 output tokens and were observed to exceed 20 s (2026-10-26). */
+export const AI_INSIGHTS_TIMEOUT_MS = 60_000;
 
 /** Documented defaults; override with env vars. See docs/IMPLEMENTATION_PLAN.md D3. */
 export const DEFAULT_AI_DAILY_LIMIT_PER_USER = 25;

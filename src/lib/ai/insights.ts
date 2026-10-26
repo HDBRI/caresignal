@@ -15,7 +15,7 @@
  */
 import { createHash } from "node:crypto";
 import { z } from "zod";
-import { MODEL_NAME } from "../config";
+import { AI_INSIGHTS_TIMEOUT_MS, MODEL_NAME } from "../config";
 import type { Database, Principal } from "../db/client";
 import { getCase, listBaselines } from "../repo/cases";
 import { checkinStatusLabel } from "../repo/checkin-labels";
@@ -414,7 +414,7 @@ export async function generateInsights(
   }
 
   const t0 = Date.now();
-  const result = await deps.chat(buildInsightMessages(input), { maxOutputTokens: 6000 }); // measured max 3,199
+  const result = await deps.chat(buildInsightMessages(input), { maxOutputTokens: 6000, timeoutMs: AI_INSIGHTS_TIMEOUT_MS }); // measured max 3,199 output tokens
   const latency = Date.now() - t0;
   if (!result.ok) {
     const usageLogId = await recordUsage(db, {

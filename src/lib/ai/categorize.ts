@@ -83,7 +83,7 @@ export function validateCategorization(content: string, noteText: string): Categ
 export type CategorizeOutcome = "complete" | "failed" | "failed_validation" | "unavailable_error" | "unavailable_limit";
 
 export interface CategorizeDeps {
-  chat: (messages: ChatMessage[], opts?: { maxOutputTokens?: number }) => Promise<AiResult>;
+  chat: (messages: ChatMessage[], opts?: { maxOutputTokens?: number; timeoutMs?: number }) => Promise<AiResult>;
   available: () => boolean;
 }
 

@@ -94,7 +94,7 @@ export function readUsage(raw: unknown): ProviderUsage | null {
  */
 export const MAX_OUTPUT_TOKENS = 4000;
 
-export async function chatJson(messages: ChatMessage[], opts: { maxOutputTokens?: number } = {}): Promise<AiResult> {
+export async function chatJson(messages: ChatMessage[], opts: { maxOutputTokens?: number; timeoutMs?: number } = {}): Promise<AiResult> {
   if (aiStatus() !== "available") return { ok: false, reason: "unavailable_missing_key", usage: null };
 
   try {
@@ -104,7 +104,7 @@ export async function chatJson(messages: ChatMessage[], opts: { maxOutputTokens?
         messages,
         response_format: { type: "json_object" },
         max_completion_tokens: opts.maxOutputTokens ?? MAX_OUTPUT_TOKENS,
-      })
+      }, opts.timeoutMs ? { timeout: opts.timeoutMs } : undefined)
       .withResponse();
 
     const content = data.choices?.[0]?.message?.content ?? "";
