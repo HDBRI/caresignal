@@ -10,6 +10,7 @@ import { z } from "zod";
 import type { Database, Principal } from "../db/client";
 import { assertUuid } from "../db/client";
 import type { Observation, ObservationAnalysis, ObservationEdit, SafetyAlert } from "../models";
+import { isCategoryId } from "../categories";
 import { evaluateSafety, type SafetyResult } from "../safety/rules";
 import { getCase, NotFoundError } from "./cases";
 import { sessionObservationDisplayId } from "./ids";
@@ -103,23 +104,110 @@ export async function getObservationByDisplayId(
   });
 }
 
-/** Edits never change the original; they add a new version. */
-export async function addObservationEdit(db: Database, p: Principal, observationId: string, editedText: string): Promise<ObservationEdit> {
+/**
+ * Edits never change the original; they add a new version with its own timestamp.
+ * The safety rules also run on the new wording. A new alert is added if the edit matches a
+ * rule and the note had none; an existing alert is never removed by editing.
+ */
+export async function addObservationEdit(
+  db: Database,
+  p: Principal,
+  observationId: string,
+  editedText: string,
+): Promise<{ edit: ObservationEdit; safety: SafetyResult; alert: SafetyAlert | null }> {
   assertUuid(observationId, "observation id");
   if (!editedText.trim() || editedText.length > 4000) throw new Error("invalid edit");
+  const safety = evaluateSafety(editedText);
   return db.asPrincipal(p, async (sql) => {
-    const obs = await sql.query<{ case_id: string }>(`select case_id from observations where id = $1 and owner_id = $2`, [observationId, p.userId]);
+    const obs = await sql.query<{ case_id: string; safety_tier: string }>(
+      `select case_id, safety_tier from observations where id = $1 and owner_id = $2`,
+      [observationId, p.userId],
+    );
     if (obs.length !== 1) throw new NotFoundError("observation");
     const [{ v }] = await sql.query<{ v: number }>(
       `select coalesce(max(version), 1)::int as v from observation_edits where observation_id = $1`,
       [observationId],
     );
     const [row] = await sql.query(
-      `insert into observation_edits (observation_id, case_id, owner_id, version, edited_text) values ($1, $2, $3, $4, $5) returning *`,
-      [observationId, obs[0].case_id, p.userId, v + 1, editedText],
+      `insert into observation_edits (observation_id, case_id, owner_id, version, edited_text, safety_tier)
+       values ($1, $2, $3, $4, $5, $6) returning *`,
+      [observationId, obs[0].case_id, p.userId, v + 1, editedText, safety.tier ?? "none"],
     );
-    return toEdit(row);
+    let alert: SafetyAlert | null = null;
+    if (safety.tier) {
+      const rank = { none: 0, review: 1, contact_care_team: 2, emergency: 3 } as const;
+      if (rank[safety.tier] > rank[obs[0].safety_tier as keyof typeof rank]) {
+        await sql.query(`update observations set safety_tier = $1, safety_rule_ids = $2 where id = $3 and owner_id = $4`, [
+          safety.tier,
+          JSON.stringify(safety.matches.map((m) => m.ruleId)),
+          observationId,
+          p.userId,
+        ]);
+      }
+      const inserted = await sql.query(
+        `insert into safety_alerts (observation_id, case_id, owner_id, tier, rule_ids, matched_text, rules_version)
+         values ($1, $2, $3, $4, $5, $6, $7) on conflict (observation_id) do nothing returning *`,
+        [
+          observationId, obs[0].case_id, p.userId, safety.tier, JSON.stringify(safety.matches.map((m) => m.ruleId)),
+          JSON.stringify(safety.matches.map((m) => m.matchedText)), safety.rulesVersion,
+        ],
+      );
+      alert = inserted[0] ? toAlert(inserted[0]) : null;
+    }
+    return { edit: toEdit(row), safety, alert };
   });
+}
+
+/** Caregiver correction of the categories. Adds a new row; the AI's suggestion and the note stay unchanged. */
+export async function correctCategories(
+  db: Database,
+  p: Principal,
+  observationId: string,
+  primary: string,
+  secondary: string[],
+): Promise<ObservationAnalysis> {
+  assertUuid(observationId, "observation id");
+  if (!isCategoryId(primary) || !secondary.every(isCategoryId) || secondary.length > 6) throw new Error("invalid categories");
+  const cleanSecondary = [...new Set(secondary)].filter((c) => c !== primary);
+  return db.asPrincipal(p, async (sql) => {
+    const obs = await sql.query<{ case_id: string }>(`select case_id from observations where id = $1 and owner_id = $2`, [
+      observationId,
+      p.userId,
+    ]);
+    if (obs.length !== 1) throw new NotFoundError("observation");
+    const [row] = await sql.query(
+      `insert into observation_analyses (observation_id, case_id, owner_id, primary_category, secondary_categories, summary, model_reported, source)
+       values ($1, $2, $3, $4, $5, null, null, 'caregiver') returning *`,
+      [observationId, obs[0].case_id, p.userId, primary, JSON.stringify(cleanSecondary)],
+    );
+    return toAnalysis(row);
+  });
+}
+
+/** All label rows for one observation, newest first (AI suggestions and caregiver corrections). */
+export async function listAnalysisHistory(db: Database, p: Principal, observationId: string): Promise<ObservationAnalysis[]> {
+  assertUuid(observationId, "observation id");
+  return db.asPrincipal(p, async (sql) =>
+    (
+      await sql.query(`select * from observation_analyses where observation_id = $1 and owner_id = $2 order by created_at desc`, [
+        observationId,
+        p.userId,
+      ])
+    ).map(toAnalysis),
+  );
+}
+
+/** Latest edit per observation (for showing current wording alongside the original). */
+export async function latestEdits(db: Database, p: Principal, caseId: string): Promise<Map<string, ObservationEdit>> {
+  await getCase(db, p, caseId);
+  const rows = await db.asPrincipal(p, (sql) =>
+    sql.query(
+      `select distinct on (observation_id) * from observation_edits where case_id = $1 and owner_id = $2
+        order by observation_id, version desc`,
+      [caseId, p.userId],
+    ),
+  );
+  return new Map(rows.map((r) => [r.observation_id as string, toEdit(r)]));
 }
 
 export async function setAiState(db: Database, p: Principal, observationId: string, state: Observation["aiState"]): Promise<void> {

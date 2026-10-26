@@ -95,11 +95,14 @@ export interface ObservationEdit {
   version: number; // 2, 3, ... (version 1 is the original)
   editedText: string;
   editedAt: string;
+  safetyTier: SafetyTier | "none" | null;
 }
 
 export interface ObservationAnalysis {
   id: string;
   observationId: string;
+  /** "ai" = suggested by the model; "caregiver" = a correction made by the caregiver. */
+  source: "ai" | "caregiver";
   primaryCategory: CategoryId;
   secondaryCategories: CategoryId[];
   summary: string | null;

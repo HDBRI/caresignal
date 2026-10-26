@@ -13,7 +13,7 @@ CareSignal is an AI-assisted care-coordination demo for family caregivers suppor
 
 ## Status
 
-This README tracks what is actually built. Current stage: **dashboard and navigation** (Task 8 in `prompt_log.md`).
+This README tracks what is actually built. Current stage: **observation logging and traceable timeline** (Task 9 in `prompt_log.md`).
 
 | Area | Status |
 |---|---|
@@ -29,7 +29,9 @@ This README tracks what is actually built. Current stage: **dashboard and naviga
 | Postgres schema, migrations, Row Level Security | ✅ Built + tested locally (PGlite) **and applied to Supabase**; demo-visitor isolation re-checked live on Supabase |
 | Repository layer (cases, observations, alerts, check-ins, handoff/insight reads, usage) | ✅ Built + tested (incl. cross-user, cross-case and demo-visitor isolation) |
 | Synthetic data package (3 cases, 25 observations, evaluation cases), seed/copy/reset | ✅ Built + tested |
-| AI categories/insights, handoff drafting/review/submit, receiver acknowledge | ⏳ Next prompts (screens state honestly that these are not built yet; no placeholder AI output) |
+| Per-note AI categories (gpt-6-luna, background, allowlisted, validated, daily caps, provider token usage logged); states pending / complete / unavailable / failed with retry | ✅ Built + tested (stand-in AI in tests; verified with a live call) |
+| Caregiver category corrections and wording edits (original kept, versioned, safety re-checked); timeline search | ✅ Built + tested |
+| AI insights, handoff drafting/review/submit, receiver acknowledge | ⏳ Next prompts (screens say so honestly; no placeholder AI output) |
 | Hosted deployment (Vercel + Supabase) | ✅ Live at https://caresignal-gilt.vercel.app — tested in a clean incognito session on 2026-10-25: demo entry, registration with Terms/Privacy acceptance, case creation, sign-out/sign-in, password-reset email |
 
 ---

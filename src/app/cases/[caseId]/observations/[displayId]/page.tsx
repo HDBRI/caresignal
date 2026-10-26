@@ -4,9 +4,10 @@ import { categoryLabel } from "@/lib/categories";
 import { requireActor, principalOf } from "@/lib/auth/session";
 import { getDb } from "@/lib/repo/db";
 import { NotFoundError } from "@/lib/repo/cases";
-import { getObservationByDisplayId, listAnalyses } from "@/lib/repo/observations";
+import { getObservationByDisplayId, listAnalysisHistory } from "@/lib/repo/observations";
 import { SAFETY_LIMITATION, SAFETY_RULES, TIER_GUIDANCE } from "@/lib/safety/rules";
-import { AI_STATE_LABEL, fmtDateTime, OriginTag, SafetyPill } from "@/components/display";
+import { AiStateText, fmtDateTime, OriginTag, RetryAiButton, SafetyPill } from "@/components/display";
+import { AutoRefreshWhilePending, CategoryCorrectionForm, EditWordingForm } from "@/components/ObservationTools";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,11 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
     throw err;
   }
   const { observation: o, edits, alert } = detail;
-  const analysis = (await listAnalyses(db, p, caseId)).get(o.id);
+  const history = await listAnalysisHistory(db, p, o.id);
+  const latestAi = history.find((h) => h.source === "ai");
+  const latestCaregiver = history.find((h) => h.source === "caregiver");
+  const effective = latestCaregiver ?? (o.aiState === "complete" ? latestAi : undefined);
+  const currentText = edits.length ? edits[edits.length - 1].editedText : o.originalText;
   const ruleLabel = (id: string) => SAFETY_RULES.find((r) => r.id === id)?.label ?? id;
 
   return (
@@ -84,26 +89,59 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
         </p>
       </section>
 
-      <section className="card ai-box" aria-labelledby="ai-h" style={{ borderStyle: "dashed" }}>
+      <AutoRefreshWhilePending pending={o.aiState === "pending"} />
+      <section className="card ai-box" aria-labelledby="ai-h" style={{ borderStyle: "dashed", display: "flex", flexDirection: "column", gap: 10 }}>
         <h2 id="ai-h" className="ai-box-label" style={{ fontSize: 13 }}>
-          AI-generated (separate from the original note)
+          Categories (separate from the original note)
         </h2>
-        {analysis ? (
-          <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
-            <div className="chip-row">
-              {[analysis.primaryCategory, ...analysis.secondaryCategories].map((c) => (
-                <Link key={c} className="chip" href={`/cases/${caseId}/observations?category=${c}`}>
-                  {categoryLabel(c)}
-                </Link>
-              ))}
-            </div>
-            {analysis.summary && <p>{analysis.summary}</p>}
-            <p className="secondary">
-              {analysis.modelReported ?? "model not reported"} · {fmtDateTime(analysis.createdAt)}
-            </p>
-          </div>
+        <p>
+          <strong>AI status:</strong> <AiStateText o={o} /> <RetryAiButton o={o} caseId={caseId} />
+        </p>
+        {latestAi ? (
+          <p>
+            <strong>AI suggested:</strong>{" "}
+            {[latestAi.primaryCategory, ...latestAi.secondaryCategories].map((c) => categoryLabel(c)).join(", ")}{" "}
+            <span className="secondary">
+              ({latestAi.modelReported ?? "model not reported"}, {fmtDateTime(latestAi.createdAt)})
+            </span>
+          </p>
         ) : (
-          <p style={{ marginTop: 8 }}>{AI_STATE_LABEL[o.aiState]}.</p>
+          <p className="secondary">No AI suggestion stored for this note.</p>
+        )}
+        {latestCaregiver && (
+          <p>
+            <strong>Your correction (in use):</strong>{" "}
+            {[latestCaregiver.primaryCategory, ...latestCaregiver.secondaryCategories].map((c) => categoryLabel(c)).join(", ")}{" "}
+            <span className="secondary">({fmtDateTime(latestCaregiver.createdAt)})</span>
+          </p>
+        )}
+        <details>
+          <summary className="muted-link" style={{ cursor: "pointer" }}>
+            {effective ? "Correct the categories" : "Set the categories yourself"}
+          </summary>
+          <div style={{ marginTop: 10 }}>
+            <CategoryCorrectionForm
+              caseId={caseId}
+              observationId={o.id}
+              primary={effective?.primaryCategory ?? null}
+              secondary={effective?.secondaryCategories ?? []}
+            />
+          </div>
+        </details>
+        {history.length > 1 && (
+          <details>
+            <summary className="muted-link" style={{ cursor: "pointer" }}>
+              Category history ({history.length})
+            </summary>
+            <ol style={{ paddingLeft: 20 }}>
+              {history.map((h) => (
+                <li key={h.id}>
+                  {h.source === "ai" ? "AI" : "Caregiver"}: {[h.primaryCategory, ...h.secondaryCategories].map((c) => categoryLabel(c)).join(", ")} ·{" "}
+                  {fmtDateTime(h.createdAt)}
+                </li>
+              ))}
+            </ol>
+          </details>
         )}
       </section>
 
@@ -111,6 +149,9 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
         <h2 id="hist-h" style={{ fontSize: 19 }}>
           Edit history
         </h2>
+        <p className="secondary" style={{ marginTop: 6 }}>
+          Version 1 (original) · {fmtDateTime(o.enteredAt)}: “{o.originalText}”
+        </p>
         {edits.length === 0 ? (
           <p className="secondary" style={{ marginTop: 6 }}>
             Not edited. Only the original version exists.
@@ -120,13 +161,22 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
             {edits.map((e) => (
               <li key={e.id}>
                 <span className="meta">
-                  Version {e.version} · {fmtDateTime(e.editedAt)}
+                  Version {e.version} · edited {fmtDateTime(e.editedAt)}
+                  {e.safetyTier && e.safetyTier !== "none" ? ` · safety rule matched (${e.safetyTier.replaceAll("_", " ")})` : ""}
                 </span>
                 <p>“{e.editedText}”</p>
               </li>
             ))}
           </ol>
         )}
+        <details style={{ marginTop: 10 }}>
+          <summary className="muted-link" style={{ cursor: "pointer" }}>
+            Correct the wording (keeps the original)
+          </summary>
+          <div style={{ marginTop: 10 }}>
+            <EditWordingForm caseId={caseId} observationId={o.id} current={currentText} />
+          </div>
+        </details>
       </section>
     </>
   );

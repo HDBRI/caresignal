@@ -122,7 +122,30 @@ export function AddObservationDialog({ caseId, pseudonym }: { caseId: string; ps
           <input type="hidden" name="caseId" value={caseId} />
           <div className="field">
             <label htmlFor="obs-text">What did you notice?</label>
-            <textarea id="obs-text" name="text" className="textarea" style={{ minHeight: 140 }} maxLength={4000} required autoFocus />
+            <p id="obs-text-hint" className="hint">
+              Examples: “Ate half his lunch and said he wasn’t hungry.” · “Needed help getting up the stairs this afternoon.” ·
+              “Seemed more confused than usual after his nap.”
+            </p>
+            <textarea
+              id="obs-text"
+              name="text"
+              className="textarea"
+              style={{ minHeight: 140 }}
+              maxLength={4000}
+              required
+              autoFocus
+              aria-describedby="obs-text-hint obs-privacy"
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="obs-author">Who noticed this? (optional)</label>
+            <input
+              id="obs-author"
+              name="authorLabel"
+              className="input"
+              maxLength={60}
+              placeholder="e.g. Me, a family member, the visiting nurse (as told to me)"
+            />
           </div>
           <div className="field">
             <label htmlFor="obs-when">When did this happen? (optional)</label>
@@ -137,7 +160,10 @@ export function AddObservationDialog({ caseId, pseudonym }: { caseId: string; ps
             />
             <input type="hidden" name="eventTimeIso" value={eventIso} />
           </div>
-          <p className="secondary">Please use fictional details only. In an emergency, call 911 — don&apos;t wait to log it here.</p>
+          <p id="obs-privacy" className="secondary">
+            Classroom demo: use fictional details only — no real names, dates of birth, addresses, phone numbers or medical record
+            numbers. In an emergency, call 911 — don&apos;t wait to log it here.
+          </p>
           <div style={{ display: "flex", gap: 8 }}>
             <SubmitButton pendingText="Saving…">Save observation</SubmitButton>
             <button className="btn btn-secondary" type="button" onClick={close}>

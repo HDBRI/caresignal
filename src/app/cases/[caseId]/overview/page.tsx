@@ -11,6 +11,7 @@ import { TIER_GUIDANCE } from "@/lib/safety/rules";
 import { markSeen } from "@/app/actions/alerts";
 import { AddObservationButton } from "@/components/AddObservation";
 import { CheckinCard } from "@/components/CheckinCard";
+import { AutoRefreshWhilePending } from "@/components/ObservationTools";
 import { EmptyState, fmtDateTime, fmtDay, ObservationItem } from "@/components/display";
 import { AlertIcon, CheckIcon, InfoIcon } from "@/components/icons";
 
@@ -93,6 +94,7 @@ export default async function OverviewPage({
         </p>
       )}
 
+      <AutoRefreshWhilePending pending={observations.some((o) => o.aiState === "pending")} />
       <header style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", alignItems: "flex-end" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <span className="pill pill-unknown" style={{ alignSelf: "flex-start" }}>

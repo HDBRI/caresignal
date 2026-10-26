@@ -40,7 +40,7 @@ describe("observations", () => {
     await expect(
       db.asPrincipal(user, (sql) => sql.query(`update observations set original_text = 'changed' where id = $1`, [observation.id])),
     ).rejects.toThrow(/immutable/);
-    const e = await addObservationEdit(db, user, observation.id, "Corrected wording");
+    const { edit: e } = await addObservationEdit(db, user, observation.id, "Corrected wording");
     expect(e.version).toBe(2);
     const detail = await getObservationByDisplayId(db, user, caseId, "OBS-0001");
     expect(detail.observation.originalText).toBe("Original wording");

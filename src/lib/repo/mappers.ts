@@ -77,6 +77,7 @@ export const toEdit = (r: Row): ObservationEdit => ({
   version: Number(r.version),
   editedText: r.edited_text as string,
   editedAt: iso(r.edited_at),
+  safetyTier: (r.safety_tier as ObservationEdit["safetyTier"]) ?? null,
 });
 
 export const toAlert = (r: Row): SafetyAlert => ({
@@ -178,6 +179,7 @@ export const toReceiverResponse = (r: Row): ReceiverResponse => ({
 export const toAnalysis = (r: Row): ObservationAnalysis => ({
   id: r.id as string,
   observationId: r.observation_id as string,
+  source: ((r.source as string) ?? "ai") as ObservationAnalysis["source"],
   primaryCategory: r.primary_category as ObservationAnalysis["primaryCategory"],
   secondaryCategories: json(r.secondary_categories),
   summary: (r.summary as string) ?? null,

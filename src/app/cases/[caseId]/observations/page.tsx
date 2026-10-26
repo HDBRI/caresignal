@@ -3,10 +3,11 @@ import { CATEGORIES, categoryLabel, isCategoryId } from "@/lib/categories";
 import { requireActor, principalOf } from "@/lib/auth/session";
 import { checkinStatusLabel, listCheckins } from "@/lib/repo/checkins";
 import { getDb } from "@/lib/repo/db";
-import { listAnalyses, listObservations } from "@/lib/repo/observations";
+import { latestEdits, listAnalyses, listObservations } from "@/lib/repo/observations";
 import { addDays, localDate } from "@/lib/time";
 import { AddObservationButton } from "@/components/AddObservation";
 import { EmptyState, fmtDay, ObservationItem } from "@/components/display";
+import { AutoRefreshWhilePending } from "@/components/ObservationTools";
 
 export const dynamic = "force-dynamic";
 
@@ -26,14 +27,16 @@ export default async function ObservationsPage({
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const { caseId } = await params;
-  const { category, show = "all" } = await searchParams;
+  const { category, show = "all", q: rawQ } = await searchParams;
+  const q = (rawQ ?? "").trim().slice(0, 100);
   const actor = await requireActor();
   const db = await getDb();
   const p = principalOf(actor);
-  const [observations, analyses, checkins] = await Promise.all([
+  const [observations, analyses, checkins, edits] = await Promise.all([
     listObservations(db, p, caseId),
     listAnalyses(db, p, caseId),
     listCheckins(db, p, caseId),
+    latestEdits(db, p, caseId),
   ]);
 
   const activeCategory = isCategoryId(category) ? category : null;
@@ -41,6 +44,10 @@ export default async function ObservationsPage({
     if (show === "seeded" && o.origin !== "seeded") return false;
     if (show === "session" && o.origin !== "session") return false;
     if (show === "flagged" && o.safetyTier === "none") return false;
+    if (q) {
+      const hay = `${o.originalText} ${edits.get(o.id)?.editedText ?? ""} ${o.displayId} ${o.authorLabel ?? ""}`.toLowerCase();
+      if (!hay.includes(q.toLowerCase())) return false;
+    }
     if (activeCategory) {
       const a = analyses.get(o.id);
       if (!a || ![a.primaryCategory, ...a.secondaryCategories].includes(activeCategory)) return false;
@@ -58,7 +65,7 @@ export default async function ObservationsPage({
   const today = localDate(new Date());
   const firstDay = observations.length ? observations.map((o) => dayOf(o.eventTime ?? o.enteredAt)).sort()[0] : today;
   const days: string[] = [];
-  const unfiltered = show === "all" && !activeCategory;
+  const unfiltered = show === "all" && !activeCategory && !q;
   for (let d = today; d >= firstDay && days.length < 60; d = addDays(d, -1)) {
     if (groups.has(d) || unfiltered) days.push(d); // show empty days only in the unfiltered timeline
   }
@@ -66,7 +73,7 @@ export default async function ObservationsPage({
   const hasAnyAnalysis = analyses.size > 0;
   const qs = (next: Record<string, string | null>) => {
     const u = new URLSearchParams();
-    const merged = { category: activeCategory, show, ...next };
+    const merged = { category: activeCategory, show, q: q || null, ...next };
     for (const [k, v] of Object.entries(merged)) if (v && !(k === "show" && v === "all")) u.set(k, v);
     const s = u.toString();
     return `/cases/${caseId}/observations${s ? `?${s}` : ""}`;
@@ -78,13 +85,31 @@ export default async function ObservationsPage({
         <div>
           <h1>Observations</h1>
           <p className="secondary" style={{ fontSize: 15 }}>
-            Every note exactly as written, newest first, with that day&apos;s check-in. {observations.length} total.
+            Every note exactly as written, newest first, grouped by the day it happened (or was logged, if no time was given), with
+            that day&apos;s check-in. {observations.length} total.
           </p>
         </div>
         <AddObservationButton />
       </header>
 
+      <AutoRefreshWhilePending pending={observations.some((o) => o.aiState === "pending")} />
       <nav aria-label="Filter observations" className="card" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <form role="search" action={`/cases/${caseId}/observations`} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {show !== "all" && <input type="hidden" name="show" value={show} />}
+          {activeCategory && <input type="hidden" name="category" value={activeCategory} />}
+          <label htmlFor="obs-search" className="sr-only">
+            Search notes
+          </label>
+          <input id="obs-search" name="q" className="input" style={{ maxWidth: 360 }} placeholder="Search note text, ID or author" defaultValue={q} />
+          <button className="btn btn-secondary" type="submit">
+            Search
+          </button>
+          {q && (
+            <Link className="btn btn-ghost" href={qs({ q: null })}>
+              Clear search
+            </Link>
+          )}
+        </form>
         <div className="chip-row">
           {ORIGINS.map((o) => (
             <Link key={o.id} className="chip" href={qs({ show: o.id })} aria-current={show === o.id ? "true" : undefined}>
@@ -110,8 +135,8 @@ export default async function ObservationsPage({
 
       {filtered.length === 0 && !unfiltered ? (
         <EmptyState title="No observations match this filter">
-          {activeCategory ? `No notes are labeled “${categoryLabel(activeCategory)}”.` : "Try another filter."}{" "}
-          <Link href={qs({ show: "all", category: null })}>Show all notes</Link>
+          {q ? `No notes contain “${q}”.` : activeCategory ? `No notes are labeled “${categoryLabel(activeCategory)}”.` : "Try another filter."}{" "}
+          <Link href={qs({ show: "all", category: null, q: null })}>Show all notes</Link>
         </EmptyState>
       ) : observations.length === 0 ? (
         <EmptyState title="No observations yet">
@@ -126,18 +151,32 @@ export default async function ObservationsPage({
               <li key={d} className="card" aria-labelledby={`day-${d}`}>
                 <div className="section-head">
                   <h2 id={`day-${d}`}>{d === today ? `Today · ${fmtDay(d)}` : fmtDay(d)}</h2>
-                  <span className={`pill ${ci ? "pill-calm" : "pill-unknown"}`}>
-                    Check-in: {checkinStatusLabel(ci?.status)}
-                    {ci?.note ? ` — “${ci.note}”` : ""}
+                  <span className="chip-row">
+                    <span className={`pill ${items.length ? "pill-calm" : "pill-unknown"}`}>
+                      {items.length ? `${items.length} observation${items.length > 1 ? "s" : ""} logged` : "No observation logged"}
+                    </span>
+                    <span className={`pill ${ci ? "pill-calm" : "pill-unknown"}`}>
+                      Check-in: {ci ? `caregiver reported “${checkinStatusLabel(ci.status)}”` : checkinStatusLabel(null)}
+                      {ci?.note ? ` — “${ci.note}”` : ""}
+                    </span>
                   </span>
                 </div>
                 {items.length === 0 ? (
-                  <p className="secondary">No observations were logged for this day. That means “not reported”, not “nothing happened”.</p>
+                  <p className="secondary">
+                    {ci?.status === "no_change"
+                      ? "No note was written, but the caregiver’s check-in reported no meaningful change."
+                      : "No observations were logged for this day. That means “not reported” — not that nothing happened."}
+                  </p>
                 ) : (
                   <ul className="list-plain">
                     {items.map((o) => (
                       <li key={o.id}>
-                        <ObservationItem o={o} analysis={analyses.get(o.id)} caseId={caseId} />
+                        <ObservationItem
+                          o={o}
+                          analysis={analyses.get(o.id)}
+                          caseId={caseId}
+                          currentWording={edits.get(o.id) ? { text: edits.get(o.id)!.editedText, version: edits.get(o.id)!.version } : null}
+                        />
                       </li>
                     ))}
                   </ul>
