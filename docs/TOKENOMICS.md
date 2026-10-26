@@ -1,6 +1,6 @@
 # CareSignal — tokenomics: measured usage and illustrative cost estimates
 
-Generated 2026-10-26T14:58:48.999Z by `npm run tokenomics`. Assumptions: [`config/cost-assumptions.json`](../config/cost-assumptions.json) (edit and re-run).
+Generated 2026-10-26T15:04:20.803Z by `npm run tokenomics`. Assumptions: [`config/cost-assumptions.json`](../config/cost-assumptions.json) (edit and re-run).
 
 > **Read this first.** Section 1 is **measured**: token counts exactly as the provider returned them. Section 2 is an **illustrative estimate** built from stated assumptions and an **unverified** price. The provider did not return a cost for any call, so no measured cost exists. None of this is a bill.
 
@@ -12,7 +12,8 @@ Generated 2026-10-26T14:58:48.999Z by `npm run tokenomics`. Assumptions: [`confi
 | Evaluation run (2026-10-26) | insight summary | 4 | 4 | 4,201 | 9,304 | 1,050 | 2,326 | not returned |
 | Demo preparation, `npm run seed:ai` (2026-10-26) | categorization | 25 | 25 | 10,207 | 3,964 | 408 | 159 | not returned |
 | Demo preparation, `npm run seed:ai` (2026-10-26) | insight summary | 3 | 3 | 3,374 | 7,848 | 1,125 | 2,616 | not returned |
-| Live app | — | not included (no database configured for this report) | | | | | | |
+| Live app (hosted database, all users, 2026-10-26 – 2026-10-26) | insight summary | 2 | 2 | 2,261 | 4,649 | 1,131 | 2,325 | not returned |
+| Live app (hosted database, all users, 2026-10-26 – 2026-10-26) | categorization | 1 | 1 | 280 | 59 | 280 | 59 | not returned |
 
 - "Requests" counts every attempted request; requests where the provider returned no usage are counted but their tokens are **not** guessed (shown as not reported, never 0).
 - Output tokens include the model's reasoning tokens, which are billed as output.
