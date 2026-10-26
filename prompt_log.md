@@ -907,3 +907,10 @@
 
 **Follow-up:**
 > Yes, push to GitHub.
+
+## Task 17: Tokenomics, usage tracking, and cost estimates
+
+**Prompt:**
+> Prompt 16 — Tokenomics, usage tracking, and cost estimates
+> Implement a small, transparent tokenomics and cost-tracking view suitable for the project report.
+> Requirements: - Track actual model/provider usage fields returned by the API, including input tokens, output tokens, request count, and cost if available. - Associate usage with task type (categorization, insight summary, handoff, evaluation) and timestamp, without logging secrets or unnecessary note contents. - If the provider does not return cost, do not invent it. If calculating cost from token usage, document the pricing source, date checked, model, and calculation. If current pricing cannot be verified, label the estimate as illustrative and state the assumption. - Add reasonable cost controls: bounded input length, no needless repeat analysis, caching by observation version where safe, explicit regeneration, and concise model outputs. Do not cache results across different patient contexts. - Show measured values separately from estimates. - Estimate costs for 100 and 10,000 users using clearly stated assumptions for observations per user, analysis frequency, input/output tokens, and retries. Make assumptions editable or easy to inspect. - Do not claim the estimates are actual bills. - Do not expose PORTKEY_API_KEY or print environment variables. - Add tests for usage accounting, missing usage fields, estimate calculations, and caching invalidation after note changes. - Provide a report-ready table and concise explanation of what was measured versus estimated.

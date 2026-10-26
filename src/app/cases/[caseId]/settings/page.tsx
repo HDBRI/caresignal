@@ -4,6 +4,7 @@ import { requireActor, principalOf } from "@/lib/auth/session";
 import { aiLimits, MODEL_NAME } from "@/lib/config";
 import { getCase, listBaselines } from "@/lib/repo/cases";
 import { getDb } from "@/lib/repo/db";
+import { usageSummary } from "@/lib/repo/usage";
 import { resetMyDemo } from "@/app/actions/auth";
 import { BaselineForm } from "@/components/BaselineForm";
 import { ReminderForm } from "@/components/ReminderForm";
@@ -21,6 +22,10 @@ export default async function SettingsPage({ params }: { params: Promise<{ caseI
   const db = await getDb();
   const p = principalOf(actor);
   const [c, baselines] = await Promise.all([getCase(db, p, caseId), listBaselines(db, p, caseId)]);
+  // Measured usage for THIS user's case only (getCase above already checked ownership).
+  const usage = await usageSummary(db, { ownerId: p.userId, caseId });
+  const TASK: Record<string, string> = { observation_analysis: "Categorization", insights: "Insight summary", handoff_draft: "Handoff draft", seed_insights: "Demo preparation", evaluation: "Evaluation" };
+  const tok = (n: number | null) => (n === null ? "not reported" : n.toLocaleString("en-US"));
   const limits = aiLimits();
 
   return (
@@ -32,6 +37,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ caseI
           ["baseline", "Baseline"],
           ["reminders", "Reminders"],
           ["ai", "AI & privacy"],
+          ["usage", "AI usage"],
           ["cases", "Cases"],
           [actor.kind === "demo" ? "demo" : "account", actor.kind === "demo" ? "Demo copy" : "Account"],
           ["about", "About & limitations"],
@@ -131,6 +137,50 @@ export default async function SettingsPage({ params }: { params: Promise<{ caseI
           <DeleteAccountForm />
         </section>
       )}
+
+      <section id="usage" className="card" aria-labelledby="usage-h" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <h2 id="usage-h">AI usage for this case (measured)</h2>
+        <p className="secondary">
+          Requests this account made for this case, with token counts exactly as the AI provider reported them. Only counts are stored — not
+          your notes. The provider does not return a price, so no cost is shown here; the project report has clearly labeled illustrative
+          estimates.
+        </p>
+        {usage.length === 0 ? (
+          <p>No AI requests have been made for this case from this account yet.</p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <caption className="sr-only">AI requests and tokens by task</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Task</th>
+                  <th scope="col">Requests</th>
+                  <th scope="col">With usage reported</th>
+                  <th scope="col">Input tokens</th>
+                  <th scope="col">Output tokens</th>
+                  <th scope="col">Last request</th>
+                </tr>
+              </thead>
+              <tbody>
+                {usage.map((u) => (
+                  <tr key={u.purpose}>
+                    <th scope="row">{TASK[u.purpose] ?? u.purpose}</th>
+                    <td>{u.requests}</td>
+                    <td>{u.withUsage}</td>
+                    <td>{tok(u.promptTokens)}</td>
+                    <td>{tok(u.completionTokens)}</td>
+                    <td>{u.lastAt ? new Date(u.lastAt).toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" }) : "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <p className="secondary">
+          Saving costs: each note is analyzed once; an insight request for unchanged notes reuses the saved result (Regenerate anyway makes a
+          new request); results are never reused across patients.
+        </p>
+      </section>
 
       <section id="about" className="card" aria-labelledby="about-h" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <h2 id="about-h">About &amp; limitations</h2>

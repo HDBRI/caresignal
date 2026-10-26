@@ -122,7 +122,7 @@ export async function buildHandoffDraft(db: Database, p: Principal, caseId: stri
   let rejected = found?.run.rejectedItems ?? 0;
   if (!found) {
     reused = false;
-    const outcome = await generateInsights(db, p, caseId, "last7", deps);
+    const outcome = await generateInsights(db, p, caseId, "last7", deps, { purpose: "handoff_draft" });
     aiStatus = outcome.status;
     if (outcome.status !== "empty") {
       rejected = outcome.rejected;

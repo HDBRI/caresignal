@@ -1,0 +1,32 @@
+{
+  "_note": "Editable assumptions for CareSignal's ILLUSTRATIVE cost estimates (npm run tokenomics). These are not bills. Change any number and re-run to see the effect. Measured usage is reported separately and is never changed by this file.",
+  "pricing": {
+    "model": "gpt-6-luna (via Portkey)",
+    "status": "illustrative",
+    "inputUsdPerMillionTokens": 1.25,
+    "cachedInputUsdPerMillionTokens": 0.125,
+    "outputUsdPerMillionTokens": 10.0,
+    "source": "Assumption, not a verified price. Stand-in values equal to OpenAI's published GPT-5 API list price as remembered from its August 2025 launch (US$1.25 per 1M input tokens, US$0.125 per 1M cached input tokens, US$10 per 1M output tokens). No price for gpt-6-luna, for the course's Portkey account, or for any discount could be verified.",
+    "dateChecked": "Not verified. Assumption recorded 2026-10-26."
+  },
+  "usage": {
+    "observationsPerUserPerMonth": 40,
+    "categorizationCallsPerObservation": 1,
+    "insightRequestsPerUserPerMonth": 4,
+    "insightCacheHitShare": 0.25,
+    "handoffDraftsPerUserPerMonth": 4,
+    "handoffDraftsNeedingNewAiCall": 0.5,
+    "retryRate": 0.05,
+    "tokensPerCall": {
+      "categorize": { "input": 408, "output": 149, "basis": "Measured average of 35 categorization calls in the 2026-10-26 evaluation run (docs/evaluation/results.json)." },
+      "insights": { "input": 1050, "output": 2326, "basis": "Measured average of 4 insight calls in the same run. Output includes the model's reasoning tokens, which are billed as output." }
+    }
+  },
+  "usageNotes": {
+    "observationsPerUserPerMonth": "About 10 notes a week from an active caregiver.",
+    "insightRequestsPerUserPerMonth": "About one 'Generate AI analysis' per week.",
+    "insightCacheHitShare": "Share of insight requests answered from a saved run because the notes had not changed (no AI call).",
+    "handoffDraftsNeedingNewAiCall": "Share of weekly handoff drafts that need a new insight call; the rest reuse a validated run for the same notes.",
+    "retryRate": "Extra calls from failed requests that are retried (timeouts, rejected output)."
+  }
+}

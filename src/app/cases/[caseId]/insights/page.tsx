@@ -380,6 +380,14 @@ export default async function InsightsPage({
           disabled={!aiAvailable || capReached}
           label={`Generate AI analysis for ${PERIOD_LABEL[aiWindow].toLowerCase()}`}
         />
+        {sp.cached && (
+          <div className="form-success" role="status" style={{ flexWrap: "wrap" }}>
+            <span>
+              Nothing changed in these notes since the last analysis, so the saved result is shown — no new AI request was made.
+            </span>
+            <GenerateInsightsForm caseId={caseId} period={aiWindow} disabled={!aiAvailable || capReached} label="Regenerate anyway (new AI request)" force secondary />
+          </div>
+        )}
         <p className="secondary">
           {!aiAvailable
             ? "AI analysis is currently unavailable. Notes, charts and safety rules still work."

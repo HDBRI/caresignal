@@ -15,7 +15,8 @@ export type AiFailureReason =
   | "unavailable_missing_key"
   | "failed_timeout"
   | "failed_provider"
-  | "failed_empty";
+  | "failed_empty"
+  | "failed_length";
 
 /** Usage exactly as the provider returned it; missing fields stay null (never 0). */
 export interface ProviderUsage {
@@ -23,6 +24,10 @@ export interface ProviderUsage {
   cachedTokens: number | null;
   completionTokens: number | null;
   totalTokens: number | null;
+  /** Reasoning tokens inside completionTokens, if the provider reports them. */
+  reasoningTokens?: number | null;
+  /** A cost in USD ONLY if the provider/gateway itself returned one. CareSignal never fills this in. */
+  costUsd?: number | null;
 }
 
 export interface AiSuccess {
@@ -71,16 +76,25 @@ export function readUsage(raw: unknown): ProviderUsage | null {
   const u = raw as Record<string, unknown>;
   const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : null);
   const details = (u.prompt_tokens_details ?? null) as Record<string, unknown> | null;
+  const outDetails = (u.completion_tokens_details ?? null) as Record<string, unknown> | null;
   return {
     promptTokens: num(u.prompt_tokens),
     cachedTokens: details ? num(details.cached_tokens) : null,
     completionTokens: num(u.completion_tokens),
     totalTokens: num(u.total_tokens),
+    reasoningTokens: outDetails ? num(outDetails.reasoning_tokens) : null,
+    costUsd: num(u.cost ?? u.total_cost ?? null),
   };
 }
 
 /** Request a JSON object response. Callers must still validate the content. */
-export async function chatJson(messages: ChatMessage[]): Promise<AiResult> {
+/**
+ * Upper bound on output tokens per call (cost control). Generous: measured outputs average a few hundred tokens,
+ * so this only stops runaway responses. A response cut off by the limit is a failure, never a partial result.
+ */
+export const MAX_OUTPUT_TOKENS = 4000;
+
+export async function chatJson(messages: ChatMessage[], opts: { maxOutputTokens?: number } = {}): Promise<AiResult> {
   if (aiStatus() !== "available") return { ok: false, reason: "unavailable_missing_key", usage: null };
 
   try {
@@ -89,11 +103,13 @@ export async function chatJson(messages: ChatMessage[]): Promise<AiResult> {
         model: MODEL_NAME,
         messages,
         response_format: { type: "json_object" },
+        max_completion_tokens: opts.maxOutputTokens ?? MAX_OUTPUT_TOKENS,
       })
       .withResponse();
 
     const content = data.choices?.[0]?.message?.content ?? "";
     const usage = readUsage(data.usage);
+    if (data.choices?.[0]?.finish_reason === "length") return { ok: false, reason: "failed_length", usage };
     if (!content.trim()) return { ok: false, reason: "failed_empty", usage };
 
     return {

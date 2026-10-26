@@ -140,13 +140,14 @@ describe("AI categorization states", () => {
     expect((await usageRows(db)).map((r) => r.status)).toEqual(["rejected"]);
   });
 
-  it("failed: provider error with no usage returned writes no usage row and marks the note failed", async () => {
+  it("failed: provider error with no usage returned counts the request (tokens null, not 0) and marks the note failed", async () => {
     const { user, caseId } = await setup();
     const { observation } = await addObservation(db, user, { caseId, text: "note", aiState: "pending" });
     const d = deps(async () => ({ ok: false, reason: "failed_timeout", usage: null }));
     expect(await categorizeObservation(db, user, observation.id, d)).toBe("failed");
     expect((await listObservations(db, user, caseId))[0].aiState).toBe("failed");
-    expect(await usageRows(db)).toEqual([]);
+    // Task 17: every attempted request is counted; usage the provider didn't return stays null.
+    expect(await usageRows(db)).toEqual([{ status: "failed", prompt_tokens: null, cached_tokens: null, completion_tokens: null, total_tokens: null, model_reported: null }]);
   });
 
   it("unavailable_limit: once the daily cap is reached, no call is made and the note says so", async () => {

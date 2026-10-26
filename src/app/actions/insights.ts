@@ -15,14 +15,18 @@ export async function generateInsightsAction(fd: FormData): Promise<void> {
   const period = (PERIODS as string[]).includes(String(fd.get("period"))) ? (String(fd.get("period")) as Period) : "last7";
   let outcome;
   try {
-    outcome = await generateInsights(await getDb(), principalOf(actor), caseId, period, {
-      chat: chatJson,
-      available: () => aiStatus() === "available",
-    });
+    outcome = await generateInsights(
+      await getDb(),
+      principalOf(actor),
+      caseId,
+      period,
+      { chat: chatJson, available: () => aiStatus() === "available" },
+      { force: fd.get("force") === "1" },
+    );
   } catch {
     console.error("[insights] generation failed");
     redirect(`/cases/${caseId}/insights?period=${period}&result=error`);
   }
   if (outcome.status === "empty") redirect(`/cases/${caseId}/insights?period=${period}&result=empty`);
-  redirect(`/cases/${caseId}/insights?period=${period}&run=${outcome.runId}`);
+  redirect(`/cases/${caseId}/insights?period=${period}&run=${outcome.runId}${outcome.cached ? "&cached=1" : ""}`);
 }

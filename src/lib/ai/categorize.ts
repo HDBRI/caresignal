@@ -83,7 +83,7 @@ export function validateCategorization(content: string, noteText: string): Categ
 export type CategorizeOutcome = "complete" | "failed" | "failed_validation" | "unavailable_error" | "unavailable_limit";
 
 export interface CategorizeDeps {
-  chat: (messages: ChatMessage[]) => Promise<AiResult>;
+  chat: (messages: ChatMessage[], opts?: { maxOutputTokens?: number }) => Promise<AiResult>;
   available: () => boolean;
 }
 
@@ -107,13 +107,15 @@ export async function categorizeObservation(
   deps: CategorizeDeps,
 ): Promise<CategorizeOutcome> {
   const rows = await db.asPrincipal(p, (sql) =>
-    sql.query<{ id: string; case_id: string; original_text: string }>(
-      `select id, case_id, original_text from observations where id = $1 and owner_id = $2`,
+    sql.query<{ id: string; case_id: string; original_text: string; ai_state: string }>(
+      `select id, case_id, original_text, ai_state from observations where id = $1 and owner_id = $2`,
       [observationId, p.userId],
     ),
   );
   if (rows.length !== 1) throw new Error("observation not found");
   const obs = rows[0];
+  // Cost control: a note's original text never changes, so a completed analysis stays valid. Never pay twice for it.
+  if (obs.ai_state === "complete") return "complete";
   const setState = (state: CategorizeOutcome | "pending") =>
     db.asPrincipal(p, (sql) =>
       sql.query(`update observations set ai_state = $1 where id = $2 and owner_id = $3`, [state, observationId, p.userId]),
@@ -127,7 +129,7 @@ export async function categorizeObservation(
   await setState("pending");
 
   const t0 = Date.now();
-  const result = await deps.chat(buildCategorizeMessages(obs.original_text));
+  const result = await deps.chat(buildCategorizeMessages(obs.original_text), { maxOutputTokens: 1500 });
   const latency = Date.now() - t0;
 
   if (!result.ok) {
@@ -141,6 +143,7 @@ export async function categorizeObservation(
       providerRequestId: null,
       usage: result.usage,
       latencyMs: latency,
+      failureReason: result.reason,
     });
     const state = result.reason === "unavailable_missing_key" ? "unavailable_error" : "failed";
     await setState(state);

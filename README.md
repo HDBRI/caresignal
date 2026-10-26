@@ -200,6 +200,12 @@ A handoff organizes the **last 7 days** of caregiver-reported observations for a
 - **Outputs:** [docs/EVALUATION.md](docs/EVALUATION.md) (readable summary, failed cases included) and `docs/evaluation/results.json` (per-case results, per-call provider usage).
 - **Honesty rules:** metric definitions are stated in the report; token counts are the provider's own usage fields; no cost is reported because no verified price was available; no prompt comparison was run. The set is small, synthetic and developer-written — it does not show clinical effectiveness or real-world safety.
 
+## Tokenomics and cost controls
+
+- **Measured:** every attempted AI request is logged in `usage_log` with its task type (categorization, insight summary, handoff draft), timestamp, model, status and the provider's own token counts (input, cached, output, reasoning). If the provider returns no usage, the request is still counted and the tokens stay empty — never 0, never estimated. A cost is stored only if the provider itself returns one (it currently does not). No note text, prompts or keys are logged. Evaluation usage is kept in `docs/evaluation/results.json`. Settings → *AI usage* shows the measured numbers for your own case.
+- **Estimated (illustrative):** `npm run tokenomics` writes [docs/TOKENOMICS.md](docs/TOKENOMICS.md): measured usage first, then cost estimates for 100 and 10,000 users from the editable assumptions in `config/cost-assumptions.json`. The price there is an **unverified stand-in**, labeled illustrative with its source and date. Estimates are not bills.
+- **Cost controls:** notes ≤ 4,000 characters; ≤ 24,000 characters of note text per insights request (most recent kept, the model is told how many were left out); output caps (1,500 / 6,000 tokens; a cut-off answer is a failure); each note analyzed once; insight results cached by exact input and note wording version, per patient case only; explicit "Regenerate anyway"; daily caps.
+
 ## Project structure
 
 ```

@@ -13,13 +13,14 @@
  *      Failing statements are removed (and counted); a failing summary rejects the whole run.
  *   4. Store only validated output, with provider-reported model/usage. Failures are stored as failed runs.
  */
+import { createHash } from "node:crypto";
 import { z } from "zod";
 import { MODEL_NAME } from "../config";
 import type { Database, Principal } from "../db/client";
 import { getCase, listBaselines } from "../repo/cases";
 import { checkinStatusLabel } from "../repo/checkin-labels";
 import { listCheckins } from "../repo/checkins";
-import { listObservations } from "../repo/observations";
+import { latestEdits, listObservations } from "../repo/observations";
 import { recordUsage } from "../repo/usage";
 import { BASELINE_DOMAINS, CARE_PHASES, CARE_SETTINGS, labelFor } from "../onboarding";
 import { addDays, localDate, wallTimeToUtc } from "../time";
@@ -85,17 +86,25 @@ export interface InsightInput {
   notes: InsightNote[];
   checkins: { dayNumber: number; status: string }[];
   daysWithoutNotes: number[];
+  /** Older notes left out because the period's notes exceeded MAX_INSIGHT_NOTE_CHARS (cost control). */
+  omittedNotes: number;
+  /** "OBS-0001@v2" per note: the caregiver's latest wording version. Part of the cache key, not sent to the model. */
+  noteVersions: string[];
 }
+
+/** Cost control: at most this many characters of note text go into one insights request (most recent notes kept). */
+export const MAX_INSIGHT_NOTE_CHARS = 24_000;
 
 const hhmm = (iso: string) =>
   new Intl.DateTimeFormat("en-GB", { timeZone: "America/New_York", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(iso));
 
 export async function buildInsightInput(db: Database, p: Principal, caseId: string, period: Period, now = new Date()): Promise<InsightInput> {
-  const [c, baselines, observations, checkins] = await Promise.all([
+  const [c, baselines, observations, checkins, edits] = await Promise.all([
     getCase(db, p, caseId),
     listBaselines(db, p, caseId),
     listObservations(db, p, caseId),
     listCheckins(db, p, caseId),
+    latestEdits(db, p, caseId),
   ]);
   const end = localDate(now);
   const dayOfObs = (o: (typeof observations)[number]) => localDate(new Date(o.eventTime ?? o.enteredAt));
@@ -103,7 +112,8 @@ export async function buildInsightInput(db: Database, p: Principal, caseId: stri
   const start = period === "last7" ? addDays(end, -6) : period === "last14" ? addDays(end, -13) : earliest < end ? earliest : end;
   const dayIndex = (d: string) => Math.round((Date.parse(d) - Date.parse(start)) / 86_400_000) + 1;
   const periodDays = dayIndex(end);
-  const notes = observations
+  const versionOf = new Map(observations.map((o) => [o.displayId, edits.get(o.id)?.version ?? 1]));
+  const allNotes = observations
     .filter((o) => {
       const d = dayOfObs(o);
       return d >= start && d <= end;
@@ -118,6 +128,15 @@ export async function buildInsightInput(db: Database, p: Principal, caseId: stri
       author: o.authorLabel,
     }))
     .sort((a, b) => a.dayNumber - b.dayNumber || a.time.localeCompare(b.time));
+  // Keep the most recent notes that fit the length budget; say how many older ones were left out.
+  let budget = MAX_INSIGHT_NOTE_CHARS;
+  const kept: typeof allNotes = [];
+  for (const n of [...allNotes].reverse()) {
+    if (n.text.length > budget) break;
+    budget -= n.text.length;
+    kept.unshift(n);
+  }
+  const notes = kept;
   const noteDays = new Set(notes.map((n) => n.dayNumber));
   return {
     periodStart: start,
@@ -128,6 +147,8 @@ export async function buildInsightInput(db: Database, p: Principal, caseId: stri
     notes,
     checkins: checkins.filter((ci) => ci.day >= start && ci.day <= end).map((ci) => ({ dayNumber: dayIndex(ci.day), status: checkinStatusLabel(ci.status) })),
     daysWithoutNotes: Array.from({ length: periodDays }, (_, i) => i + 1).filter((d) => !noteDays.has(d)),
+    omittedNotes: allNotes.length - notes.length,
+    noteVersions: notes.map((n) => `${n.id}@v${versionOf.get(n.id) ?? 1}`),
   };
 }
 
@@ -175,6 +196,7 @@ export function buildInsightMessages(input: InsightInput): ChatMessage[] {
     "<checkins>",
     input.checkins.length ? input.checkins.map((c) => `- day ${c.dayNumber}: ${c.status}`).join("\n") : "No check-ins recorded.",
     `Days with no observation logged: ${input.daysWithoutNotes.length ? input.daysWithoutNotes.join(", ") : "none"}.`,
+    ...(input.omittedNotes ? [`${input.omittedNotes} older note(s) in this period were not included because of a length limit; list that as unknown.`] : []),
     "</checkins>",
     "<notes>",
     notes,
@@ -287,7 +309,24 @@ export function validateInsightOutput(content: string, input: Pick<InsightInput,
 
 export type InsightRunOutcome =
   | { status: "empty" }
-  | { status: "complete" | "failed" | "failed_validation" | "unavailable_error" | "unavailable_limit"; runId: string; rejected: number };
+  | { status: "complete" | "failed" | "failed_validation" | "unavailable_error" | "unavailable_limit"; runId: string; rejected: number; cached?: boolean };
+
+/**
+ * Cache key for an insights request: the exact messages that would be sent, the model, the prompt version and
+ * each note's wording version. Same key for the same patient case = same answer, so no new AI call is needed.
+ * Lookups are always filtered by case and owner, so a result is never reused for another patient.
+ */
+export function insightFingerprint(input: InsightInput): string {
+  const payload = JSON.stringify({ model: MODEL_NAME, prompt: INSIGHTS_PROMPT_VERSION, messages: buildInsightMessages(input), versions: input.noteVersions });
+  return createHash("sha256").update(payload).digest("hex");
+}
+
+export interface GenerateOptions {
+  /** Explicit regeneration: ignore a cached run and make a new call. */
+  force?: boolean;
+  /** Task type for usage accounting. */
+  purpose?: "insights" | "handoff_draft";
+}
 
 export async function storeInsightRun(
   db: Database,
@@ -304,18 +343,20 @@ export async function storeInsightRun(
     errorReason?: string | null;
     generatedAt?: string | null;
     promptVersion?: string;
+    inputFingerprint?: string | null;
   },
 ): Promise<string> {
   return db.asPrincipal(p, async (sql) => {
     const [{ id: runId }] = await sql.query<{ id: string }>(
       `insert into insight_runs (case_id, owner_id, status, period_start, period_end, origin, model_reported, generated_at, usage_log_id,
-                                 error_reason, summary, unknowns, questions, input_source_ids, rejected_items, prompt_version)
-       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) returning id`,
+                                 error_reason, summary, unknowns, questions, input_source_ids, rejected_items, prompt_version, input_fingerprint)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) returning id`,
       [
         caseId, p.userId, r.status, wallTimeToUtc(input.periodStart, "12:00").toISOString(), wallTimeToUtc(input.periodEnd, "12:00").toISOString(), r.origin, r.modelReported ?? null,
         r.generatedAt ?? (r.status === "complete" ? new Date().toISOString() : null), r.usageLogId ?? null, r.errorReason ?? null,
         r.value?.summary ?? null, JSON.stringify(r.value?.unknowns ?? []), JSON.stringify(r.value?.questions ?? []),
         JSON.stringify(input.notes.map((n) => n.id)), r.rejected ?? 0, r.promptVersion ?? INSIGHTS_PROMPT_VERSION,
+        r.inputFingerprint ?? null,
       ],
     );
     if (r.value) {
@@ -348,9 +389,23 @@ export async function generateInsights(
   caseId: string,
   period: Period,
   deps: CategorizeDeps,
+  opts: GenerateOptions = {},
 ): Promise<InsightRunOutcome> {
   const input = await buildInsightInput(db, p, caseId, period);
   if (input.notes.length === 0) return { status: "empty" }; // nothing to summarize; no call, no fabricated output
+  const purpose = opts.purpose ?? "insights";
+  const fingerprint = insightFingerprint(input);
+  if (!opts.force) {
+    const cached = await db.asPrincipal(p, (sql) =>
+      sql.query<{ id: string; rejected_items: number }>(
+        `select id, rejected_items from insight_runs
+          where case_id = $1 and owner_id = $2 and status = 'complete' and input_fingerprint = $3
+          order by created_at desc limit 1`,
+        [caseId, p.userId, fingerprint],
+      ),
+    );
+    if (cached.length) return { status: "complete", runId: cached[0].id, rejected: Number(cached[0].rejected_items), cached: true };
+  }
 
   const start = await initialAiState(db, p, deps);
   if (start !== "pending") {
@@ -359,12 +414,12 @@ export async function generateInsights(
   }
 
   const t0 = Date.now();
-  const result = await deps.chat(buildInsightMessages(input));
+  const result = await deps.chat(buildInsightMessages(input), { maxOutputTokens: 6000 }); // measured max 3,199
   const latency = Date.now() - t0;
   if (!result.ok) {
     const usageLogId = await recordUsage(db, {
-      ownerId: p.userId, caseId, purpose: "insights", status: "failed", modelRequested: MODEL_NAME, modelReported: null,
-      providerRequestId: null, usage: result.usage, latencyMs: latency,
+      ownerId: p.userId, caseId, purpose, status: "failed", modelRequested: MODEL_NAME, modelReported: null,
+      providerRequestId: null, usage: result.usage, latencyMs: latency, failureReason: result.reason,
     });
     const status = result.reason === "unavailable_missing_key" ? "unavailable_error" : "failed";
     const runId = await storeInsightRun(db, p, caseId, input, { status, origin: "session", usageLogId, errorReason: result.reason });
@@ -373,7 +428,7 @@ export async function generateInsights(
 
   const v = validateInsightOutput(result.content, input);
   const usageLogId = await recordUsage(db, {
-    ownerId: p.userId, caseId, purpose: "insights", status: v.ok ? "complete" : "rejected", modelRequested: MODEL_NAME,
+    ownerId: p.userId, caseId, purpose, status: v.ok ? "complete" : "rejected", modelRequested: MODEL_NAME,
     modelReported: result.modelReported, providerRequestId: result.providerRequestId, usage: result.usage, latencyMs: latency,
   });
   if (!v.ok) {
@@ -384,6 +439,7 @@ export async function generateInsights(
   }
   const runId = await storeInsightRun(db, p, caseId, input, {
     status: "complete", origin: "session", value: v.value, rejected: v.rejected.length, modelReported: result.modelReported, usageLogId,
+    inputFingerprint: fingerprint,
   });
   return { status: "complete", runId, rejected: v.rejected.length };
 }

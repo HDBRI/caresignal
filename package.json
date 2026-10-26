@@ -25,7 +25,8 @@
     "test:live": "node scripts/test-live.mjs",
     "safety:report": "tsx scripts/safety-report.ts",
     "eval": "tsx --conditions react-server scripts/eval.ts",
-    "eval:live": "tsx --conditions react-server scripts/eval.ts --live"
+    "eval:live": "tsx --conditions react-server scripts/eval.ts --live",
+    "tokenomics": "tsx --conditions react-server scripts/tokenomics.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.11",

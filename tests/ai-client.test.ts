@@ -19,7 +19,7 @@ describe("AI client", () => {
   it("copies provider-returned usage exactly", () => {
     expect(
       readUsage({ prompt_tokens: 812, completion_tokens: 230, total_tokens: 1042, prompt_tokens_details: { cached_tokens: 512 } }),
-    ).toEqual({ promptTokens: 812, cachedTokens: 512, completionTokens: 230, totalTokens: 1042 });
+    ).toEqual({ promptTokens: 812, cachedTokens: 512, completionTokens: 230, totalTokens: 1042, reasoningTokens: null, costUsd: null });
   });
 
   it("keeps missing usage fields null, never 0", () => {
@@ -28,6 +28,8 @@ describe("AI client", () => {
       cachedTokens: null,
       completionTokens: 20,
       totalTokens: null,
+      reasoningTokens: null,
+      costUsd: null,
     });
     expect(readUsage(undefined)).toBeNull();
   });
