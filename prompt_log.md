@@ -1040,3 +1040,6 @@
 
 **Follow-up:**
 > I want you to quickly edit the report & slides & I want this main thing to come through clearly, Caresignal is for all those caregivers who are struggling to keep track of & find patterns in their patient's symptoms - it makes it so caregivers dont have to byurden themselves with remmebering every dxetail to making excel spreadsheets at home to tell the doc oh thus med made this happen & changed this symptom like oh day 5 the med did this & day 10 the med did this - its so we can inform better medical decisions by the care teams by making invisible observations visible - this doesnt have to be in it word for word but this what it should convey, from how we are different to the suymmary of the app, u feel me? & I have 9 mins so be quick [lease, & then push everything, tell me if thsi will take longer than 5 mins
+
+**Follow-up:**
+> make sure all the links are clearly visible & at in teh front slide & page respectively
