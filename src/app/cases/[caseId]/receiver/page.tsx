@@ -4,6 +4,10 @@ import { getDb } from "@/lib/repo/db";
 import { listHandoffs } from "@/lib/repo/handoffs";
 import { EmptyState, fmtDateTime } from "@/components/display";
 import { InfoIcon } from "@/components/icons";
+import { HistoryList } from "@/components/handoff/HandoffView";
+import { getCase } from "@/lib/repo/cases";
+import { fictionalResponseFor } from "@/lib/repo/handoff-workflow";
+import { acknowledgeHandoffAction, addFictionalResponseAction } from "@/app/actions/handoffs";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +15,10 @@ export const dynamic = "force-dynamic";
 export default async function ReceiverPage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = await params;
   const actor = await requireActor();
-  const handoffs = await listHandoffs(await getDb(), principalOf(actor), caseId);
+  const db = await getDb();
+  const p = principalOf(actor);
+  const [handoffs, c] = await Promise.all([listHandoffs(db, p, caseId), getCase(db, p, caseId)]);
+  const scenarioResponse = fictionalResponseFor(c.seedKey);
   const received = handoffs.filter((h) => h.receipt);
 
   return (
@@ -36,7 +43,9 @@ export default async function ReceiverPage({ params }: { params: Promise<{ caseI
         received.map(({ handoff: h, receipt, history, responses }) => (
           <article key={h.id} className="card" aria-labelledby={`r-${h.displayId}`} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div className="section-head" style={{ marginBottom: 0 }}>
-              <h2 id={`r-${h.displayId}`}>Handoff {h.displayId}</h2>
+              <h2 id={`r-${h.displayId}`}>
+                Handoff {h.displayId} · version {h.version}
+              </h2>
               <span className={`pill ${receipt!.acknowledgedAt ? "pill-calm" : "pill-attention"}`}>
                 {receipt!.acknowledgedAt ? `Acknowledged ${fmtDateTime(receipt!.acknowledgedAt)}` : "Received — not yet acknowledged"}
               </span>
@@ -50,9 +59,30 @@ export default async function ReceiverPage({ params }: { params: Promise<{ caseI
               {h.draftedBy === "seed_fixture" && <span>· Example from this synthetic scenario</span>}
             </p>
 
+            {!receipt!.acknowledgedAt && (
+              <form action={acknowledgeHandoffAction}>
+                <input type="hidden" name="caseId" value={caseId} />
+                <input type="hidden" name="handoffId" value={h.id} />
+                <button className="btn btn-secondary" type="submit">
+                  Acknowledge receipt (simulated — no real person acts)
+                </button>
+              </form>
+            )}
+            {scenarioResponse && responses.length === 0 && (
+              <form action={addFictionalResponseAction}>
+                <input type="hidden" name="caseId" value={caseId} />
+                <input type="hidden" name="handoffId" value={h.id} />
+                <button className="btn btn-secondary" type="submit">
+                  Show this scenario&apos;s fictional receiver response
+                </button>
+              </form>
+            )}
             {responses.map((r) => (
-              <div key={r.id} className="card" style={{ background: "var(--attention-bg)", borderColor: "#efd9a8" }}>
-                <p className="stat-label" style={{ color: "var(--attention)", fontWeight: 600 }}>
+              <div key={r.id} className="card" style={{ background: "var(--unknown-bg)" }}>
+                <p className="stat-label" style={{ fontWeight: 600, display: "flex", gap: 6 }}>
+                  <InfoIcon size={14} /> Simulated receiver response — fictional
+                </p>
+                <p className="secondary" style={{ fontWeight: 600 }}>
                   {r.label}
                 </p>
                 <p style={{ marginTop: 4 }}>{r.text}</p>
@@ -70,14 +100,7 @@ export default async function ReceiverPage({ params }: { params: Promise<{ caseI
               <summary className="muted-link" style={{ cursor: "pointer" }}>
                 Status history
               </summary>
-              <ol style={{ paddingLeft: 20 }}>
-                {history.map((e) => (
-                  <li key={e.id}>
-                    {e.status} · {fmtDateTime(e.at)}
-                    {e.note ? ` — ${e.note}` : ""}
-                  </li>
-                ))}
-              </ol>
+              <HistoryList history={history} />
             </details>
           </article>
         ))

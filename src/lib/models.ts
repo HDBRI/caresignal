@@ -199,6 +199,10 @@ export interface HandoffItem {
   statement: string;
   support: Support;
   sourceIds: string[];
+  /** Task 13 drafts: what kind of statement this is (an AI insight, or a caregiver note listed as-is). */
+  kind?: "pattern" | "change" | "possible_pattern" | "conflict" | "note";
+  uncertainty?: string | null;
+  comparesToBaseline?: boolean;
 }
 
 export interface HandoffQuestion {
@@ -212,6 +216,10 @@ export interface HandoffContent {
   items: HandoffItem[];
   questions: HandoffQuestion[];
   missingInfo: string[];
+  /** Task 13 drafts: notes grouped by category (caregiver correction first, else completed AI labels). */
+  categories?: { category: string; sourceIds: string[] }[];
+  /** Task 13 drafts: notes in the period that triggered emergency / prompt-attention guidance when saved. */
+  urgent?: { sourceId: string; tier: SafetyTier; alertedAt: string; seenAt: string | null }[];
 }
 
 export interface HandoffPayload extends HandoffContent {
@@ -233,7 +241,7 @@ export interface Handoff {
   periodStart: string | null;
   periodEnd: string | null;
   draft: HandoffContent;
-  draftedBy: "ai" | "caregiver" | "seed_fixture";
+  draftedBy: "ai" | "caregiver" | "seed_fixture" | "records";
   approvedPayload: HandoffPayload | null;
   sourceIds: string[];
   origin: Origin;
@@ -242,12 +250,27 @@ export interface Handoff {
   submittedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  version: number;
+  /** The draft as generated, before caregiver edits (null for seeded examples). */
+  generatedContent: HandoffContent | null;
+  generation: HandoffGeneration;
+  editedAt: string | null;
+}
+
+export interface HandoffGeneration {
+  method?: "ai_insights" | "records_only" | "empty";
+  insightRunId?: string | null;
+  aiStatus?: string | null;
+  modelReported?: string | null;
+  reusedRun?: boolean;
+  rejectedItems?: number;
 }
 
 export interface HandoffStatusEvent {
   id: string;
   handoffId: string;
   status: HandoffStatus;
+  event: "status" | "edited" | "regenerated" | "response_added";
   note: string | null;
   at: string;
 }

@@ -843,3 +843,16 @@
 
 **Follow-up:**
 > Yes, push to GitHub and redeploy the live site.
+
+## Task 13: Weekly handoff draft and caregiver review
+
+**Prompt:**
+> Prompt 12 — Weekly handoff draft and caregiver review
+> Paste this entire prompt into Claude Code after the previous prompt has completed successfully.
+> Use the handoff page design: clean sections for summary, categories, source observations, uncertainties/conflicts, and questions. The caregiver must be able to open every source note and edit the draft before approval. Show a clear status path and never use visual language that implies a real clinician has acted.
+> Build a weekly care-coordination handoff generator using the stored observations and validated AI outputs.
+> The handoff should include: - Patient pseudonym and date range. - A plain-language summary of logged observations. - Relevant category groupings. - Supported changes relative to caregiver-reported baseline or prior observations. - Source observation IDs and the original notes behind every substantive claim. - Uncertainty, conflicting reports, and missing information. - Unresolved questions the caregiver may wish to raise with the care team. - A clear distinction between caregiver-reported information, AI-generated summaries, and any simulated receiver response.
+> Requirements: - One routine draft per configured seven-day period; allow regeneration when the caregiver adds/corrects information, while preserving prior submitted versions. - The caregiver must review and may edit the handoff before approving/submitting it. - Never auto-send a handoff. - If there are no observations, say "No observations were logged for this period," not "The patient is doing well." - Urgent events must trigger safety guidance immediately and must not be deferred to the weekly report. - Do not recommend medication changes or diagnose. - For the cancer case, show a supported pattern and clinician questions, then allow a separate simulated receiver response that is explicitly labeled fictional. - For the recovery case, preserve contradictory meal reports and explain what is unknown. - Keep a record of draft, reviewed, submitted, and later status changes. - Add tests for empty weeks, source traceability, review-before-submit, version preservation, urgent-event handling, and uncertainty/conflict retention.
+
+**Follow-up:**
+> are u done with the last prompt

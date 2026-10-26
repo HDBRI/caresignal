@@ -36,7 +36,7 @@ This README tracks what is actually built. Current stage: **optional daily check
 | Optional daily check-in: 4 explicit answers (incl. "Skip today"), response timestamp, optional note for change/concern that can be saved as an observation; "No response recorded" never read as fine | ✅ Built + tested |
 | In-app reminder preference: off by default, one daily local time, shown only inside the app (no email/SMS/push), never blocks logging | ✅ Built + tested |
 | Care insights dashboard: chart period (7 / 30 days / all history) separate from the AI window; metrics and 7 category charts from stored records; "Changes worth reviewing" labeled by source (records / safety rule / AI); baseline comparison; evidence drawer; raw IDs hidden (kept internally) | ✅ Built + tested |
-| Handoff drafting/review/submit, receiver acknowledge | ⏳ Next prompts |
+| Weekly handoff: draft from stored notes + validated AI output (or notes only when AI is unavailable), caregiver edit, approve, submit to the simulated receiver, acknowledge, fictional response (Case 1), versions and full status history | ✅ Built + tested |
 | Hosted deployment (Vercel + Supabase) | ✅ Live at https://caresignal-gilt.vercel.app — tested in a clean incognito session on 2026-10-25: demo entry, registration with Terms/Privacy acceptance, case creation, sign-out/sign-in, password-reset email |
 
 ---
@@ -160,6 +160,19 @@ Results on the synthetic test set (`tests/fixtures/safety-cases.json`, regenerat
 | Prompt-injection notes with the correct level | 5 / 5 |
 
 **Limitation:** these rules cover a small predefined set of phrases written by the developer, and the test set was written by the same person. These numbers are **not** real-world sensitivity or specificity. Phrasings outside the set will be missed. **No alert does not mean the situation is safe.**
+
+## Weekly handoff
+
+A handoff organizes the **last 7 days** of caregiver-reported observations for a conversation with the care team (`src/lib/ai/handoff.ts`, `src/lib/repo/handoff-workflow.ts`).
+
+- **What it contains:** patient pseudonym and date range; a plain-language summary; statements grouped as *supported*, *possible — not confirmed* and *conflicting reports*, each with its source note IDs and the original notes one click away; notes by category; urgent notes from the period and when their guidance was shown; uncertain/missing information; questions the caregiver may want to ask; and every source observation exactly as entered.
+- **Where the text comes from:** statements, unknowns and questions come only from an insight run that passed every check in `insights.ts` (exact quotes, known source IDs, no diagnosis, no medication advice, no safety claims). A run made from exactly the same notes is reused; otherwise a new one is generated. If the AI is unavailable or its output is rejected, the draft lists each note as written and says nothing was analyzed. A week with no notes says **"No observations were logged for this period."**
+- **Labels:** caregiver-reported notes, AI-drafted text, text edited by the caregiver, and the simulated receiver's fictional response are labeled separately.
+- **Review before submit:** nothing is ever sent automatically. The caregiver may edit wording (sources stay attached and can't be changed or invented), must confirm they reviewed the draft to approve it, and then chooses to submit. Editing an approved handoff returns it to draft.
+- **One open draft per case:** regenerating updates the open draft. A submitted handoff is frozen. If information is added or corrected after submission, a new version is created and the earlier version and its receipt are kept unchanged. If nothing changed, no new draft is made.
+- **Submit:** the server checks status, payload schema and that every source ID exists in the case, then saves the receipt and status history in one transaction. Retrying with the same submission key returns the original receipt.
+- **Status history:** draft → reviewed → submitted → received (simulated) → acknowledged (simulated), plus edits, regenerations and the fictional response.
+- **Urgent notes are never deferred:** emergency and prompt-attention guidance appears the moment a note is saved; the handoff only records that it was shown.
 
 ## Project structure
 

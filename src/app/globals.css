@@ -246,3 +246,12 @@ pre.payload { background: var(--bg); padding: 12px; border-radius: var(--radius-
 
 /* Neutral "Please review this observation" marker (Task 12): not amber, not red — icon + text. */
 .pill-review { background: #eef1f6; color: #33415c; border: 1px solid #d5dbe6; }
+
+/* Handoff status path (Task 13): text + number/check, never color alone. */
+.status-path { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.status-step { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text-secondary); }
+.status-dot { width: 22px; height: 22px; border-radius: 999px; display: inline-grid; place-items: center; font-size: 11.5px; font-weight: 600; border: 1px solid var(--border); background: var(--surface); }
+.status-done { color: var(--primary); }
+.status-done .status-dot { background: var(--primary); color: #fff; border-color: var(--primary); }
+.status-current { color: var(--text); font-weight: 600; }
+.status-current .status-dot { border: 2px solid var(--primary); color: var(--primary); }

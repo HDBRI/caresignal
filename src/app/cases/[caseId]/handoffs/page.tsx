@@ -3,127 +3,84 @@ import { requireActor, principalOf } from "@/lib/auth/session";
 import { getDb } from "@/lib/repo/db";
 import { listHandoffs } from "@/lib/repo/handoffs";
 import { EmptyState, fmtDateTime } from "@/components/display";
+import { DraftButton } from "@/components/handoff/HandoffForms";
+import { HANDOFF_STATUS, periodLabel, provenance, StatusPath } from "@/components/handoff/HandoffView";
 
 export const dynamic = "force-dynamic";
 
-const STATUS: Record<string, string> = {
-  draft: "Draft — not sent yet",
-  reviewed: "Reviewed and approved — ready to send",
-  submitted: "Sent — waiting for confirmation",
-  received: "Received by the simulated care team",
-  acknowledged: "Received and acknowledged by the simulated care team",
-  failed: "Didn't go through — you can try again",
-};
-const SUPPORT: Record<string, string> = {
-  supported: "Supported",
-  possible_unconfirmed: "Possible, not confirmed",
-  conflicting: "Conflicting reports",
-  unknown: "Unknown",
-};
-
-function Sources({ caseId, ids }: { caseId: string; ids: string[] }) {
-  return (
-    <span className="chip-row" style={{ display: "inline-flex", marginLeft: 6 }}>
-      {ids.map((s) => (
-        <Link key={s} className="chip" href={`/cases/${caseId}/observations/${s}`}>
-          {s}
-        </Link>
-      ))}
-    </span>
-  );
-}
-
-/** Screen 6 — Handoffs: content, included sources and status history. Nothing is ever sent automatically. */
+/** Screen 6 — Handoffs: this week's draft and every earlier version (kept unchanged). Nothing is sent automatically. */
 export default async function HandoffsPage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = await params;
   const actor = await requireActor();
   const handoffs = await listHandoffs(await getDb(), principalOf(actor), caseId);
+  const open = handoffs.find((b) => b.handoff.status === "draft" || b.handoff.status === "reviewed");
+  const sorted = [...handoffs].sort((a, b) => b.handoff.version - a.handoff.version || b.handoff.createdAt.localeCompare(a.handoff.createdAt));
 
   return (
     <>
-      <header>
+      <header style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <h1>Handoffs</h1>
         <p className="secondary" style={{ fontSize: 15 }}>
-          A handoff packages caregiver-reported observations for the care team. You review and approve it first — CareSignal
-          never sends anything automatically, and the receiving “care team” is simulated.
+          A weekly handoff organizes the last 7 days of caregiver-reported observations for a conversation with the care team. You review it,
+          may edit it, and approve it first — CareSignal never sends anything automatically, and the receiving “care team” is simulated.
+          Urgent notes are never held for the handoff: their guidance appears the moment they are saved.
         </p>
       </header>
 
-      {handoffs.length === 0 ? (
-        <EmptyState title="No handoffs yet">Handoff drafting is added in the next build step.</EmptyState>
-      ) : (
-        handoffs.map(({ handoff: h, history, receipt }) => (
-          <article key={h.id} className="card" aria-labelledby={`h-${h.displayId}`} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div className="section-head" style={{ marginBottom: 0 }}>
-              <h2 id={`h-${h.displayId}`}>{STATUS[h.status]}</h2>
-              <span className="secondary">
-                {h.draftedBy === "seed_fixture" ? "Example handoff written for this synthetic scenario" : h.draftedBy === "ai" ? "Drafted by AI, reviewed by you" : "Written by you"}
-              </span>
-            </div>
-            <p className="meta">
-              <span>Handoff ID {h.displayId}</span>
-              <span>· Covers {fmtDateTime(h.periodStart)} – {fmtDateTime(h.periodEnd)}</span>
+      <section className="card" aria-labelledby="week-h" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <h2 id="week-h" style={{ fontSize: 19 }}>This week</h2>
+        {open ? (
+          <>
+            <p>
+              <Link href={`/cases/${caseId}/handoffs/${open.handoff.displayId}`}>
+                <strong>Version {open.handoff.version} · {periodLabel(open.handoff)}</strong>
+              </Link>{" "}
+              — {HANDOFF_STATUS[open.handoff.status]}.
             </p>
+            <div>
+              <Link className="btn btn-primary" href={`/cases/${caseId}/handoffs/${open.handoff.displayId}`}>
+                {open.handoff.status === "draft" ? "Review this draft" : "Review and submit"}
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="secondary">
+              Draft a handoff from the observations logged in the last 7 days. If a submitted version already covers these days, a new version is
+              made only when you have added or corrected information since — the submitted one is kept unchanged.
+            </p>
+            <DraftButton caseId={caseId} label="Draft this week's handoff" />
+          </>
+        )}
+      </section>
 
-            <section>
-              <h3>Summary</h3>
-              <p>{h.draft.summary}</p>
-            </section>
-            <section>
-              <h3>What the notes show</h3>
-              <ul className="list-plain">
-                {h.draft.items.map((i) => (
-                  <li key={i.statement}>
-                    <span className="pill pill-unknown">{SUPPORT[i.support]}</span> {i.statement}
-                    <Sources caseId={caseId} ids={i.sourceIds} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-            <section>
-              <h3>Questions for the care team</h3>
-              <ul className="list-plain">
-                {h.draft.questions.map((q) => (
-                  <li key={q.text}>
-                    {q.text}
-                    <Sources caseId={caseId} ids={q.sourceIds} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-            <section>
-              <h3>Missing or unknown</h3>
-              <ul style={{ margin: "6px 0 0", paddingLeft: 20 }}>
-                {h.draft.missingInfo.map((m) => (
-                  <li key={m}>{m}</li>
-                ))}
-              </ul>
-            </section>
-
-            <section>
-              <h3>Status history</h3>
-              <ol style={{ margin: "6px 0 0", paddingLeft: 20 }}>
-                {history.map((e) => (
-                  <li key={e.id}>
-                    <strong>{STATUS[e.status] ?? e.status}</strong> <span className="secondary">· {fmtDateTime(e.at)}</span>
-                    {e.note ? <span className="secondary"> — {e.note}</span> : null}
-                  </li>
-                ))}
-              </ol>
-            </section>
-
-            {receipt ? (
-              <p className="secondary">
-                Receipt: saved by the simulated receiver {fmtDateTime(receipt.receivedAt)}.{" "}
-                <Link href={`/cases/${caseId}/receiver`}>View in Demo receiver</Link>
+      {sorted.length === 0 ? (
+        <EmptyState title="No handoffs yet">Drafting one doesn&apos;t send anything.</EmptyState>
+      ) : (
+        <section aria-labelledby="all-h" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <h2 id="all-h" style={{ fontSize: 19 }}>All versions ({sorted.length})</h2>
+          {sorted.map(({ handoff: h, receipt, responses }) => (
+            <article key={h.id} className="card" aria-labelledby={`h-${h.displayId}`} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div className="section-head" style={{ marginBottom: 0 }}>
+                <h3 id={`h-${h.displayId}`}>
+                  <Link href={`/cases/${caseId}/handoffs/${h.displayId}`}>
+                    Version {h.version} · {periodLabel(h)}
+                  </Link>
+                </h3>
+                <span className="secondary">{provenance(h)}</span>
+              </div>
+              <StatusPath status={h.status} />
+              <p className="meta">
+                <span>Handoff ID {h.displayId}</span>
+                <span>· {h.sourceIds.length} source note{h.sourceIds.length === 1 ? "" : "s"}</span>
+                {h.submittedAt && <span>· Submitted {fmtDateTime(h.submittedAt)} (frozen — never changed afterwards)</span>}
+                {receipt && <span>· Receipt saved by the simulated receiver</span>}
+                {responses.length > 0 && <span>· Has a fictional simulated response</span>}
               </p>
-            ) : (
-              <p className="secondary">
-                No receipt — this handoff has not been received. Reviewing, editing and submitting are added in the next build step.
-              </p>
-            )}
-          </article>
-        ))
+              <p style={{ fontSize: 15 }}>{(h.approvedPayload ?? h.draft).summary}</p>
+            </article>
+          ))}
+        </section>
       )}
     </>
   );

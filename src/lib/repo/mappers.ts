@@ -159,12 +159,17 @@ export const toHandoff = (r: Row): Handoff => ({
   submittedAt: isoOrNull(r.submitted_at),
   createdAt: iso(r.created_at),
   updatedAt: iso(r.updated_at),
+  version: Number(r.version ?? 1),
+  generatedContent: r.generated_content ? json(r.generated_content) : null,
+  generation: r.generation ? json(r.generation) : {},
+  editedAt: isoOrNull(r.edited_at),
 });
 
 export const toStatusEvent = (r: Row): HandoffStatusEvent => ({
   id: r.id as string,
   handoffId: r.handoff_id as string,
   status: r.status as HandoffStatusEvent["status"],
+  event: ((r.event as string) ?? "status") as HandoffStatusEvent["event"],
   note: (r.note as string) ?? null,
   at: iso(r.at),
 });
