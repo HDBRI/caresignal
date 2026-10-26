@@ -68,7 +68,8 @@ for (const m of MAP) {
     const tier = safety.tier ?? "none";
     const label = o.safety_test_label === "routine" ? "none" : o.safety_test_label;
     if (tier !== label) report.push(`${o.observation_id}: dataset label "${label}", app rules "${tier}" — the app's rules are used`);
-    const cats = String(o.categories).split(";").map((c) => CAT[c.trim()]).filter(Boolean);
+    const rawCats: string[] = Array.isArray(o.categories) ? o.categories : String(o.categories).split(";"); // a list in the JSON (labels contain commas)
+    const cats = [...new Set(rawCats.map((c) => CAT[c.trim()]).filter(Boolean))];
     const tags: string[] = [];
     if (cats.length > 1) tags.push("multi_category");
     if (o.date_confidence !== "day_reported") tags.push("missing_context");

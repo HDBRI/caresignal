@@ -71,7 +71,7 @@ export default async function InsightsPage({
 }) {
   const { caseId } = await params;
   const sp = await searchParams;
-  const range: ChartPeriod = CHART_PERIODS.some((p) => p.id === sp.range) ? (sp.range as ChartPeriod) : "7d";
+  const range: ChartPeriod = CHART_PERIODS.some((p) => p.id === sp.range) ? (sp.range as ChartPeriod) : "30d"; // demo cases hold a month of notes
   const aiWindow: Period = (AI_WINDOWS as string[]).includes(sp.period ?? "") ? (sp.period as Period) : "last7";
   const actor = await requireActor();
   const db = await getDb();

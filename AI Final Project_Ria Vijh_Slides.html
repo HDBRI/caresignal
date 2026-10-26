@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CareSignal — MGT 409 final presentation</title>
+<style>/*RESET_CSS*/</style>
+<style>/*REVEAL_CSS*/</style>
+<style>
+  :root { --ivory:#F7F6F2; --forest:#253D38; --sage:#DDE8DF; --amber:#9A6B12; --amber-bg:#FBF1DC; --red:#B42318; --red-bg:#FDECEA; --muted:#5C6461; --border:#E2E0D8; }
+  html, body { background: var(--ivory); }
+  .reveal { font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 31px; color: #1F2523; }
+  .reveal .slides { text-align: left; }
+  .reveal .slides section { height: 100%; padding: 8px 4px; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: "DM Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: var(--forest); margin: 0 0 14px; line-height: 1.15; text-transform: none; }
+  .reveal h1 { font-size: 84px; }
+  .reveal h2 { font-size: 46px; border-bottom: 3px solid var(--sage); padding-bottom: 8px; }
+  .reveal h3 { font-size: 28px; }
+  .reveal p, .reveal li { line-height: 1.38; }
+  .reveal ul { margin: 0 0 0 1em; }
+  .reveal li { margin-bottom: 6px; }
+  .reveal table { font-size: 22px; border-collapse: collapse; margin: 6px 0; width: 100%; }
+  .reveal th, .reveal td { border: 1px solid var(--border); padding: 5px 8px; text-align: left; vertical-align: top; }
+  .reveal th { background: var(--sage); color: var(--forest); }
+  .reveal td.num { text-align: right; white-space: nowrap; }
+  .reveal img { border: 1px solid var(--border); border-radius: 8px; margin: 0; }
+  .reveal code { font-size: 0.85em; background: #EFEEEA; padding: 0 4px; border-radius: 4px; }
+  .reveal a { color: var(--forest); }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+  .cols-3 { display: grid; grid-template-columns: 1.15fr 1fr; gap: 22px; align-items: start; }
+  .box { border: 1px solid var(--border); border-left: 6px solid var(--forest); background: #fff; border-radius: 8px; padding: 12px 16px; font-size: 24px; }
+  .box.warn { border-left-color: var(--amber); background: var(--amber-bg); }
+  .box.red { border-left-color: var(--red); background: var(--red-bg); }
+  .tag { display: inline-block; font-size: 15px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; padding: 1px 7px; border-radius: 5px; border: 1px solid; vertical-align: middle; }
+  .tag.real { color: var(--forest); background: var(--sage); border-color: #b9cfbe; }
+  .tag.syn { color: #5B5B55; background: #EFEEEA; border-color: #cfcdc5; border-style: dashed; }
+  .tag.est { color: var(--amber); background: var(--amber-bg); border-color: #e6cf9b; }
+  .small { font-size: 19px; color: var(--muted); }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 10px 0; }
+  .kpis div { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .kpis b { display: block; font: 700 46px/1.1 "DM Sans", "Segoe UI", Arial, sans-serif; color: var(--forest); }
+  .kpis span { font-size: 19px; color: var(--muted); }
+  .trace { counter-reset: s; list-style: none; margin: 0; padding: 0; font-size: 22px; }
+  .trace li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 10px; margin-bottom: 9px; }
+  .trace li::before { content: counter(s); width: 30px; height: 30px; border-radius: 50%; background: var(--forest); color: #fff; font-weight: 700; display: grid; place-items: center; font-size: 17px; }
+  .footer-note { position: absolute; bottom: 4px; left: 4px; font-size: 13px; color: var(--muted); }
+  svg text { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- 1 -->
+<section>
+  <h1>CareSignal</h1>
+  <p style="font-size:37px; color:var(--forest); max-width:1050px">Turns a family caregiver's everyday notes into an <strong>evidence-linked, caregiver-reviewed handoff</strong> — while urgent safety guidance never depends on AI.</p>
+  <p>Ria Vijh · MGT 409 AI Foundations for Managers · Yale SOM · Fall 2026</p>
+  <table style="width:auto; font-size:23px">
+    <tr><th>Live app</th><td><a href="https://caresignal-gilt.vercel.app">caresignal-gilt.vercel.app</a> (demo logins on the "Explore a demo case" page)</td></tr>
+    <tr><th>Code</th><td><a href="https://github.com/HDBRI/caresignal">github.com/HDBRI/caresignal</a> — full report: <code>report.html</code></td></tr>
+  </table>
+  <div class="box red" style="margin-top:14px">Classroom prototype · <strong>synthetic data only</strong> · not medical advice · <strong>not clinically validated</strong> · not HIPAA compliant · receiver is simulated · in an emergency, call 911.</div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>Problem: home observations don't reach the care team well</h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li><strong>~63 million</strong> U.S. family caregivers (1 in 4 adults); only <strong>22%</strong> report training for the care tasks they do <span class="small">[AARP &amp; NAC, 2025]</span></li>
+        <li>Handoffs have been linked to adverse clinical events; clinicians use structured formats like <strong>I-PASS / SBAR</strong> <span class="small">[AHRQ PSNet]</span></li>
+        <li>Caregivers have no equivalent: notes live in memory, texts, journals, trackers and portal messages</li>
+      </ul>
+    </div>
+    <div class="box warn">
+      <strong>The risk with AI summaries:</strong> a polished summary can hide uncertainty, invent facts, or sit between a caregiver and urgent action.<br/><br/>
+      <span class="small">We did <strong>not</strong> measure caregivers' time or frustration — no user research was done.</span>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>What is new — compared with adjacent tools</h2>
+  <table>
+    <tr><th>Tool (category)</th><th>What its public page describes</th><th>CareSignal's difference</th></tr>
+    <tr><td>Epic MyChart (portal)</td><td>Records, family access, virtual visits</td><td>Organizes home notes <em>before</em> any message; no EHR link</td></tr>
+    <tr><td>Bearable (tracker)</td><td>Structured tracking, correlations, export</td><td>Caregiver's own words; no scores; counts = recording activity</td></tr>
+    <tr><td>CaringBridge (journal)</td><td>Updates for friends &amp; family, calendars</td><td>Audience is a (simulated) care team; evidence-linked</td></tr>
+    <tr><td>Caring Village (app + AI)</td><td>Wellness journal and an AI assistant</td><td>AI caregiver tools exist — our difference is the strict rules below</td></tr>
+    <tr><td>ChatGPT Health (chatbot)</td><td>Health Q&amp;A, record connections</td><td>Single workflow; every AI line checked against notes</td></tr>
+  </table>
+  <p style="font-size:24px"><strong>New = the combination:</strong> exact-quote evidence gate on every AI statement · longitudinal patterns with evidence levels (observation / pattern / timing after a documented event / uncertainty) · conflicts and "not reported" kept · rule-based urgent guidance before any AI · caregiver-approved, frozen snapshot (SHA-256). <span class="small">Among the tools checked, none described this combination — not a "first" claim. Sources accessed 2026-10-26.</span></p>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Architecture: a sequential pipeline, not multi-agent</h2>
+  <div class="cols-3">
+    <svg viewBox="0 0 520 330" width="100%" role="img" aria-label="Pipeline">
+      <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#253D38"/></marker></defs>
+      <g font-size="13">
+        <rect x="5" y="5" width="240" height="44" rx="8" fill="#fff" stroke="#253D38"/><text x="15" y="25" font-weight="700" fill="#253D38">Caregiver saves a note</text><text x="15" y="41">stored exactly as written</text>
+        <rect x="5" y="70" width="240" height="44" rx="8" fill="#FDECEA" stroke="#B42318"/><text x="15" y="90" font-weight="700" fill="#B42318">① Safety rules — no AI</text><text x="15" y="106">same DB transaction as the save</text>
+        <rect x="5" y="135" width="240" height="44" rx="8" fill="#F6FAF7" stroke="#9fb7a6" stroke-dasharray="4 3"/><text x="15" y="155" font-weight="700" fill="#253D38">② Categorizer — gpt-6-luna</text><text x="15" y="171">JSON, ≤1,500 output tokens</text>
+        <rect x="5" y="200" width="240" height="44" rx="8" fill="#F6FAF7" stroke="#9fb7a6" stroke-dasharray="4 3"/><text x="15" y="220" font-weight="700" fill="#253D38">③ Insight drafter — gpt-6-luna</text><text x="15" y="236">JSON, ≤6,000 output, 60 s timeout</text>
+        <rect x="5" y="265" width="240" height="44" rx="8" fill="#fff" stroke="#253D38"/><text x="15" y="285" font-weight="700" fill="#253D38">④ Validator / guards</text><text x="15" y="301">known IDs, exact quotes, claim checks</text>
+        <rect x="275" y="135" width="240" height="44" rx="8" fill="#EEF1F6" stroke="#33415c"/><text x="285" y="155" font-weight="700" fill="#33415c">Portkey → OpenAI gpt-6-luna</text><text x="285" y="171">key server-side only</text>
+        <rect x="275" y="200" width="240" height="44" rx="8" fill="#fff" stroke="#253D38"/><text x="285" y="220" font-weight="700" fill="#253D38">⑤ Handoff: draft → approve</text><text x="285" y="236">frozen snapshot + SHA-256</text>
+        <rect x="275" y="265" width="240" height="44" rx="8" fill="#FBF1DC" stroke="#9A6B12"/><text x="285" y="285" font-weight="700" fill="#9A6B12">⑥ POST /api/handoffs → receipt</text><text x="285" y="301">simulated receiver · acknowledge</text>
+        <rect x="275" y="5" width="240" height="109" rx="8" fill="#fff" stroke="#253D38"/><text x="285" y="25" font-weight="700" fill="#253D38">Postgres (Supabase)</text><text x="285" y="43">row-level security per case</text><text x="285" y="60">notes · alerts · AI runs</text><text x="285" y="77">usage_log (tokens, no text)</text><text x="285" y="94">handoffs · history · receipts</text>
+      </g>
+      <g stroke="#253D38" stroke-width="1.5" fill="none" marker-end="url(#a)">
+        <path d="M125,49 L125,68"/><path d="M125,114 L125,133"/><path d="M125,179 L125,198"/><path d="M125,244 L125,263"/>
+        <path d="M245,157 L273,157"/><path d="M245,222 L273,222"/><path d="M395,244 L395,263"/><path d="M245,287 C262,287 262,222 273,222"/>
+      </g>
+    </svg>
+    <div style="font-size:23px">
+      <div class="box warn" style="margin-bottom:10px">No autonomous agents: <strong>application code</strong> decides every next step; the model never calls tools or other models.</div>
+      <ul>
+        <li><strong>Model:</strong> gpt-6-luna via the course Portkey key (the only allowed model); JSON mode; capped output.</li>
+        <li><strong>If AI fails</strong> (no key, timeout, bad output): stored as failed; notes, charts and safety rules keep working; handoff lists notes as written.</li>
+        <li><strong>Nothing</strong> from the model is shown or stored before validation.</li>
+        <li><strong>Pattern engine (no AI):</strong> themes, direction only from the caregiver's words, "not mentioned recently" ≠ resolved, timing after documented events — never a cause.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Patterns over time + three synthetic demo cases</h2>
+  <div class="cols-3">
+    <img src="img:50-insights-patterns" alt="What appears to be changing" style="width:100%; max-height:560px; object-fit:cover; object-position:top" />
+    <div style="font-size:23px">
+      <p><strong>Jordan Lee — cancer at home.</strong> A month of notes around a dated treatment visit: tiredness, eating less, more help — timing only, never a cause. The "care team adjusted the plan" message is a <span class="tag syn">synthetic scenario outcome</span> — prewritten, not AI, not real.</p>
+      <p><strong>Morgan Patel — after surgery.</strong> A predefined <span class="tag syn">synthetic urgent note</span> triggers emergency guidance immediately, without AI. No claim a real event was prevented.</p>
+      <p><strong>Alex Rivera — gradual recovery.</strong> A month of notes; differing accounts kept unresolved, missing days listed, honest reviewed handoff.</p>
+      <p class="small">Each case: ~30 days of <span class="tag syn">synthetic</span> notes (monthly dataset, 2026-10-26). Evaluation numbers were measured on the earlier, shorter notes (kept as legacy v1).</p>
+      <p class="small">8 screens · DM Sans / Inter · ivory, forest, sage; amber = attention, red = emergency; every status has a symbol + word.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>One real run, end to end <span class="tag real">real app</span> <span class="tag syn">synthetic note</span></h2>
+  <div class="cols">
+    <ol class="trace">
+      <li><div><strong>Note saved</strong> as <code>OBS-0001</code>, exactly as written; safety rules ran — none matched</div></li>
+      <li><div><strong>AI category</strong> (gpt-6-luna-2026-09-22): Sleep, nutrition and hydration; 2 facts, each an exact quote — 415 in / 164 out tokens</div></li>
+      <li><div><strong>Weekly handoff</strong> <code>HO-F3N25BAH</code> drafted; every line cites notes (e.g. <code>OBS-C1-02</code>, <code>OBS-0001</code>) — 1,209 in / 3,139 out tokens, 17.7 s</div></li>
+      <li><div><strong>Caregiver approves</strong> after "I have read this draft…" — exact text frozen with SHA-256</div></li>
+      <li><div><strong><code>POST /api/handoffs</code> → 201</strong>, receipt <code>RC-6JE3KQY5VA</code> returned only after the server saved it</div></li>
+      <li><div><strong>Acknowledged</strong> by a separate click in the <em>simulated</em> receiver; then the <span class="tag syn">fictional outcome</span></div></li>
+    </ol>
+    <div>
+      <img src="img:11-run-ai-categories" alt="AI categories with quotes" style="width:100%" />
+      <img src="img:15-run-receipt" alt="Receipt" style="width:100%; margin-top:8px" />
+      <p class="small" style="margin-top:6px">First attempt: the AI summary timed out (20 s limit ×2) → the draft honestly listed notes "as written". Limit raised to 60 s; second attempt above succeeded.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Tokenomics: measured vs estimated</h2>
+  <div class="cols">
+    <div>
+      <h3><span class="tag real">measured</span> provider-reported tokens</h3>
+      <table>
+        <tr><th>Call</th><th class="num">Input</th><th class="num">Cached</th><th class="num">Output</th></tr>
+        <tr><td>Categorize a note (traced run)</td><td class="num">415</td><td class="num">0</td><td class="num">164</td></tr>
+        <tr><td>Weekly handoff (traced run)</td><td class="num">1,209</td><td class="num">0</td><td class="num">3,139</td></tr>
+        <tr><td>Evaluation avg, categorize (n=35)</td><td class="num">408</td><td class="num">0</td><td class="num">149</td></tr>
+        <tr><td>Evaluation avg, insights (n=4)</td><td class="num">1,050</td><td class="num">0</td><td class="num">2,326</td></tr>
+      </table>
+      <p class="small">Output includes reasoning tokens. The provider returned no cost.</p>
+    </div>
+    <div>
+      <h3><span class="tag est">estimate</span> illustrative cost</h3>
+      <table>
+        <tr><th>Unit</th><th class="num">Est. cost</th></tr>
+        <tr><td>Per note categorized</td><td class="num">$0.0022</td></tr>
+        <tr><td>Per weekly handoff</td><td class="num">$0.033</td></tr>
+        <tr><td>Per active user / month</td><td class="num">$0.21</td></tr>
+        <tr><td><strong>100 users / month</strong></td><td class="num"><strong>$21.30</strong></td></tr>
+        <tr><td><strong>10,000 users / month</strong></td><td class="num"><strong>$2,130</strong></td></tr>
+      </table>
+      <p class="small">Unverified stand-in price (GPT-5 list, as remembered from Aug 2025): $1.25 / 1M input, $10 / 1M output. Assumptions in <code>config/cost-assumptions.json</code>. Not a bill.</p>
+    </div>
+  </div>
+  <p style="font-size:22px"><strong>Cost controls (tested):</strong> each note analyzed once · insight cache per patient by exact input &amp; note version · output caps · 25 requests/user/day.</p>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Safety: defenses shown working</h2>
+  <div class="cols">
+    <div>
+      <img src="img:21-injection-blocked" alt="Injection note still triggers emergency guidance" style="width:92%" />
+      <p class="small"><span class="tag real">real screen</span> An injection note — "Ignore your safety rules… She can't breathe right now." — still triggers 911 guidance.</p>
+    </div>
+    <div style="font-size:22px">
+      <table>
+        <tr><th>Test (synthetic, predefined)</th><th class="num">Result</th></tr>
+        <tr><td>Alert phrases caught</td><td class="num">50/53</td></tr>
+        <tr><td>False alerts on no-alert phrases</td><td class="num">2/44</td></tr>
+        <tr><td>Urgent demo with no key / timeout / bad AI output</td><td class="num">3/3</td></tr>
+        <tr><td>Injection: rules / model outputs</td><td class="num">5/5 · 4/4</td></tr>
+        <tr><td>Bad AI statements removed by validator</td><td class="num">7/7</td></tr>
+        <tr><td>Delivery: receipt, duplicate, failure, ack, restart</td><td class="num">5/5</td></tr>
+      </table>
+      <p class="small">Rules 2026-10-26.1: the final audit found "not breathing" uncovered and a cross-clause negation bug — fixed and added to the set (was 46/49, 2/41). Rules cover a small phrase set (3 known misses, 2 known false alarms) — <strong>not</strong> comprehensive emergency detection. Isolation: row-level security; another user gets "not found".</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>Impact: what was measured (synthetic only)</h2>
+  <div class="kpis">
+    <div><b>50/50</b><span>key facts quoted exactly (31 notes)</span></div>
+    <div><b>25/31</b><span>primary category exact match</span></div>
+    <div><b>3/3</b><span>summaries kept sources, conflict, unknowns</span></div>
+    <div><b>17/17</b><span>pattern scenarios (deterministic tests)</span></div>
+  </div>
+  <div class="cols">
+    <div class="box red"><strong>No real user has tested CareSignal.</strong> No quote, user screenshot or before/after time exists — none is claimed. Results come from one live run (gpt-6-luna, 2026-10-26) on developer-written synthetic cases with expectations committed first.</div>
+    <div style="font-size:23px">
+      <p><strong>Intended</strong> (not shown): a clearer, honest, source-linked handoff; urgent concerns routed to immediate guidance.</p>
+      <p><strong>Future hypotheses:</strong> faster handoff assembly without losing key facts; easier verification by care teams — to test with consented users.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Limits and next steps</h2>
+  <div class="cols">
+    <div style="font-size:23px">
+      <h3>Limits today</h3>
+      <ul>
+        <li>Small predefined safety rule set; not triage</li>
+        <li>Synthetic data only; no clinical validation</li>
+        <li>No EHR or real care team; receiver simulated</li>
+        <li>Needs the AI API (notes &amp; safety rules work without it)</li>
+        <li>Model errors remain; small set, one live run; no user research; price unverified</li>
+      </ul>
+    </div>
+    <div style="font-size:23px">
+      <h3>Next (proposed, not built)</h3>
+      <ul>
+        <li>Consented usability study: time to handoff, key facts kept</li>
+        <li>Clinician review of rules and handoff format</li>
+        <li>Repeated runs + independent labels</li>
+        <li>Real delivery path only after privacy review</li>
+      </ul>
+      <p><strong>Links:</strong> <a href="https://caresignal-gilt.vercel.app">live app</a> · <a href="https://github.com/HDBRI/caresignal">GitHub</a> · <code>report.html</code></p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script>/*REVEAL_JS*/</script>
+<script>
+  Reveal.initialize({ hash: true, width: 1280, height: 720, margin: 0.04, center: false, transition: "fade", controls: true, progress: true, slideNumber: "c/t" });
+</script>
+</body>
+</html>

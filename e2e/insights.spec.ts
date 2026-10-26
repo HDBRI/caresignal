@@ -6,7 +6,7 @@ const CATEGORIES = [
   "Cognition and communication",
   "Emotional wellbeing and behavior",
   "Sleep, nutrition and hydration",
-  "Treatment and care coordination",
+  "Other",
   "Other",
 ];
 
@@ -35,13 +35,15 @@ test("chart period selector updates metrics and charts, makes no AI or server-ac
     if (r.method() === "POST") posts.push(r.url());
   });
   const metric = page.getByTestId("metric-observations");
-  await expect(metric).toHaveText("6"); // a month of notes; one day in the last week has no note
+  await expect(metric).toHaveText("29"); // opens on the last 30 days of the month of notes
+  await page.getByRole("navigation", { name: "Chart period" }).getByRole("link", { name: "Last 7 days" }).click();
+  await expect(metric).toHaveText("6"); // one day in the last week has no note
   await expectAllSevenCategories(page);
-  await page.getByRole("link", { name: "All history" }).click();
+  await page.getByRole("navigation", { name: "Chart period" }).getByRole("link", { name: "All history" }).click();
   await expect(metric).toHaveText("30");
   await expectAllSevenCategories(page);
   await expect(page.getByTestId("comparison-note")).toContainText("no earlier period to compare");
-  await page.getByRole("link", { name: "Last 30 days" }).click();
+  await page.getByRole("navigation", { name: "Chart period" }).getByRole("link", { name: "Last 30 days" }).click();
   await expect(metric).toHaveText("29");
   await expect(page.getByTestId("comparison-note")).toContainText("reliable comparison can't be made");
   expect(posts, "changing the chart period must not call the AI or any server action").toEqual([]);
@@ -51,6 +53,7 @@ test("chart period selector updates metrics and charts, makes no AI or server-ac
 
 test("a chart bar opens the exact supporting notes; keyboard Escape closes and returns focus; link opens the record", async ({ page }) => {
   await openInsights(page, "Jordan Lee");
+  await page.getByRole("navigation", { name: "Chart period" }).getByRole("link", { name: "Last 7 days" }).click(); // daily bars
   const bar = page.getByRole("button", { name: /^\w+ \d+: 1 note about [^—]+ — open them$/ }).first();
   await bar.focus();
   await page.keyboard.press("Enter");
@@ -82,7 +85,7 @@ test("changes worth reviewing are split into four labeled groups; conflicts are 
 test("urgent safety guidance stays at the top and in the safety group", async ({ page }) => {
   await openInsights(page, "Morgan Patel");
   await expect(page.getByRole("alert").filter({ hasText: "Possible emergency described" })).toBeVisible();
-  await page.getByRole("link", { name: "All history" }).click(); // the urgent note is two weeks back in the month
+  await page.getByRole("navigation", { name: "Chart period" }).getByRole("link", { name: "All history" }).click(); // the urgent note is two weeks back in the month
   await expect(page.getByRole("alert").filter({ hasText: "Possible emergency described" })).toBeVisible();
   const safety = page.locator(".group-safety");
   await expect(safety.getByRole("heading", { level: 4, name: /Possible emergency described/ })).toBeVisible();
@@ -93,7 +96,7 @@ test("adding a note and correcting its category updates the charts", async ({ pa
   const insightsUrl = page.url();
   const metric = page.getByTestId("metric-observations");
   const before = Number(await metric.innerText());
-  await expect(page.getByTestId("empty-categories").getByRole("link", { name: "Treatment and care coordination", exact: true })).toBeVisible();
+  await expect(page.getByTestId("empty-categories").getByRole("link", { name: "Other", exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "+ Add observation" }).first().click();
   await page.getByLabel("What did you notice?").fill("The power went out for an hour this evening.");
@@ -106,12 +109,12 @@ test("adding a note and correcting its category updates the charts", async ({ pa
 
   await page.goto(insightsUrl.replace(/\/insights.*$/, "/observations/OBS-0001"));
   await page.getByText("Set the categories yourself").click();
-  await page.getByRole("radio", { name: "Treatment and care coordination" }).check();
+  await page.getByRole("radio", { name: "Other" }).check();
   await page.getByRole("button", { name: "Save my categories" }).click();
   await expect(page.getByText(/Categories updated/)).toBeVisible();
 
   await page.goto(insightsUrl);
-  await expect(page.getByRole("heading", { level: 3, name: "Treatment and care coordination", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 3, name: "Other", exact: true })).toBeVisible();
   await expect(metric).toHaveText(String(before + 1));
 });
 
@@ -122,7 +125,7 @@ test("a finding can be added to the open weekly draft — never sent, approval c
   await page.getByRole("link", { name: /Review this draft|Review and submit/ }).first().click();
   await page.getByRole("button", { name: "Regenerate from latest notes" }).click(); // the draft now covers all of this week's notes
   await expect(page.getByText("Draft regenerated from your latest notes.")).toBeVisible();
-  await page.goto(insightsUrl);
+  await page.goto(insightsUrl.replace(/\?.*$/, "") + "?range=7d"); // this week's findings
   await page.getByRole("button", { name: "Add to this week's handoff" }).first().click();
   await expect(page.getByText(/Added to this week's draft \(HO-[A-Z0-9]{8}\)\. Nothing was sent/)).toBeVisible();
   await page.getByRole("link", { name: "Open the draft" }).click();
@@ -146,7 +149,7 @@ test("pattern detection: changes over time with a documented treatment event, wi
   await openInsights(page, "Jordan Lee");
   const pat = page.locator("section.patterns");
   await expect(pat.getByRole("heading", { name: "What appears to be changing" })).toBeVisible();
-  await page.getByRole("link", { name: "All history" }).click();
+  await page.getByRole("navigation", { name: "Chart period" }).getByRole("link", { name: "All history" }).click();
   // The dated treatment visit comes from the synthetic scenario timeline, labelled as such, never as a cause.
   await expect(pat.getByRole("heading", { name: "Treatment and care timeline" })).toBeVisible();
   await expect(pat).toContainText("Treatment visit");

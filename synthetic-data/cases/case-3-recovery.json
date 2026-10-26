@@ -75,10 +75,14 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "physical_symptoms_comfort",
+        "secondaryCategories": [
+          "sleep_nutrition_hydration",
+          "treatment_care_coordination"
+        ],
         "safetyTier": "none",
         "tags": [
+          "multi_category",
           "ambiguous",
           "conflicting_report"
         ]
@@ -98,11 +102,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "sleep_nutrition_hydration"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -120,11 +126,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "physical_symptoms_comfort"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -142,11 +150,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "physical_symptoms_comfort"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -164,11 +174,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "physical_symptoms_comfort",
+        "secondaryCategories": [
+          "sleep_nutrition_hydration"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -186,11 +198,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "treatment_care_coordination"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -230,11 +244,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "physical_symptoms_comfort"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -252,11 +268,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "sleep_nutrition_hydration"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -296,10 +314,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "physical_symptoms_comfort",
+        "secondaryCategories": [
+          "cognition_communication"
+        ],
         "safetyTier": "none",
         "tags": [
+          "multi_category",
           "missing_context",
           "ambiguous"
         ]
@@ -341,11 +362,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "physical_symptoms_comfort",
+        "secondaryCategories": [
+          "sleep_nutrition_hydration"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -363,10 +386,14 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "cognition_communication",
+        "secondaryCategories": [
+          "sleep_nutrition_hydration",
+          "treatment_care_coordination"
+        ],
         "safetyTier": "none",
         "tags": [
+          "multi_category",
           "ambiguous",
           "conflicting_report"
         ]
@@ -408,11 +435,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "emotional_wellbeing_behavior"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -430,11 +459,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "physical_symptoms_comfort"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -496,10 +527,15 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "physical_symptoms_comfort",
+          "cognition_communication",
+          "sleep_nutrition_hydration"
+        ],
         "safetyTier": "none",
         "tags": [
+          "multi_category",
           "missing_context",
           "ambiguous"
         ]
@@ -563,10 +599,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "emotional_wellbeing_behavior"
+        ],
         "safetyTier": "none",
         "tags": [
+          "multi_category",
           "ambiguous"
         ]
       }
@@ -585,11 +624,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "physical_symptoms_comfort"
+        ],
         "safetyTier": "none",
         "tags": [
-          "ordinary"
+          "multi_category"
         ]
       }
     },
@@ -607,10 +648,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "treatment_care_coordination"
+        ],
         "safetyTier": "none",
         "tags": [
+          "multi_category",
           "conflicting_report"
         ]
       }
@@ -629,10 +673,14 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "physical_symptoms_comfort",
+        "secondaryCategories": [
+          "sleep_nutrition_hydration",
+          "treatment_care_coordination"
+        ],
         "safetyTier": "none",
         "tags": [
+          "multi_category",
           "ambiguous",
           "conflicting_report"
         ]
@@ -652,10 +700,13 @@
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "other",
-        "secondaryCategories": [],
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [
+          "sleep_nutrition_hydration"
+        ],
         "safetyTier": "none",
         "tags": [
+          "multi_category",
           "ambiguous"
         ]
       }

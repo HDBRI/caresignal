@@ -1025,3 +1025,9 @@
 
 **Follow-up:**
 > Yes: apply migration 0013 to Supabase, push to GitHub, and redeploy the live site.
+
+**Follow-up:**
+> *[screenshot of Insights: Recorded activity by category, last 7 days, only two category charts]* this data doesnt seem to be for 30 days, where are the otehr graphs & the data
+
+**Follow-up:**
+> how much longer
