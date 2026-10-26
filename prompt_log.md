@@ -891,3 +891,6 @@
 
 **Follow-up:**
 > can u pls do it fast & give me status updates every couple of mins, I dont see anything
+
+**Follow-up:**
+> Yes, push to GitHub and redeploy the live site.
