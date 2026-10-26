@@ -22,7 +22,7 @@ import { listCheckins } from "../repo/checkins";
 import { listObservations } from "../repo/observations";
 import { recordUsage } from "../repo/usage";
 import { BASELINE_DOMAINS, CARE_PHASES, CARE_SETTINGS, labelFor } from "../onboarding";
-import { addDays, localDate } from "../time";
+import { addDays, localDate, wallTimeToUtc } from "../time";
 import type { ChatMessage } from "./client";
 import { initialAiState, type CategorizeDeps } from "./categorize";
 import { checkStatement, isExactQuote, type GuardProblem } from "./guards";
@@ -312,7 +312,7 @@ export async function storeInsightRun(
                                  error_reason, summary, unknowns, questions, input_source_ids, rejected_items, prompt_version)
        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) returning id`,
       [
-        caseId, p.userId, r.status, `${input.periodStart}T00:00:00Z`, `${input.periodEnd}T23:59:59Z`, r.origin, r.modelReported ?? null,
+        caseId, p.userId, r.status, wallTimeToUtc(input.periodStart, "12:00").toISOString(), wallTimeToUtc(input.periodEnd, "12:00").toISOString(), r.origin, r.modelReported ?? null,
         r.generatedAt ?? (r.status === "complete" ? new Date().toISOString() : null), r.usageLogId ?? null, r.errorReason ?? null,
         r.value?.summary ?? null, JSON.stringify(r.value?.unknowns ?? []), JSON.stringify(r.value?.questions ?? []),
         JSON.stringify(input.notes.map((n) => n.id)), r.rejected ?? 0, r.promptVersion ?? INSIGHTS_PROMPT_VERSION,

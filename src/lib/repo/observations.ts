@@ -252,8 +252,10 @@ export async function listAnalyses(db: Database, p: Principal, caseId: string): 
   await getCase(db, p, caseId);
   const rows = await db.asPrincipal(p, (sql) =>
     sql.query(
+      // A caregiver correction always wins over any AI label (even an AI retry made after the correction).
       `select distinct on (observation_id) * from observation_analyses
-        where case_id = $1 and owner_id = $2 order by observation_id, created_at desc`,
+        where case_id = $1 and owner_id = $2
+        order by observation_id, (source = 'caregiver') desc, created_at desc`,
       [caseId, p.userId],
     ),
   );

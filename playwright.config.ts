@@ -8,7 +8,7 @@ export default defineConfig({
   testDir: "e2e",
   globalSetup: "./e2e/global-setup.ts",
   timeout: 90_000,
-  expect: { timeout: 20_000 },
+  expect: { timeout: 30_000 }, // first visit to a page compiles it on the dev server
   fullyParallel: false,
   workers: 1,
   reporter: [["list"]],

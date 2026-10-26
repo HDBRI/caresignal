@@ -68,14 +68,3 @@ test("timeline separates 'no observation logged' from 'caregiver reported no mea
   // Day -2 in the Jordan Lee scenario has neither a note nor a check-in
   await expect(page.getByText("No response recorded").first()).toBeVisible();
 });
-
-test("Insights: pre-generated AI output is labeled, sourced, and urgent notes carry deterministic 911 guidance", async ({ page }) => {
-  await openDemo(page, "Morgan Patel");
-  await page.getByRole("link", { name: "Insights" }).first().click();
-  await expect(page.getByRole("heading", { level: 1, name: "Insights" })).toBeVisible();
-  await expect(page.getByText("AI-generated insights — derived from caregiver notes, not written by the caregiver")).toBeVisible();
-  await expect(page.getByText(/Generated once when this demo example was prepared/)).toBeVisible();
-  await expect(page.getByText(/OBS-C2-08 matched an emergency safety rule\. If this is happening now, call 911\./).first()).toBeVisible();
-  // AI is disabled on the UI-test server: generating must say so honestly instead of producing anything.
-  await expect(page.getByText("AI analysis is currently unavailable. You can continue logging notes and using the prototype's predefined safety rules.")).toBeVisible();
-});

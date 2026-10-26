@@ -35,6 +35,7 @@ This README tracks what is actually built. Current stage: **optional daily check
 | Real AI output pre-generated once for the 3 demo cases (`npm run seed:ai`), labeled "prepared with the demo" | ✅ 25/25 notes + 3/3 insight runs passed all checks |
 | Optional daily check-in: 4 explicit answers (incl. "Skip today"), response timestamp, optional note for change/concern that can be saved as an observation; "No response recorded" never read as fine | ✅ Built + tested |
 | In-app reminder preference: off by default, one daily local time, shown only inside the app (no email/SMS/push), never blocks logging | ✅ Built + tested |
+| Care insights dashboard: chart period (7 / 30 days / all history) separate from the AI window; metrics and 7 category charts from stored records; "Changes worth reviewing" labeled by source (records / safety rule / AI); baseline comparison; evidence drawer; raw IDs hidden (kept internally) | ✅ Built + tested |
 | Handoff drafting/review/submit, receiver acknowledge | ⏳ Next prompts |
 | Hosted deployment (Vercel + Supabase) | ✅ Live at https://caresignal-gilt.vercel.app — tested in a clean incognito session on 2026-10-25: demo entry, registration with Terms/Privacy acceptance, case creation, sign-out/sign-in, password-reset email |
 
@@ -185,6 +186,14 @@ scripts/               env check, database setup/reset/status
 docs/                  Implementation plan, data model + data dictionary
 prompt_log.md          Prompt log for the course
 ```
+
+## How Insights counts (dashboard)
+
+- A note's **day** is its event time if given, otherwise its entry time, in the app time zone (America/New_York). Notes with unreadable dates are excluded and counted as "undated".
+- A note's **categories** are the caregiver's correction if one exists, otherwise the AI labels — only once AI analysis completed. Uncategorized notes are shown as a separate count.
+- **Category counts** count each note at most once per category; one note can belong to several categories, so category counts can add up to more than the **total**, which counts unique notes.
+- Bars are **logged observations per day** (up to 14 days) or **per week** (longer periods). Counts measure how much was written down, never severity.
+- "From your records" findings are rules over these counts (repeated topic on 2+ days; more/fewer notes than the previous equal period, only when earlier records exist). They never claim a condition changed.
 
 ## Data model
 

@@ -376,6 +376,437 @@
 **Follow-up prompts:**
 > Yes: apply the new migration to Supabase, push to GitHub, and redeploy the live site.
 
+> Follow up for the prompt before the one u just worked on -
+>
+> CareSignal — Comprehensive Insights Dashboard Redesign
+> Objective
+> Redesign the existing CareSignal Insights page into a polished, caregiver-friendly, longitudinal insights dashboard.
+> The current page is clean but too text-heavy. It primarily presents a long AI-generated report, multiple quoted observations, and raw identifiers such as `OBS-C1-02`. I want the page to help a caregiver quickly understand:
+>
+> 1. What has been recorded over the selected period?
+> 2. What appears to have changed compared with earlier observations or the reported baseline?
+> 3. Which categories have the most recorded activity?
+> 4. Which patterns may deserve a closer look?
+> 5. What evidence supports each finding?
+> 6. What information is missing, conflicting, or uncertain?
+>
+> The experience should feel like a thoughtfully designed care-coordination product, not a raw AI output viewer, a hospital EHR, or a generic analytics dashboard.
+> Core principle: keep technical complexity in the backend and present meaningful, understandable information in the UI.
+> Before coding, inspect the existing application, Insights page, database schema, observation model, AI generation pipeline, safety rules, authentication/demo architecture, and tests. Explain the current implementation, the proposed changes, and any technical constraints before implementing. Reuse the existing architecture wherever possible.
+> Do not rewrite unrelated screens, break existing functionality, create a disconnected mock dashboard, or deploy changes without my approval.
+> 1. Preserve the working application
+> Inspect the current implementation and retain existing functionality, including:
+>
+> * Caregiver observation entry and persistence.
+> * Original caregiver note preservation.
+> * AI-generated insights using the existing course-required model and Portkey configuration.
+> * Existing AI generation-window controls.
+> * Existing server-side AI request limits and daily cap.
+> * Evidence validation and filtering of unsupported AI claims.
+> * Baseline comparisons where relevant data exists.
+> * Deterministic safety rules that operate independently of AI.
+> * Case and user isolation.
+> * Synthetic demo mode and its warnings.
+> * Navigation, styling conventions, and working links to observations.
+> * Existing API contracts and database relationships unless a justified migration is necessary.
+>
+> Do not silently change the meaning of existing features. Do not remove a functioning safety mechanism to make the redesign easier.
+> If a schema change is required, create a safe migration compatible with existing records. Do not delete, overwrite, or regenerate real application data merely to populate charts.
+> 2. Create a distinct chart-period selector
+> Introduce a visible selector near the top of Insights:
+>
+> * Last 7 days
+> * Last 30 days
+> * All available history, where appropriate
+>
+> The selected period must control the chart data, displayed counts, category summaries, and period-specific comparisons consistently.
+> Important: the current AI generation controls offer windows such as Last 7 days, Last 14 days, and All notes. Do not conflate the AI generation window with the chart display period.
+> Keep both concepts separate:
+>
+> * Chart period: determines which records are displayed and analyzed descriptively.
+> * AI generation window: determines which observations are supplied to the existing AI insight-generation process.
+>
+> Do not silently regenerate AI insights whenever a chart selector changes unless the user explicitly requests this behavior and the existing architecture supports it.
+> Use consistent date boundaries and the case's relevant timezone. Handle timestamps correctly, including observations with an event date that differs from the date the note was entered.
+> If the selected period contains no observations, show an honest empty state rather than an apparently normal or symptom-free period.
+> 3. Reorganize the page hierarchy
+> Use this information architecture.
+> A. Page header
+> Show:
+>
+> * Page title: "Care insights"
+> * A short explanation: "Explore patterns in the observations recorded over time."
+> * A 7-day / 30-day / all-history selector.
+> * A discreet AI availability indicator when relevant.
+>
+> Keep the existing synthetic-data warning and safety disclaimer accessible. Do not repeat lengthy disclaimers in every section.
+> B. At-a-glance overview
+> Create a small, restrained row of summary metrics:
+>
+> * Total observations in the selected period.
+> * Number of categories represented.
+> * Date range covered by the available observations.
+> * Optionally, number of observations that need caregiver review, if that is a real and well-defined persisted state.
+>
+> These metrics must be calculated from actual persisted data, not hardcoded values.
+> Use clear labels. Do not create arbitrary percentages, health scores, severity scores, risk scores, confidence percentages, or misleading trend indicators.
+> If a metric cannot be calculated reliably, omit it or explain why it is unavailable.
+> Do not imply that a larger number of observations means a worse health state. Counts measure recorded activity, not clinical severity.
+> C. Category activity and trends
+> This should be one of the primary visual sections.
+> Create an accessible, responsive grid of charts or small multiples covering all seven existing CareSignal categories:
+>
+> 1. Mobility and daily functioning.
+> 2. Physical symptoms and comfort.
+> 3. Cognition and communication.
+> 4. Emotional wellbeing and behavior.
+> 5. Sleep, nutrition and hydration.
+> 6. Treatment and care coordination.
+> 7. Other.
+>
+> Use the actual category names and identifiers already defined in the application. Do not introduce duplicate category taxonomies.
+> For every category, provide an understandable visualization of observation activity over time, using a sensible daily or weekly aggregation depending on the selected date range and data volume.
+> The default chart can show observation counts per time bucket.
+> Requirements:
+>
+> * Counts must come from persisted observations.
+> * All chart values must respond to the selected chart period.
+> * The same observation must not be counted multiple times in the same category unless the data model explicitly supports multiple distinct records.
+> * If one observation belongs to multiple categories, define and document how category counts work. Prevent accidental double counting in the overall total.
+> * Display readable dates and category names.
+> * Use clear axes, labels, legends, and tooltips.
+> * Provide accessible text alternatives or a data-table alternative.
+> * Make chart points or category sections clickable so users can open the relevant observations.
+> * Avoid tiny unreadable charts and excessive visual decoration.
+> * Ensure the layout works on mobile and desktop.
+>
+> Where the data supports a meaningful underlying measure, such as a structured reported quantity or consistently captured measure, a separate trend may be appropriate.
+> Do not transform arbitrary free-text notes into fabricated numeric severity values. Do not interpret the number of mentions as the severity of a symptom.
+> If the underlying data consists only of text, show observation activity and evidence-supported themes instead of pretending that a clinical measurement exists.
+> D. Changes worth reviewing
+> Place this section above the long-form AI narrative.
+> Its purpose is to help the caregiver identify meaningful differences without reading every note.
+> Each finding should include:
+>
+> * A concise, plain-language title.
+> * The category or categories involved.
+> * The period being considered.
+> * What was observed or what may have changed.
+> * The comparison basis, if one genuinely exists.
+> * The supporting observations.
+> * Important uncertainty or contradictory evidence.
+> * A way to open the original notes.
+>
+> Examples of appropriate presentation, using real evidence only:
+>
+> * "Fatigue was mentioned in several recent observations."
+> * "Fewer observations about walking were recorded this week than last week."
+> * "Recent notes describe smaller meals compared with the caregiver-reported baseline."
+> * "The notes contain conflicting descriptions of appetite."
+> * "There is not enough information to determine whether mobility has changed."
+>
+> These are illustrative phrasings, not prewritten findings to display regardless of data.
+> Clearly distinguish between:
+>
+> 1. Descriptive data findings, calculated from stored records.
+> 2. Deterministic safety alerts, generated by established application rules.
+> 3. AI-generated interpretations, derived from the actual model response.
+>
+> Never label a deterministic count as an AI finding, and never label an AI interpretation as a verified fact.
+> Change-detection rules
+> Use actual observation content, timestamps, category labels, and the caregiver-reported baseline when available.
+> Distinguish:
+>
+> * A repeated theme across multiple observations.
+> * A one-off observation.
+> * A change in recording frequency.
+> * A change in a structured reported measure.
+> * A potential change compared with a baseline.
+> * Conflicting or insufficient evidence.
+>
+> A change in note frequency is not necessarily a change in the person's condition.
+> Do not claim that a symptom has increased or decreased unless the source information supports that direction. If the notes simply mention a topic more frequently, describe the increase in recorded mentions rather than asserting that the condition worsened.
+> Do not invent a previous state, trend, causal relationship, severity level, or clinical conclusion.
+> Do not label something an anomaly merely because it differs numerically from a small or incomplete sample. Explain the basis for any flag in plain language.
+> If a finding is uncertain, say so. Do not display arbitrary model confidence percentages.
+> E. Baseline comparison
+> Retain and improve the existing caregiver-reported baseline comparison.
+> For every comparison:
+>
+> * Identify the relevant baseline in understandable language.
+> * State what recent notes support.
+> * Link to the underlying evidence.
+> * Identify the comparison period.
+> * Show missing or conflicting information.
+> * Make clear when no baseline is available.
+>
+> Never imply that the baseline is a medically validated normal range.
+> Do not infer a baseline from missing observations. Do not treat a lack of reports as improvement.
+> When the baseline and recent notes are incomparable, state that limitation rather than manufacturing a trend.
+> F. Questions to consider discussing with the care team
+> Where useful, present a short list of neutral questions grounded in the recorded observations.
+> Examples:
+>
+> * "Would it be helpful to discuss the repeated reports of fatigue?"
+> * "Could we clarify the conflicting descriptions of appetite?"
+> * "Is there any additional information we should record about mobility?"
+>
+> Generate questions only when there is a reasonable evidence basis. Keep them separate from safety alerts.
+> Do not prescribe treatment, recommend medication changes, diagnose a condition, or imply that a clinician has reviewed these questions.
+> G. Detailed AI analysis
+> Retain the current AI-generated summary, but move it below the visual overview and change-focused sections.
+> The detailed analysis should remain available for users who want more context.
+> Preserve:
+>
+> * The distinction between AI-generated text and caregiver-authored notes.
+> * The generation timestamp and model metadata where useful.
+> * Evidence links.
+> * The original quotes and their context.
+> * Warnings when claims are removed or rejected by validation.
+> * Missing-information and uncertainty statements.
+> * Existing AI usage-limit behavior.
+>
+> Consider a collapsible "Detailed analysis" section so the main page remains easy to scan.
+> Do not delete the current evidence-validation warning simply because it occupies space. Make it concise and accessible.
+> 4. Remove unnecessary technical identifiers from the caregiver-facing UI
+> The current page displays identifiers such as `OBS-C1-02`, `OBS-C1-03`, and `OBS-C1-08` in narrative text, source lists, and quoted-note sections.
+> These identifiers are useful internally, but they should not dominate the user experience.
+> Backend and data model
+> Preserve stable observation IDs and all identifiers required for:
+>
+> * Database integrity.
+> * Relationships between observations and insights.
+> * API contracts.
+> * Evidence traceability.
+> * Audit history.
+> * Automated tests.
+> * Debugging and troubleshooting.
+> * Patient and account isolation.
+>
+> Do not rename or delete identifiers merely to simplify the interface.
+> AI responses should continue to reference the correct source observation IDs internally. Validate those references server-side.
+> Do not trust an AI-provided identifier unless it maps to an actual observation belonging to the current authorized case.
+> Caregiver-facing UI
+> By default, do not display raw technical IDs in:
+>
+> * Chart labels.
+> * Main insight titles or paragraphs.
+> * Ordinary source lists.
+> * Summary metric cards.
+> * Primary navigation.
+> * Ordinary quoted-note displays.
+>
+> Instead, use readable labels such as:
+>
+> * "Oct 24 · Physical symptoms and comfort"
+> * "Fatigue mentioned in this observation"
+> * "4 supporting observations"
+> * "Review original notes"
+>
+> When a finding has supporting evidence, provide a button or link such as "Review supporting notes."
+> Clicking it should open a side panel, modal, drawer, or focused detail section containing:
+>
+> * The original caregiver-written note.
+> * A readable event date and, when useful, entry date.
+> * Its relevant category.
+> * Any applicable safety notice.
+> * A way to open the full observation record.
+>
+> Preserve the original note verbatim. Do not silently rewrite the source note to make it fit the UI.
+> Show raw IDs only in an optional technical-details view, appropriate debugging interface, or other context where they are genuinely useful.
+> Do not remove evidence links simply because raw IDs are hidden. Evidence must remain traceable and accessible.
+> 5. Improve chart-to-evidence interactions
+> Charts must be useful for exploration, not merely decorative.
+> When a user selects a chart point or category:
+>
+> * Show the relevant time bucket.
+> * Display the actual count or structured value.
+> * List the observations contributing to the value.
+> * Use readable dates and short note excerpts.
+> * Allow navigation to the original observation.
+> * Preserve all authorization and case-isolation checks.
+>
+> For a chart showing observation counts, make it clear that the count refers to logged observations.
+> If a single observation contributes to multiple categories, explain that category counts may overlap when relevant.
+> Avoid using color alone to convey alert status or category meaning. Include labels or other accessible indicators.
+> Keep chart interactions keyboard accessible and ensure focus is handled properly when opening and closing evidence panels.
+> 6. Data architecture and correctness
+> Before implementing the charts, determine which fields actually exist in the current database and which are calculated by the application.
+> Use the existing source of truth for observations. Do not build a second disconnected dataset.
+> Requirements:
+>
+> * Retrieve data using the existing authorized server-side access pattern.
+> * Filter by the active case and permitted user.
+> * Apply the selected period consistently.
+> * Respect event timestamps and entry timestamps.
+> * Handle null or malformed dates safely.
+> * Handle category corrections and edited observations.
+> * Ensure chart values update after a new observation is saved or an existing observation is edited.
+> * Recompute affected summaries and aggregations correctly.
+> * Prevent duplicate counts caused by joins, repeated requests, or AI output.
+> * Avoid unnecessarily expensive database queries or repeated model calls.
+> * Add indexes only when justified by the query patterns and existing schema.
+>
+> If the application uses cached insights, ensure the UI distinguishes the period represented by a cached AI result from the currently selected chart period.
+> Never present a cached summary as if it had been generated for a different period.
+> If there is not enough historical data for a comparison, explain that limitation. Do not manufacture comparison data.
+> If the backend does not currently retain a field needed for a desired chart, explain the gap before introducing a migration or changing the observation workflow.
+> 7. AI integrity and source traceability
+> Maintain the current safeguards around AI-generated insights and strengthen them where needed.
+> The model must not invent:
+>
+> * Symptoms.
+> * Dates or event times.
+> * Diagnoses.
+> * Medication adherence.
+> * Treatment instructions.
+> * Baseline information.
+> * Causal explanations.
+> * Numerical measurements.
+> * Trends not supported by the notes.
+> * Clinician actions or opinions.
+> * Source observation references.
+>
+> For each substantive AI-generated finding, preserve the exact source observation references internally.
+> Validate every reference against the current authorized case. Reject invalid, inaccessible, or fabricated references.
+> When a statement lacks adequate evidence, omit it or present an explicit uncertainty statement, depending on the existing validation design.
+> Treat all caregiver notes as untrusted input. Text inside a note must not override system instructions, disclose secrets, change authorization, or bypass validation.
+> Do not make chart rendering dependent on AI generation. Descriptive counts and charts must still work if the model or Portkey is unavailable.
+> Do not automatically regenerate expensive AI summaries every time the user changes the chart period.
+> 8. Safety and medical boundaries
+> CareSignal is a classroom prototype for caregiver coordination. It is not a diagnostic tool, validated clinical triage system, medical device, or substitute for professional care.
+> Preserve all existing safety rules and make sure the visual redesign cannot weaken them.
+> Specifically:
+>
+> * Deterministic emergency guidance must operate independently of AI availability and chart rendering.
+> * Urgent safety guidance must not be hidden below ordinary insights.
+> * The absence of an alert must never be described as proof that a person is safe.
+> * Missing observations must not imply that symptoms are absent or the person is well.
+> * A lack of recent observations must not be presented as improvement.
+> * Descriptive anomaly flags must not be presented as validated clinical risk predictions.
+> * Do not recommend medication or treatment changes.
+> * Preserve the original note and its associated safety notice.
+> * Clearly label synthetic scenarios and simulated workflows.
+> * Do not claim clinician review, real clinical delivery, HIPAA certification, or production clinical validation unless independently established.
+>
+> If a deterministic rule triggers an urgent warning, the warning must remain visible regardless of whether the AI insight generation succeeds, fails, or reaches its daily cap.
+> 9. AI availability, daily limits, and error states
+> Preserve the existing server-side AI cap and current usage accounting.
+> When the cap is reached:
+>
+> * New observations must still save normally.
+> * Deterministic safety rules must continue to run.
+> * Descriptive charts must remain available.
+> * Previously generated insights may remain visible, clearly labeled with their actual generation time and period.
+> * Do not claim that new observations have been analyzed if they have not.
+> * Display a concise explanation that new AI analysis is temporarily unavailable because the limit was reached.
+>
+> When AI or Portkey is unavailable:
+>
+> * Preserve the original caregiver note.
+> * Show an understandable error or retry option.
+> * Do not display fabricated AI insights.
+> * Do not fake token counts, model metadata, or successful analysis statuses.
+> * Keep all non-AI functionality working wherever possible.
+>
+> Provide appropriate loading, empty, partial-data, error, and retry states.
+> 10. Visual design and accessibility
+> Retain CareSignal's established visual identity:
+>
+> * Ivory background `#F7F6F2`.
+> * White content surfaces.
+> * Deep forest green `#253D38`.
+> * Soft sage `#DDE8DF`.
+> * Readable dark text.
+> * Restrained secondary text.
+> * Amber for review-needed states.
+> * Red reserved for genuine urgent safety states.
+> * Neutral styling for missing or unavailable information.
+>
+> Use consistent typography, spacing, borders, and card treatment. Avoid turning every data point into a separate large card.
+> Design priorities:
+>
+> * Clear visual hierarchy.
+> * Concise titles and explanations.
+> * Readable chart labels and legends.
+> * Consistent date formatting.
+> * Good contrast.
+> * Keyboard navigation.
+> * Screen-reader-friendly controls and chart alternatives.
+> * Responsive layout for desktop, tablet, and mobile.
+> * Reduced-motion support.
+> * Clear hover, focus, selected, and disabled states.
+> * No reliance on color alone.
+>
+> The dashboard should be visually calm without making meaningful safety information easy to miss.
+> 11. Testing requirements
+> Add or update automated tests for the following.
+> Chart calculations
+>
+> * Correct 7-day and 30-day filtering.
+> * Correct all-history filtering.
+> * Correct time-bucket aggregation.
+> * Correct category counts.
+> * Correct overall unique observation counts.
+> * Correct behavior when one observation has multiple categories.
+> * Correct behavior for category corrections and edited notes.
+> * Correct handling of missing or malformed dates.
+> * Correct behavior around date and timezone boundaries.
+> * Correct empty states.
+> * Correct behavior when only one observation exists.
+> * Correct behavior when data is too sparse to support a trend.
+> * Correct updates after adding an observation.
+>
+> Insight integrity
+>
+> * Every substantive AI claim links to valid supporting observations.
+> * No source ID can refer to an observation from another case.
+> * Conflicting evidence remains visible.
+> * Missing information is not interpreted as normal health.
+> * Unsupported numerical values and invented trends are not rendered.
+> * AI validation warnings remain visible.
+> * Raw technical IDs are hidden in ordinary UI but preserved internally.
+>
+> Safety and resilience
+>
+> * Deterministic urgent rules continue to work when AI is unavailable.
+> * Reaching the AI cap does not prevent note saving or chart rendering.
+> * AI failures do not erase notes.
+> * Empty data does not produce reassuring but unsupported claims.
+> * Prompt-injection attempts in notes do not override application instructions.
+> * Case isolation is maintained for chart queries, evidence panels, and insights.
+>
+> UI behavior
+>
+> * Changing the chart-period selector updates all relevant chart data and metrics.
+> * Chart clicks open the correct supporting observations.
+> * Evidence panels can be used with a keyboard.
+> * Links to original observations work.
+> * Loading, error, empty, and unavailable states are understandable.
+> * Responsive layouts remain usable on small screens.
+>
+> Run the relevant test suite, linting, type checks, and production build. Fix regressions before reporting completion.
+> 12. Implementation approach
+> Work in this order:
+>
+> 1. Inspect the existing Insights component, relevant routes, observation schema, category definitions, aggregation logic, AI insight pipeline, and tests.
+> 2. Report the current architecture, existing working features, and any data gaps.
+> 3. Define the chart data contract and the distinction between descriptive findings, deterministic safety alerts, and AI-generated interpretations.
+> 4. Implement reliable server-side filtering and aggregation using persisted data.
+> 5. Implement the page hierarchy and category visualizations.
+> 6. Implement the changes-worth-reviewing section and evidence drawer.
+> 7. Hide raw technical identifiers in ordinary UI while retaining internal traceability.
+> 8. Preserve detailed AI analysis and existing validation behavior.
+> 9. Verify all safety, access-control, AI-cap, and failure-state behavior.
+> 10. Run tests, linting, type checks, and production build.
+> 11. Summarize what changed, files modified, tests run, test results, known limitations, and any remaining issues.
+>
+> Do not deploy, publish, or push changes to a public repository without my explicit approval.
+> Definition of done
+> The redesign is complete when a caregiver can open Insights and quickly understand the recorded activity across all seven categories, explore the selected time period, identify evidence-supported changes worth reviewing, and access the original notes without being overwhelmed by technical identifiers or a wall of AI-generated text.
+> All numbers and charts must be grounded in actual stored data. All AI claims must remain traceable to their sources. The application must preserve safety behavior, user and case isolation, existing note persistence, and AI usage limits.
+> The final experience should feel like a polished, trustworthy caregiver insights dashboard, with implementation complexity kept behind the scenes.
+
 ## Task 11: Optional daily check-in and reminder preferences
 
 **Prompt:**
