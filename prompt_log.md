@@ -372,3 +372,6 @@
 > For the recovery case, it should preserve conflicting meal observations and flag missing time/context. It must not claim a definite worsening trend unless the dated observations actually support it.
 >
 > Add tests for schema validation, valid/invalid source IDs, category allowlist, unsupported claims, uncertainty/conflict handling, API failure, and prompt-injection attempts. If the API key is available, run a small live smoke test with synthetic data only and label it separately from deterministic tests. Do not reveal the key.
+
+**Follow-up prompts:**
+> Yes: apply the new migration to Supabase, push to GitHub, and redeploy the live site.
