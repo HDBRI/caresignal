@@ -1010,3 +1010,9 @@
 
 **Follow-up:**
 > be as fast as u can please
+
+**Follow-up:**
+> okay how much longer do u think it will take, & are u also updating all the documents we need to submit to reflect all teh changes?
+
+**Follow-up:**
+> great

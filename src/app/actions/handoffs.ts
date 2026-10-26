@@ -124,10 +124,10 @@ export async function addFictionalResponseAction(fd: FormData): Promise<void> {
 }
 
 const findingInput = z.object({
-  statement: z.string().min(1).max(800),
+  statement: z.string().min(1).max(2000),
   support: z.enum(["supported", "possible_unconfirmed", "conflicting", "unknown"]),
   kind: z.enum(["pattern", "change", "possible_pattern", "conflict", "recording_activity"]),
-  uncertainty: z.string().max(400).nullable().optional(),
+  uncertainty: z.string().max(1200).nullable().optional(),
   sourceIds: z.array(z.string().regex(/^OBS-[A-Z0-9-]{2,12}$/)).min(1).max(40),
 });
 

@@ -1,0 +1,375 @@
+{
+  "seedKey": "PAT-RECOVERY-003",
+  "synthetic": true,
+  "title": "Gradual recovery change — incomplete and conflicting reports",
+  "demonstrates": "Longitudinal organization: a supported change in walking, a possible but unconfirmed change in sleep, two conflicting meal reports (one with no day or time), and an honest list of what is unknown.",
+  "demoAccount": {
+    "userId": "0d1e7a10-0000-4000-8000-000000000003",
+    "username": "demo-recovery",
+    "email": "demo.recovery@caresignal.example",
+    "displayName": "Demo · Alex Rivera case"
+  },
+  "patient": {
+    "patientRef": "PAT-RECOVERY-003",
+    "pseudonym": "Alex Rivera",
+    "ageRange": null,
+    "primaryCondition": "Recovery after a serious infection (fictional)",
+    "carePhase": "recovering",
+    "careSetting": "home",
+    "careContext": "Fictional. Alex is recovering at home after a long hospital stay for a serious infection. A physical therapy visit is planned.",
+    "milestones": "Physical therapy visit planned (date unclear).",
+    "synthetic": true
+  },
+  "caregiver": {
+    "name": "Casey",
+    "relationship": "Partner"
+  },
+  "baselines": [
+    {
+      "category": "mobility_function",
+      "description": "Before the hospital stay, walked around the house without help."
+    },
+    {
+      "category": "energy_sleep",
+      "description": "Usually slept 7–8 hours at night and did not nap."
+    }
+  ],
+  "observations": [
+    {
+      "fixtureId": "OBS-C3-01",
+      "at": {
+        "dayOffset": -7,
+        "time": "10:00"
+      },
+      "eventTime": null,
+      "author": "Casey (partner)",
+      "text": "Walked from the bedroom to the kitchen on his own, slowly, holding the counter at the end.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-02",
+      "at": {
+        "dayOffset": -6,
+        "time": "16:00"
+      },
+      "eventTime": null,
+      "author": "Casey (partner)",
+      "text": "Napped for about two hours after lunch.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "differs_from_baseline"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-03",
+      "at": {
+        "dayOffset": -5,
+        "time": "09:30"
+      },
+      "eventTime": null,
+      "author": "Casey (partner)",
+      "text": "Needed my arm to get from the bed to the bathroom this morning.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "differs_from_baseline"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-04",
+      "at": {
+        "dayOffset": -4,
+        "time": "20:30"
+      },
+      "eventTime": null,
+      "author": "Casey (partner)",
+      "text": "Slept most of the afternoon and went to bed early, around 8.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "differs_from_baseline"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-05",
+      "at": {
+        "dayOffset": -3,
+        "time": "08:45"
+      },
+      "eventTime": null,
+      "author": "Casey (partner)",
+      "text": "Needed help walking to the bathroom again and leaned on the hallway wall.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "differs_from_baseline"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-06",
+      "at": {
+        "dayOffset": -3,
+        "time": "19:30"
+      },
+      "eventTime": {
+        "dayOffset": -3,
+        "time": "18:30"
+      },
+      "author": "Casey (partner)",
+      "text": "Ate a full plate of pasta at dinner.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "conflicting_report"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-07",
+      "at": {
+        "dayOffset": -2,
+        "time": "11:00"
+      },
+      "eventTime": null,
+      "author": "Jamie (brother)",
+      "text": "Alex barely touched dinner — maybe a few bites.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "conflicting_report",
+          "missing_context"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-08",
+      "at": {
+        "dayOffset": -2,
+        "time": "16:20"
+      },
+      "eventTime": null,
+      "author": "Casey (partner)",
+      "text": "Seemed a bit down, said he's frustrated about needing help.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "emotional_wellbeing_behavior",
+        "secondaryCategories": [
+          "mobility_daily_functioning"
+        ],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary",
+          "multi_category"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-09",
+      "at": {
+        "dayOffset": -1,
+        "time": "12:00"
+      },
+      "eventTime": null,
+      "author": "Casey (partner)",
+      "text": "Asked whether the physical therapy visit is this week or next — I couldn't find the letter.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "treatment_care_coordination",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary",
+          "missing_context"
+        ]
+      }
+    }
+  ],
+  "missingDays": [],
+  "checkins": [
+    {
+      "dayOffset": -5,
+      "synthetic": true,
+      "status": "noticed_change",
+      "note": null,
+      "responses": {
+        "mobility_function": {
+          "state": "answered",
+          "value": "Needed more help"
+        },
+        "energy_sleep": {
+          "state": "answered",
+          "value": "More sleep than usual"
+        }
+      }
+    },
+    {
+      "dayOffset": -2,
+      "synthetic": true,
+      "status": "skipped",
+      "note": null,
+      "responses": {}
+    }
+  ],
+  "handoff": {
+    "synthetic": true,
+    "draftedBy": "seed_fixture",
+    "period": {
+      "fromDayOffset": -7,
+      "toDayOffset": -1
+    },
+    "statusTimeline": [
+      {
+        "status": "draft",
+        "at": {
+          "dayOffset": -1,
+          "time": "20:00"
+        },
+        "note": "Example draft prepared for this synthetic scenario"
+      },
+      {
+        "status": "reviewed",
+        "at": {
+          "dayOffset": -1,
+          "time": "20:20"
+        },
+        "note": "Caregiver reviewed and approved — ready to submit"
+      }
+    ],
+    "content": {
+      "summary": "Caregiver-reported observations for Alex Rivera (synthetic) over seven days. One change is supported by several notes; one is possible but not confirmed; the meal reports conflict.",
+      "items": [
+        {
+          "statement": "Supported: Alex needed more help walking as the week went on. Early in the week Alex walked to the kitchen alone, holding the counter; later Alex needed an arm, then help again and leaned on the wall. Before the hospital stay, Alex walked around the house without help.",
+          "support": "supported",
+          "sourceIds": [
+            "OBS-C3-01",
+            "OBS-C3-03",
+            "OBS-C3-05"
+          ]
+        },
+        {
+          "statement": "Possible, not confirmed: Alex may be sleeping more than usual. Two notes describe long daytime sleep; the reported baseline is 7–8 hours at night with no naps. Night-time sleep was not reported, so this is not confirmed.",
+          "support": "possible_unconfirmed",
+          "sourceIds": [
+            "OBS-C3-02",
+            "OBS-C3-04"
+          ]
+        },
+        {
+          "statement": "Conflicting: one report says Alex ate a full plate of pasta at dinner; another, from a different family member, says Alex barely touched dinner. The second report does not say which day's dinner it means.",
+          "support": "conflicting",
+          "sourceIds": [
+            "OBS-C3-06",
+            "OBS-C3-07"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "text": "Is the increase in help needed for walking something the care team or physical therapist wants to assess?",
+          "sourceIds": [
+            "OBS-C3-01",
+            "OBS-C3-03",
+            "OBS-C3-05"
+          ]
+        },
+        {
+          "text": "Is the physical therapy visit this week or next?",
+          "sourceIds": [
+            "OBS-C3-09"
+          ]
+        },
+        {
+          "text": "Is there a particular way you would like meals tracked, since family reports differ?",
+          "sourceIds": [
+            "OBS-C3-06",
+            "OBS-C3-07"
+          ]
+        }
+      ],
+      "missingInfo": [
+        "Which day's dinner the second meal report refers to.",
+        "Night-time sleep hours were not reported.",
+        "No eating baseline was reported."
+      ]
+    },
+    "receiverResponse": null
+  },
+  "expectedOutcome": {
+    "supported": [
+      {
+        "claim": "Needing more help walking over the week",
+        "sourceIds": [
+          "OBS-C3-01",
+          "OBS-C3-03",
+          "OBS-C3-05"
+        ]
+      }
+    ],
+    "possibleUnconfirmed": [
+      {
+        "claim": "Sleeping more than usual",
+        "sourceIds": [
+          "OBS-C3-02",
+          "OBS-C3-04"
+        ]
+      }
+    ],
+    "conflicts": [
+      [
+        "OBS-C3-06",
+        "OBS-C3-07"
+      ]
+    ],
+    "unknowns": [
+      "Which dinner OBS-C3-07 refers to",
+      "Night-time sleep",
+      "Eating baseline not reported"
+    ],
+    "mustNot": [
+      "resolve the meal conflict by picking one report",
+      "state a diagnosis",
+      "say the patient is normal"
+    ]
+  }
+}

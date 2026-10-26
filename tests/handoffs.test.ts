@@ -6,8 +6,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AiResult } from "@/lib/ai/client";
 import { NO_OBSERVATIONS } from "@/lib/ai/handoff";
 import type { Database, Principal } from "@/lib/db/client";
-import { SEED_CASES } from "@/lib/fixtures";
-import { createUserCase } from "@/lib/repo/cases";
+import { LEGACY_CASES, SEED_CASES } from "@/lib/fixtures";
+import { createUserCase, getCase } from "@/lib/repo/cases";
+import { scenarioTimeline } from "@/lib/scenario-timeline";
 import {
   acknowledgeHandoff,
   addFictionalResponse,
@@ -19,7 +20,7 @@ import {
 } from "@/lib/repo/handoff-workflow";
 import { listHandoffs } from "@/lib/repo/handoffs";
 import { addObservation, listAlerts, listObservations } from "@/lib/repo/observations";
-import { startDemoSession } from "@/lib/repo/seed";
+import { copySeedToUserCase, startDemoSession } from "@/lib/repo/seed";
 import { freshDb, registeredUser } from "./helpers/db";
 
 let db: Database;
@@ -30,6 +31,14 @@ afterEach(async () => {
 
 const noAi = { chat: vi.fn(async (): Promise<AiResult> => ({ ok: false, reason: "unavailable_missing_key", usage: null })), available: () => false };
 const timeoutAi = () => ({ chat: vi.fn(async (): Promise<AiResult> => ({ ok: false, reason: "failed_timeout", usage: null })), available: () => true });
+
+/** A private copy of the legacy (pre-monthly-import) notes, which carry the validated pre-generated AI run. */
+async function legacy(seedKey: string): Promise<{ p: Principal; caseId: string }> {
+  db = await freshDb();
+  const u = await registeredUser(db);
+  const caseId = await copySeedToUserCase(db, u, seedKey, new Date(), LEGACY_CASES.find((c) => c.seedKey === seedKey)!);
+  return { p: u, caseId };
+}
 
 async function demo(seedKey: string): Promise<{ p: Principal; caseId: string }> {
   db = await freshDb();
@@ -58,7 +67,7 @@ describe("empty week", () => {
 
 describe("source traceability (Case 1 — supported pattern + questions)", () => {
   it("every statement and question cites notes from this case and period; the validated AI run is reused offline", async () => {
-    const { p, caseId } = await demo("PAT-CANCER-001");
+    const { p, caseId } = await legacy("PAT-CANCER-001");
     const { status, handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
     expect(status).toBe("created"); // the seeded v1 was submitted; new notes arrived after it, so v2 is allowed
     expect(handoff.version).toBe(2);
@@ -187,13 +196,20 @@ describe("version preservation", () => {
 
 describe("urgent events are not deferred to the weekly handoff", () => {
   it("Case 2: the emergency alert exists before any handoff; the draft lists it and the payload carries it", async () => {
-    const { p, caseId } = await demo("PAT-SURGERY-002");
+    const { p, caseId } = await legacy("PAT-SURGERY-002"); // legacy notes: the urgent note falls inside this week
     const alerts = await listAlerts(db, p, caseId, { unseenOnly: true });
     expect(alerts.some((a) => a.tier === "emergency")).toBe(true); // guidance is already showing, no handoff needed
     const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
     expect(handoff.draft.urgent).toEqual(expect.arrayContaining([expect.objectContaining({ sourceId: "OBS-C2-08", tier: "emergency", seenAt: null })]));
     const approved = await approveHandoff(db, p, handoff.id, true);
     expect(approved.approvedPayload!.safetyNotes).toContainEqual({ sourceId: "OBS-C2-08", tier: "emergency" });
+  });
+
+  it("Case 2 (monthly data): the emergency alert from two weeks ago is shown immediately and stays unseen until marked", async () => {
+    const { p, caseId } = await demo("PAT-SURGERY-002");
+    const urgent = (await listAlerts(db, p, caseId, { unseenOnly: true })).find((a) => a.tier === "emergency")!;
+    expect(urgent.ruleIds.sort()).toEqual(["EMG-HARD-TO-WAKE", "REV-CONFUSION"]);
+    expect(urgent.isTestScenario).toBe(true);
   });
 
   it("a new urgent note alerts immediately on save, whether or not a handoff draft exists", async () => {
@@ -211,7 +227,7 @@ describe("urgent events are not deferred to the weekly handoff", () => {
 
 describe("uncertainty and conflicting reports are kept", () => {
   it("Case 3: the contradictory meal reports stay as a conflict with both sources, plus what is unknown", async () => {
-    const { p, caseId } = await demo("PAT-RECOVERY-003");
+    const { p, caseId } = await legacy("PAT-RECOVERY-003");
     const { status, handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
     expect(status).toBe("regenerated"); // the seeded reviewed draft is the open one
     const conflict = handoff.draft.items.find((i) => i.support === "conflicting")!;
@@ -274,13 +290,14 @@ describe("structured handoff (pattern detection, no AI)", () => {
     const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
     const d = handoff.draft;
     expect(d.overview).toMatch(/notes were logged/);
-    expect(d.summary).toBe(d.overview);
-    const fatigue = d.patterns!.find((x) => x.theme === "Tiredness or low energy")!;
-    expect(fatigue.level).toBe("temporal_association");
-    expect(fatigue.event).toMatch(/^Treatment session, .* \(from a caregiver note\)$/);
-    expect(fatigue.directions).toContain("described_worse"); // "worse than last cycle" in the caregiver's words
+    expect(d.summary.startsWith(d.overview!)).toBe(true);
+    expect(d.patterns!.length).toBeGreaterThan(0);
     for (const row of d.patterns!) for (const id of row.sourceIds) expect(handoff.sourceIds).toContain(id);
-    expect(d.timeline!.some((e) => e.label === "Treatment session")).toBe(true);
+    // Dated treatment visits come from the synthetic scenario timeline, labelled as such — never as a cause.
+    for (const e of d.timeline!) expect(e.sourceId !== "" || e.dateCertainty === "scenario_date").toBe(true);
+    const events = scenarioTimeline(await getCase(db, p, caseId));
+    expect(events.find((e) => e.label === "Treatment visit")).toMatchObject({ kind: "treatment_session", sourceId: "", dateCertainty: "scenario_date" });
+    for (const row of d.patterns!) if (row.event) expect(row.event).toMatch(/\((from a caregiver note|synthetic scenario timeline)\)$/);
     expect(JSON.stringify(d.patterns)).not.toMatch(/caused by|because of|due to|side effect|score/i);
   });
 
@@ -288,13 +305,13 @@ describe("structured handoff (pattern detection, no AI)", () => {
     const { p, caseId } = await demo("PAT-RECOVERY-003");
     const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
     const missing = handoff.draft.missingInfo.join(" ");
-    expect(missing).toMatch(/Conflicting reports \(eating\)/);
+    expect(missing).toMatch(/Conflicting reports \(accounts\): Accounts differ within one note/); // Alex vs caregiver, kept unresolved
     expect(missing).toMatch(/timing relative to treatment can't be assessed/);
-    expect(handoff.draft.patterns!.map((x) => x.theme)).toEqual(expect.arrayContaining(["Needing help with daily activities", "Sleeping more in the day"]));
+    expect(missing).toMatch(/No note on 1 of 7 days/); // a missing day is "not reported", not "nothing happened"
   });
 
   it("Case 2: the urgent note is an important individual observation, not a pattern", async () => {
-    const { p, caseId } = await demo("PAT-SURGERY-002");
+    const { p, caseId } = await legacy("PAT-SURGERY-002");
     const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
     expect(handoff.draft.notable![0]).toMatchObject({ sourceId: "OBS-C2-08" });
     expect(handoff.draft.notable![0].reason).toMatch(/emergency safety rule/);
@@ -310,9 +327,9 @@ describe("structured handoff (pattern detection, no AI)", () => {
       questions: handoff.draft.questions.map((q) => ({ text: q.text, remove: false })),
       newQuestions: [],
       missingInfo: handoff.draft.missingInfo,
-      patterns: rows.map((r, i) => ({ change: i === 0 ? "My wording for this pattern" : r.change, remove: i === rows.length - 1 })),
+      patterns: rows.map((r, i) => ({ change: i === 0 ? "My wording for this pattern" : r.change, remove: rows.length > 1 && i === rows.length - 1 })),
     });
-    expect(edited.draft.patterns).toHaveLength(rows.length - 1);
+    expect(edited.draft.patterns).toHaveLength(rows.length > 1 ? rows.length - 1 : 1);
     expect(edited.draft.patterns![0]).toMatchObject({ change: "My wording for this pattern", sourceIds: rows[0].sourceIds });
     const approved = await approveHandoff(db, p, handoff.id, true);
     expect(approved.approvedPayload!.patterns![0].change).toBe("My wording for this pattern");

@@ -45,7 +45,7 @@ export async function materializeSeedCase(sql: Sql, fixture: CaseFixture, anchor
     await sql.query(
       `insert into baselines (case_id, owner_id, category, description, origin, synthetic, reported_at)
        values ($1, $2, $3, $4, 'seeded', true, $5)`,
-      [caseId, target.ownerId, b.category, b.description, t({ dayOffset: -8, time: "09:00" })],
+      [caseId, target.ownerId, b.category, b.description, t({ dayOffset: fixture.dataset ? -31 : -8, time: "09:00" })],
     );
   }
 
@@ -75,7 +75,19 @@ export async function materializeSeedCase(sql: Sql, fixture: CaseFixture, anchor
     }
   }
 
-  await materializeGeneratedAi(sql, fixture, anchor, caseId, target.ownerId, obsIdByFixture);
+  if (fixture.dataset) {
+    // Monthly synthetic dataset: its own category labels, stored as source "scenario" (not AI, not a caregiver correction).
+    // The earlier pre-generated AI output belongs to the previous notes and is NOT attached to these.
+    for (const o of fixture.observations) {
+      await sql.query(
+        `insert into observation_analyses (observation_id, case_id, owner_id, primary_category, secondary_categories, facts, model_reported, source, prompt_version, created_at)
+         values ($1, $2, $3, $4, $5, '[]'::jsonb, null, 'scenario', 'synthetic-dataset-1.0', $6)`,
+        [obsIdByFixture.get(o.fixtureId), caseId, target.ownerId, o.expected.primaryCategory, JSON.stringify(o.expected.secondaryCategories), t(o.at)],
+      );
+    }
+  } else {
+    await materializeGeneratedAi(sql, fixture, anchor, caseId, target.ownerId, obsIdByFixture);
+  }
 
   for (const c of fixture.checkins) {
     await sql.query(
@@ -289,10 +301,11 @@ export async function copySeedToUserCase(
   principal: Principal,
   seedKey: string,
   anchor: Date = new Date(),
+  fixtureOverride?: CaseFixture, // tests/evaluation only: copy the legacy (pre-import) notes
 ): Promise<string> {
   if (principal.demoSessionId) throw new Error("demo sessions cannot create private cases");
   assertUuid(principal.userId, "user id");
-  const fixture = seedCase(seedKey);
+  const fixture = fixtureOverride ?? seedCase(seedKey);
   return db.asAdmin((sql) =>
     materializeSeedCase(sql, fixture, anchor, { ownerId: principal.userId, kind: "user", demoSessionId: null }),
   );

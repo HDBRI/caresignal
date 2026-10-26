@@ -50,7 +50,8 @@ describe("seeding demo copies", () => {
       expect(obs.map((o) => o.originalText).sort()).toEqual(fixture.observations.map((o) => o.text).sort());
       // Real pre-generated labels (npm run seed:ai) make a note "complete"; otherwise it is honestly "not_run".
       const gen = (await import("@/lib/generated")).generatedFor(fixture.seedKey);
-      for (const o of obs) expect(o.aiState, o.displayId).toBe(gen?.notes[o.displayId] ? "complete" : "not_run");
+      // Monthly dataset notes carry their own scenario categories, never the AI output generated for the earlier notes.
+      for (const o of obs) expect(o.aiState, o.displayId).toBe(!fixture.dataset && gen?.notes[o.displayId] ? "complete" : "not_run");
       const c = await getCase(db, p, caseId);
       expect(c.synthetic).toBe(true);
       expect(c.patientRef).toBe(fixture.patient.patientRef);
@@ -126,7 +127,7 @@ describe("seeding demo copies", () => {
       };
     }
     expect(states).toEqual({
-      "PAT-CANCER-001": { handoff: "acknowledged", hasReceipt: true, responses: 1, alertTiers: ["review"] },
+      "PAT-CANCER-001": { handoff: "acknowledged", hasReceipt: true, responses: 1, alertTiers: [] },
       "PAT-SURGERY-002": { handoff: "draft", hasReceipt: false, responses: 0, alertTiers: ["emergency", "review"] },
       "PAT-RECOVERY-003": { handoff: "reviewed", hasReceipt: false, responses: 0, alertTiers: [] },
     });
@@ -139,7 +140,7 @@ describe("seeding demo copies", () => {
     const alerts = await listAlerts(db, { userId: uid, demoSessionId: s.demoSessionId }, s.caseId, { unseenOnly: true });
     const emergency = alerts.find((a) => a.tier === "emergency")!;
     expect(emergency.isTestScenario).toBe(true);
-    expect(emergency.ruleIds.sort()).toEqual(["EMG-BREATHING", "EMG-HARD-TO-WAKE"]);
+    expect(emergency.ruleIds.sort()).toEqual(["EMG-HARD-TO-WAKE", "REV-CONFUSION"]);
     expect(emergency.seenAt).toBeNull();
   });
 

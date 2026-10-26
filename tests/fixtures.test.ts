@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { CATEGORY_IDS } from "@/lib/categories";
-import { EVALUATION_CASES, SEED_CASES } from "@/lib/fixtures";
+import { EVALUATION_CASES, LEGACY_CASES, SEED_CASES } from "@/lib/fixtures";
 import { evaluateSafety } from "@/lib/safety/rules";
 
 const allObs = SEED_CASES.flatMap((c) => c.observations.map((o) => ({ ...o, seedKey: c.seedKey })));
+// Category / note-type coverage is checked over the demo notes plus the legacy evaluation package (both synthetic).
+const packageObs = [...SEED_CASES, ...LEGACY_CASES].flatMap((c) => c.observations);
 
 describe("synthetic data package", () => {
   it("has exactly the three locked cases with the locked names and IDs", () => {
@@ -28,7 +30,7 @@ describe("synthetic data package", () => {
 
   it("has at least 15 observations and covers all seven categories", () => {
     expect(allObs.length).toBeGreaterThanOrEqual(15);
-    const used = new Set(allObs.flatMap((o) => [o.expected.primaryCategory, ...o.expected.secondaryCategories]));
+    const used = new Set(packageObs.flatMap((o) => [o.expected.primaryCategory, ...o.expected.secondaryCategories]));
     expect([...used].sort()).toEqual([...CATEGORY_IDS].sort());
   });
 
@@ -91,15 +93,15 @@ describe("synthetic data package", () => {
   });
 
   it("includes every required note type", () => {
-    const tags = new Set(allObs.flatMap((o) => o.expected.tags));
+    const tags = new Set(packageObs.flatMap((o) => o.expected.tags));
     for (const t of ["ordinary", "multi_category", "ambiguous", "conflicting_report", "missing_context", "routine_safety_example", "urgent_scenario"]) {
       expect(tags, t).toContain(t);
     }
     expect(EVALUATION_CASES.some((e) => e.id.startsWith("EVAL-INJECT"))).toBe(true);
   });
 
-  it("Case 3 keeps the meal conflict and lists unknowns", () => {
-    const c3 = SEED_CASES[2];
+  it("Case 3 keeps the meal conflict and lists unknowns (legacy evaluation notes)", () => {
+    const c3 = LEGACY_CASES[2];
     expect(c3.expectedOutcome.conflicts).toContainEqual(["OBS-C3-06", "OBS-C3-07"]);
     const conflictItem = c3.handoff.content.items.find((i) => i.support === "conflicting")!;
     expect(conflictItem.sourceIds.sort()).toEqual(["OBS-C3-06", "OBS-C3-07"]);
@@ -128,5 +130,51 @@ describe("synthetic data package", () => {
       expect(o.at.dayOffset).toBeLessThanOrEqual(-1);
       if (o.eventTime) expect(o.eventTime.dayOffset).toBeLessThanOrEqual(o.at.dayOffset);
     }
+  });
+});
+
+describe("monthly synthetic dataset import (2026-10-26)", () => {
+  it("imports about a month per case, each note keeps its dataset ID, and IDs are unique per case", () => {
+    for (const c of SEED_CASES) {
+      expect(c.dataset).toBeTruthy();
+      expect(c.observations.length).toBeGreaterThanOrEqual(25);
+      const ids = c.observations.map((o) => o.fixtureId);
+      expect(new Set(ids).size).toBe(ids.length);
+      expect(c.observations.every((o) => o.datasetId)).toBe(true);
+      const offsets = c.observations.map((o) => o.at.dayOffset);
+      expect(Math.min(...offsets)).toBeGreaterThanOrEqual(-31);
+      expect(Math.max(...offsets)).toBeLessThanOrEqual(0);
+    }
+  });
+
+  it("keeps profiles separate: no note text or dataset ID appears in another case", () => {
+    const seen = new Map<string, string>();
+    for (const c of SEED_CASES)
+      for (const o of c.observations) {
+        expect(seen.get(o.datasetId!) ?? c.seedKey).toBe(c.seedKey);
+        seen.set(o.datasetId!, c.seedKey);
+        expect(o.fixtureId.startsWith(`OBS-C${SEED_CASES.indexOf(c) + 1}-`)).toBe(true);
+      }
+  });
+
+  it("stores only completed check-ins (skipped / not completed stay unknown, never 'no change')", () => {
+    for (const c of SEED_CASES) for (const ci of c.checkins) expect(["no_change", "noticed_change"]).toContain(ci.status);
+  });
+
+  it("Morgan's urgent note triggers the deterministic emergency rules", () => {
+    const c2 = SEED_CASES[1];
+    const urgent = c2.observations.find((o) => o.fixtureId === c2.expectedOutcome.urgent!.sourceId)!;
+    expect(urgent.isTestScenario).toBe(true);
+    const r = evaluateSafety(urgent.text);
+    expect(r.tier).toBe("emergency");
+    expect([...new Set(r.matches.map((m) => m.ruleId))].sort()).toEqual([...c2.expectedOutcome.urgent!.ruleIds].sort());
+  });
+
+  it("the scenario timeline holds dated, synthetic care events only", () => {
+    for (const c of SEED_CASES) for (const e of c.careEvents ?? []) {
+      expect(e.synthetic).toBe(true);
+      expect(e.dayOffset).toBeLessThanOrEqual(0);
+    }
+    expect(SEED_CASES[0].careEvents!.some((e) => e.kind === "treatment_session")).toBe(true);
   });
 });

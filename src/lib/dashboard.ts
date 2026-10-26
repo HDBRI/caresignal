@@ -37,7 +37,7 @@ export interface DashboardObservation {
   text: string; // ORIGINAL text, verbatim
   editedText: string | null; // latest correction of wording, if any
   categories: CategoryId[];
-  categorySource: "caregiver" | "ai" | null;
+  categorySource: "caregiver" | "ai" | "scenario" | null;
   safetyTier: Observation["safetyTier"];
   alertUnseen: boolean;
   origin: Observation["origin"];
@@ -135,9 +135,9 @@ export function observationDay(o: Pick<Observation, "eventTime" | "enteredAt">, 
 }
 
 /** Caregiver correction wins; otherwise AI labels only if the AI analysis completed. */
-export function effectiveCategories(o: Pick<Observation, "aiState">, analysis: ObservationAnalysis | undefined): { categories: CategoryId[]; source: "caregiver" | "ai" | null } {
+export function effectiveCategories(o: Pick<Observation, "aiState">, analysis: ObservationAnalysis | undefined): { categories: CategoryId[]; source: "caregiver" | "ai" | "scenario" | null } {
   if (!analysis) return { categories: [], source: null };
-  if (analysis.source !== "caregiver" && o.aiState !== "complete") return { categories: [], source: null };
+  if (analysis.source === "ai" && o.aiState !== "complete") return { categories: [], source: null };
   const cats = [...new Set([analysis.primaryCategory, ...analysis.secondaryCategories])].filter((c) =>
     CATEGORIES.some((k) => k.id === c),
   ) as CategoryId[];

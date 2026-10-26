@@ -1,0 +1,2223 @@
+{
+  "dataset_name": "CareSignal Synthetic Monthly Demo Dataset",
+  "version": "1.0",
+  "date_window": {
+    "start": "2026-09-26",
+    "end": "2026-10-25",
+    "days": 30
+  },
+  "notice": "All profiles, observations, and events are fictional. Classroom demo only; not clinical data, protocol, or decision support.",
+  "profiles": [
+    {
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "scenario": "Fictional adult receiving active cancer treatment at home",
+      "care_phase": "Active treatment; fictional treatment visit during window",
+      "baseline": {
+        "mobility": "Usually walks dog, dresses and showers independently.",
+        "nutrition": "Usually eats three small meals and drinks fluids throughout day.",
+        "energy": "Usually active much of day; sleeps about 7 hours."
+      },
+      "timeline_events": [
+        {
+          "event_id": "TX-J-01",
+          "date": "2026-10-06",
+          "type": "Treatment visit",
+          "description": "Fictional scheduled cancer-treatment visit; no drug or regimen specified."
+        },
+        {
+          "event_id": "TX-J-02",
+          "date": "2026-10-07",
+          "type": "Care-team check-in",
+          "description": "Fictional nurse asks caregiver to track energy, intake and daily functioning."
+        }
+      ]
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "scenario": "Fictional adult recovering at home after non-specific surgery",
+      "care_phase": "Post-operative home recovery; surgery occurred before this window",
+      "baseline": {
+        "mobility": "Initially walks short distances indoors with family nearby.",
+        "nutrition": "Small meals, appetite gradually returning.",
+        "energy": "Tired at times but usually alert and conversational."
+      },
+      "timeline_events": [
+        {
+          "event_id": "TX-M-01",
+          "date": "2026-09-26",
+          "type": "Recovery-window start",
+          "description": "Synthetic timeline anchor; exact surgery date unspecified."
+        },
+        {
+          "event_id": "TX-M-02",
+          "date": "2026-10-03",
+          "type": "Follow-up appointment",
+          "description": "Fictional follow-up; caregiver asked to record changes and raise concerns."
+        }
+      ]
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "scenario": "Fictional adult gradually recovering from a non-specific lower-limb injury",
+      "care_phase": "Home recovery; no specific diagnosis or protocol provided",
+      "baseline": {
+        "mobility": "Usually independent at home and takes short walks.",
+        "sleep": "Usually sleeps 7\u20138 hours; occasional interruption by discomfort.",
+        "nutrition": "Regular meals and fluids."
+      },
+      "timeline_events": [
+        {
+          "event_id": "TX-A-01",
+          "date": "2026-09-26",
+          "type": "Recovery-window start",
+          "description": "Synthetic observation window begins; exact injury date unspecified."
+        },
+        {
+          "event_id": "TX-A-02",
+          "date": "2026-10-12",
+          "type": "Activity milestone",
+          "description": "Caregiver reports Alex tried a slightly longer walk; not a clinician-prescribed milestone."
+        }
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "OBS-JORDAN-001",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-09-26",
+      "entered_date": "2026-09-26",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan walked the dog around the block and ate oatmeal and half a banana.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-002",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-09-27",
+      "entered_date": "2026-09-27",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan seemed a little more tired after lunch but still got dressed without help.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-003",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-09-28",
+      "entered_date": "2026-09-28",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan slept about 7 hours. Ate most of breakfast and a small lunch.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-004",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-09-29",
+      "entered_date": "2026-09-29",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan said food tasted metallic and left most of lunch.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-005",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-09-30",
+      "entered_date": "2026-09-30",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan was tired after errands and rested for an hour. Still showered independently.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-006",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-01",
+      "entered_date": "2026-10-01",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan ate a small dinner and said they were not very hungry.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-007",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-02",
+      "entered_date": "2026-10-02",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan walked the dog more slowly than usual and came home early.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-008",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-03",
+      "entered_date": "2026-10-03",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan slept poorly and said they felt worn out this morning.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-009",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-04",
+      "entered_date": "2026-10-04",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan ate half a sandwich at lunch and skipped the afternoon snack.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-010",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-05",
+      "entered_date": "2026-10-05",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan had a better appetite today and finished most of dinner.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-011",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-06",
+      "entered_date": "2026-10-06",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Treatment visit today. Jordan came home tired and went straight to bed after only a few bites of soup.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-012",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-07",
+      "entered_date": "2026-10-07",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan slept late and said they felt drained. Caregiver offered fluids several times.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-013",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-08",
+      "entered_date": "2026-10-08",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan ate a little breakfast and half a bowl of soup for lunch.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-014",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-09",
+      "entered_date": "2026-10-09",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan walked to the mailbox but rested afterward. Caregiver says this is less activity than usual.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-015",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-10",
+      "entered_date": "2026-10-10",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan seemed more like themself today and finished lunch.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-016",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-11",
+      "entered_date": "2026-10-11",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan said they were exhausted by mid-afternoon and skipped the usual dog walk.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-017",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-12",
+      "entered_date": "2026-10-12",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan drank about two glasses of water by late afternoon; caregiver is unsure how much they drank later.",
+      "categories": [
+        "Emotional wellbeing and behavior",
+        "Sleep, nutrition and hydration",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "review"
+    },
+    {
+      "observation_id": "OBS-JORDAN-018",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-13",
+      "entered_date": "2026-10-13",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan ate a few bites at dinner and said food still tasted strange.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-019",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-14",
+      "entered_date": "2026-10-14",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan needed help getting dressed this morning; this is the first time caregiver has noticed needing that help.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "review"
+    },
+    {
+      "observation_id": "OBS-JORDAN-020",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-15",
+      "entered_date": "2026-10-15",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan was tired again and rested most of the afternoon. They were still able to chat normally.",
+      "categories": [
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-021",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-16",
+      "entered_date": "2026-10-16",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan ate a small breakfast and a few spoonfuls of soup at lunch.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-022",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-17",
+      "entered_date": "2026-10-17",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan said the tiredness feels worse than during the previous treatment cycle.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-023",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-18",
+      "entered_date": "2026-10-18",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan had a more energetic morning and walked outside for about ten minutes, then rested.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-024",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-19",
+      "entered_date": "2026-10-19",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan did not finish dinner. Caregiver did not measure the amount of fluid taken today.",
+      "categories": [
+        "Sleep, nutrition and hydration",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-025",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-20",
+      "entered_date": "2026-10-20",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan needed help choosing clothes and getting dressed because they felt too tired to manage it alone.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "review"
+    },
+    {
+      "observation_id": "OBS-JORDAN-026",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-21",
+      "entered_date": "2026-10-21",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan seemed quieter than usual tonight and said they were just worn out.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Emotional wellbeing and behavior"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-027",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-22",
+      "entered_date": "2026-10-22",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan ate a little more today and sat with family after dinner.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-028",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-23",
+      "entered_date": "2026-10-23",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan reported feeling tired after a shower and needed to sit down before getting dressed.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-029",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-24",
+      "entered_date": "2026-10-24",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan had a low appetite at lunch but ate most of dinner. Energy seemed a little better in the evening.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-JORDAN-030",
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "event_date": "2026-10-25",
+      "entered_date": "2026-10-25",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Jordan was tired in the morning but walked to the mailbox. Caregiver says energy still varies day to day.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-001",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-09-26",
+      "entered_date": "2026-09-26",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan walked from the bedroom to the kitchen with a family member nearby. The incision area felt sore when standing.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-002",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-09-27",
+      "entered_date": "2026-09-27",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan ate a small breakfast and lunch. Needed a rest after washing up.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-003",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-09-28",
+      "entered_date": "2026-09-28",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan said getting out of the chair was uncomfortable but managed with help.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-004",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-09-29",
+      "entered_date": "2026-09-29",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan slept poorly and woke several times because of discomfort.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-005",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-09-30",
+      "entered_date": "2026-09-30",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan walked around the home twice today and seemed steadier than at the start of the week.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-006",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-01",
+      "entered_date": "2026-10-01",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan ate most of a small dinner and said the appetite was coming back.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-007",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-02",
+      "entered_date": "2026-10-02",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan felt tired after a short walk and rested. No new concern was reported.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-008",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-03",
+      "entered_date": "2026-10-03",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan walked to the mailbox with family nearby, then returned indoors to rest.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-009",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-04",
+      "entered_date": "2026-10-04",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan said soreness was less noticeable while sitting, but movement still felt uncomfortable.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-010",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-05",
+      "entered_date": "2026-10-05",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan ate breakfast and lunch. Caregiver says portions are still smaller than usual.",
+      "categories": [
+        "Sleep, nutrition and hydration",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-011",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-06",
+      "entered_date": "2026-10-06",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan slept better overnight but was tired after showering.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-012",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-07",
+      "entered_date": "2026-10-07",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan walked around the block with family at a slow pace and wanted to turn back early.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-013",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-08",
+      "entered_date": "2026-10-08",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "At follow-up, caregiver was reminded to keep recording changes and contact the care team with concerns.",
+      "categories": [
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-014",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-09",
+      "entered_date": "2026-10-09",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan said they felt a little stronger today and prepared a simple snack while seated.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-015",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-10",
+      "entered_date": "2026-10-10",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan had a poor night of sleep and felt low-energy in the morning.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-016",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-11",
+      "entered_date": "2026-10-11",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan walked a little farther than last week but had more soreness later that evening.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-017",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-12",
+      "entered_date": "2026-10-12",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan ate most of lunch and dinner. Caregiver noticed no new issue in today's routine.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Sleep, nutrition and hydration",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-018",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-13",
+      "entered_date": "2026-10-13",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan suddenly became confused and was difficult to wake. This was a sharp change from their usual alert, conversational state.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Cognition and communication",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "emergency"
+    },
+    {
+      "observation_id": "OBS-MORGAN-019",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-14",
+      "entered_date": "2026-10-14",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "In this fictional scenario, the caregiver called emergency services after the sudden confusion and difficulty waking. Morgan was assessed by emergency clinicians.",
+      "categories": [
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-020",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-15",
+      "entered_date": "2026-10-15",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Fictional follow-up: Morgan is home again after hospital assessment. Caregiver is following the discharge instructions provided by the fictional care team.",
+      "categories": [
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-021",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-16",
+      "entered_date": "2026-10-16",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan was alert during breakfast and walked a short distance indoors with family nearby.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Cognition and communication",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-022",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-17",
+      "entered_date": "2026-10-17",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan felt tired after activity, but recovered after resting. No new confusion was reported.",
+      "categories": [
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-023",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-18",
+      "entered_date": "2026-10-18",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan ate small regular meals today and took two short walks indoors.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-024",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-19",
+      "entered_date": "2026-10-19",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan slept through most of the night and said soreness was less bothersome today.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-025",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-20",
+      "entered_date": "2026-10-20",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan needed help with a household task but managed dressing independently.",
+      "categories": [
+        "Other"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-026",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-21",
+      "entered_date": "2026-10-21",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan felt more tired than yesterday and chose to rest instead of taking a walk.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-027",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-22",
+      "entered_date": "2026-10-22",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan walked indoors several times and said movement felt a little easier.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-028",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-23",
+      "entered_date": "2026-10-23",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan had a low appetite at lunch but ate a snack later in the afternoon.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-029",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-24",
+      "entered_date": "2026-10-24",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan reported feeling more confident moving around the home, though still slower than before surgery.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-MORGAN-030",
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "event_date": "2026-10-25",
+      "entered_date": "2026-10-25",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Morgan walked indoors independently for short distances and rested afterward. Recovery still varies day to day.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-001",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-09-26",
+      "entered_date": "2026-09-26",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked for five minutes outdoors and said the leg felt stiff at first.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-002",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-09-27",
+      "entered_date": "2026-09-27",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex slept well, but caregiver says they woke once because of discomfort.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-003",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-09-28",
+      "entered_date": "2026-09-28",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked around the home without help and prepared breakfast.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-004",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-09-29",
+      "entered_date": "2026-09-29",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex tried a slightly longer walk and reported aching afterward.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-005",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-09-30",
+      "entered_date": "2026-09-30",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex was less active today and said the leg felt tired. No severity rating was recorded.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-006",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-01",
+      "entered_date": "2026-10-01",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex slept better last night and said discomfort was mild this morning.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-007",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-02",
+      "entered_date": "2026-10-02",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex skipped the planned walk; caregiver did not say why.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-008",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-03",
+      "entered_date": "2026-10-03",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked for about seven minutes and felt okay afterward.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-009",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-04",
+      "entered_date": "2026-10-04",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex said the leg was more uncomfortable after standing for a long time.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-010",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-05",
+      "entered_date": "2026-10-05",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex slept well and got dressed independently.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-011",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-06",
+      "entered_date": "2026-10-06",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked for ten minutes, slower near the end, then rested.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-012",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-07",
+      "entered_date": "2026-10-08",
+      "date_confidence": "uncertain_event_timing",
+      "original_caregiver_note": "Alex reported less discomfort this morning, but the timing of the note is uncertain.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Cognition and communication"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-013",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-08",
+      "entered_date": "2026-10-08",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked around the block with a pause halfway through.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-014",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-09",
+      "entered_date": "2026-10-09",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex slept poorly and said discomfort woke them twice.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-015",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-10",
+      "entered_date": "2026-10-10",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex said sleep was better, though caregiver recalls Alex was awake for a while overnight. The details are unclear.",
+      "categories": [
+        "Cognition and communication",
+        "Sleep, nutrition and hydration",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-016",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-11",
+      "entered_date": "2026-10-11",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked for twelve minutes and managed the usual morning routine.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-017",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-12",
+      "entered_date": "2026-10-12",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex felt sore after the longer walk and chose a quieter afternoon.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Emotional wellbeing and behavior"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-018",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-13",
+      "entered_date": "2026-10-13",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "No check-in was completed today. No observation was logged.",
+      "categories": [
+        "Other"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-019",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-14",
+      "entered_date": "2026-10-14",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked for ten minutes today, shorter than yesterday, because it was raining; no change in discomfort was mentioned.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-020",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-15",
+      "entered_date": "2026-10-15",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex said the leg felt 'about the same' but did not compare it with a specific day.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-021",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-16",
+      "entered_date": "2026-10-16",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked to a nearby shop with a friend and rested when they returned.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-022",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-17",
+      "entered_date": "2026-10-18",
+      "date_confidence": "uncertain_event_timing",
+      "original_caregiver_note": "Alex said discomfort was worse after walking, but the note was entered the following morning and the event date is uncertain.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort",
+        "Cognition and communication",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-023",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-18",
+      "entered_date": "2026-10-18",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex prepared lunch and moved around the home independently.",
+      "categories": [
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-024",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-19",
+      "entered_date": "2026-10-19",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex said the leg felt better today, but did not describe what was better or compared with when.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-025",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-20",
+      "entered_date": "2026-10-20",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex took a shorter walk and said they felt unsure whether to increase activity.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Emotional wellbeing and behavior"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-026",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-21",
+      "entered_date": "2026-10-21",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked for about fifteen minutes with one pause and said the leg felt tired afterward.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Physical symptoms and comfort"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-027",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-22",
+      "entered_date": "2026-10-22",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Caregiver says Alex was more active yesterday; Alex says they mostly rested. They may be describing different parts of the day.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-028",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-23",
+      "entered_date": "2026-10-23",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex slept through the night according to caregiver, but Alex remembers waking once because of discomfort.",
+      "categories": [
+        "Physical symptoms and comfort",
+        "Sleep, nutrition and hydration",
+        "Treatment and care coordination"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-029",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-24",
+      "entered_date": "2026-10-24",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex walked for twelve minutes and said the leg felt stiff at the beginning but easier later.",
+      "categories": [
+        "Mobility and daily functioning",
+        "Sleep, nutrition and hydration"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    },
+    {
+      "observation_id": "OBS-ALEX-030",
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "event_date": "2026-10-25",
+      "entered_date": "2026-10-25",
+      "date_confidence": "day_reported",
+      "original_caregiver_note": "Alex completed the usual morning routine and took a short walk. No overall rating or measured distance was recorded.",
+      "categories": [
+        "Mobility and daily functioning"
+      ],
+      "synthetic": true,
+      "source_type": "synthetic_seed_observation",
+      "safety_test_label": "routine"
+    }
+  ],
+  "daily_checkins": [
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-26",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-27",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-28",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-29",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-30",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-01",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-02",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-03",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-04",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-05",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-06",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-07",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-08",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-09",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-10",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-11",
+      "status": "completed",
+      "response": "noticed_a_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-12",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-13",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-14",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-15",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-16",
+      "status": "completed",
+      "response": "noticed_a_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-17",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-18",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-19",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-20",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-21",
+      "status": "completed",
+      "response": "noticed_a_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-22",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-23",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-24",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-25",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-26",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-27",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-28",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-29",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-30",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-01",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-02",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-03",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-04",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-05",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-06",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-07",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-08",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-09",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-10",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-11",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-12",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-13",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-14",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-15",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-16",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-17",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-18",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-19",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-20",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-21",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-22",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-23",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-24",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-25",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-26",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-27",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-28",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-29",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-30",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-01",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-02",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-03",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-04",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-05",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-06",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-07",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-08",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-09",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-10",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-11",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-12",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-13",
+      "status": "not_completed",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-14",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-15",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-16",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-17",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-18",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-19",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-20",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-21",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-22",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-23",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-24",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-25",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    }
+  ]
+}

@@ -14,6 +14,8 @@ import { createUserCase } from "@/lib/repo/cases";
 import { listInsightRuns } from "@/lib/repo/handoffs";
 import { addObservation } from "@/lib/repo/observations";
 import { copySeedToUserCase } from "@/lib/repo/seed";
+import { LEGACY_CASES } from "@/lib/fixtures";
+const LEGACY3 = () => LEGACY_CASES[2];
 import { freshDb, registeredUser } from "./helpers/db";
 
 let db: Database;
@@ -219,7 +221,7 @@ describe("generation runs", () => {
   it("stores only validated insights, the run metadata and the exact provider usage", async () => {
     db = await freshDb();
     const u = await registeredUser(db);
-    const caseId = await copySeedToUserCase(db, u, "PAT-RECOVERY-003");
+    const caseId = await copySeedToUserCase(db, u, "PAT-RECOVERY-003", new Date(), LEGACY3());
     await db.asAdmin((sql) => sql.query(`delete from insight_runs where case_id = $1`, [caseId])); // ignore any pre-generated run
     const chat = vi.fn(async () => okResult(output({ insights: [insight(), conflict(), insight({ statement: "This may indicate an infection." })] })));
     const r = await generateInsights(db, u, caseId, "all", { chat, available: () => true });
@@ -283,10 +285,19 @@ describe("pre-generated demo output (npm run seed:ai)", () => {
     if (!recovery) return; // not generated in this checkout: nothing is shown, which is also correct
     db = await freshDb();
     const u = await registeredUser(db);
-    const caseId = await copySeedToUserCase(db, u, "PAT-RECOVERY-003");
+    const caseId = await copySeedToUserCase(db, u, "PAT-RECOVERY-003", new Date(), LEGACY3()); // generated for the legacy notes only
     const [run] = await listInsightRuns(db, u, caseId);
     expect(run.run.origin).toBe("seeded");
     expect(run.run.modelReported).toMatch(/^gpt-6-luna/);
     expect(run.insights.some((i) => i.kind === "conflict" && i.sourceIds.includes("OBS-C3-06") && i.sourceIds.includes("OBS-C3-07"))).toBe(true);
+  });
+});
+
+describe("monthly dataset demo copies", () => {
+  it("never receive the AI run generated for the earlier notes (no mismatched AI output)", async () => {
+    db = await freshDb();
+    const u = await registeredUser(db);
+    const caseId = await copySeedToUserCase(db, u, "PAT-RECOVERY-003");
+    expect(await listInsightRuns(db, u, caseId)).toEqual([]);
   });
 });

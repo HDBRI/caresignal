@@ -9,6 +9,9 @@ import case1 from "../../synthetic-data/cases/case-1-cancer.json";
 import case2 from "../../synthetic-data/cases/case-2-surgery.json";
 import case3 from "../../synthetic-data/cases/case-3-recovery.json";
 import evaluation from "../../synthetic-data/evaluation/evaluation-cases.json";
+import legacy1 from "../../synthetic-data/evaluation/legacy-v1/case-1-cancer.json";
+import legacy2 from "../../synthetic-data/evaluation/legacy-v1/case-2-surgery.json";
+import legacy3 from "../../synthetic-data/evaluation/legacy-v1/case-3-recovery.json";
 
 const category = z.enum(CATEGORY_IDS as [string, ...string[]]);
 const tier = z.enum(["emergency", "contact_care_team", "review", "none"]);
@@ -18,6 +21,10 @@ const fixtureObsId = z.string().regex(/^OBS-C[1-3]-\d{2}$/);
 
 const observationFixture = z.object({
   fixtureId: fixtureObsId,
+  /** ID in the imported synthetic monthly dataset (traceability). */
+  datasetId: z.string().optional(),
+  /** "uncertain" when the dataset says the event timing is uncertain. */
+  dateConfidence: z.enum(["day_reported", "uncertain"]).optional(),
   at: seedTime,
   eventTime: seedTime.nullable(),
   author: z.string().nullable(),
@@ -95,6 +102,20 @@ const caseFixture = z.object({
       })
       .nullable(),
   }),
+  /** Dated care/treatment events from the synthetic scenario timeline (kept separate from caregiver notes). */
+  careEvents: z
+    .array(
+      z.object({
+        eventId: z.string(),
+        dayOffset: z.number().int(),
+        kind: z.enum(["treatment_session", "procedure", "clinician_visit", "medication_change", "milestone"]),
+        label: z.string(),
+        description: z.string(),
+        synthetic: z.literal(true),
+      }),
+    )
+    .optional(),
+  dataset: z.object({ name: z.string(), version: z.string(), window: z.unknown(), importedFrom: z.string() }).optional(),
   expectedOutcome: z.object({
     supported: z.array(z.object({ claim: z.string(), sourceIds: z.array(fixtureObsId) })),
     possibleUnconfirmed: z.array(z.object({ claim: z.string(), sourceIds: z.array(fixtureObsId) })),
@@ -127,6 +148,8 @@ export type SeedKey = CaseFixture["seedKey"];
 
 export const SEED_CASES: CaseFixture[] = [case1, case2, case3].map((c) => caseFixture.parse(c));
 export const EVALUATION_CASES = evaluationFixture.parse(evaluation).cases;
+/** The earlier (pre-monthly-import) demo notes. The evaluation suite and its recorded results reference these IDs. */
+export const LEGACY_CASES: CaseFixture[] = [legacy1, legacy2, legacy3].map((c) => caseFixture.parse(c));
 
 export function seedCase(seedKey: string): CaseFixture {
   const c = SEED_CASES.find((s) => s.seedKey === seedKey);

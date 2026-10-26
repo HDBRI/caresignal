@@ -104,7 +104,7 @@ export interface ObservationAnalysis {
   id: string;
   observationId: string;
   /** "ai" = suggested by the model; "caregiver" = a correction made by the caregiver. */
-  source: "ai" | "caregiver";
+  source: "ai" | "caregiver" | "scenario"; // scenario = label from the synthetic dataset (not AI, not a correction)
   primaryCategory: CategoryId;
   secondaryCategories: CategoryId[];
   /** AI-extracted facts, each with the exact words from the note that support it. */
@@ -244,7 +244,7 @@ export interface HandoffContent {
   /** C. Important individual observations (urgent or isolated but notable). */
   notable?: { sourceId: string; reason: string }[];
   /** D. Care / treatment events documented in notes (never invented). */
-  timeline?: { day: string; label: string; sourceId: string; quote: string; dateCertainty: "note_day" | "relative_unresolved"; relativeText: string | null; relatedThemes: string[] }[];
+  timeline?: { day: string; label: string; sourceId: string; quote: string; dateCertainty: "note_day" | "relative_unresolved" | "scenario_date"; relativeText: string | null; relatedThemes: string[] }[];
 }
 
 export interface HandoffPayload extends HandoffContent {

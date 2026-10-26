@@ -55,7 +55,7 @@ test("Overview shows stored data: check-in statuses, handoff status (ID hidden u
   await idToggle.click();
   await expect(page.getByText(/^HO-[A-Z0-9]{8}$/)).toBeVisible();
   await expect(page.getByLabel("Check-in status for the last 7 days")).toContainText("No response recorded");
-  await expect(page.getByLabel("Check-in status for the last 7 days")).toContainText("I have a concern or question");
+  await expect(page.getByLabel("Check-in status for the last 7 days")).toContainText("I noticed a change");
   await expect(page.getByText("Not provided").first()).toBeVisible();
 });
 

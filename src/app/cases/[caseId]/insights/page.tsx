@@ -22,6 +22,8 @@ import { EvidenceButton, EvidenceProvider } from "@/components/insights/Evidence
 import { AddToHandoff, type HandoffFinding } from "@/components/insights/AddToHandoff";
 import { PatternSections } from "@/components/insights/PatternSections";
 import { detectPatterns } from "@/lib/patterns";
+import { scenarioTimeline } from "@/lib/scenario-timeline";
+import { getCase } from "@/lib/repo/cases";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +84,7 @@ export default async function InsightsPage({
     listAlerts(db, p, caseId),
     listHandoffs(db, p, caseId),
   ]);
+  const theCase = await getCase(db, p, caseId);
   const obs = dash.observations;
   const byInternalId = new Map(Object.values(obs).map((o) => [o.id, o]));
   const shown = (sp.run && runs.find((r) => r.run.id === sp.run)) || runs[0];
@@ -114,6 +117,7 @@ export default async function InsightsPage({
         periodStart: dash.period.start,
         periodEnd: dash.period.end,
         baselines: dash.baselines.filter((b) => b.baseline).map((b) => ({ domain: b.domain, description: b.baseline! })),
+        timelineEvents: scenarioTimeline(theCase).filter((e) => e.day >= dash.period.start!),
       })
     : null;
   const withNotes = dash.series.filter((s) => s.total > 0);

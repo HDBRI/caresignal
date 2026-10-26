@@ -233,7 +233,7 @@ describe("loaded through the authorized data path", () => {
     const u = await registeredUser(db);
     const caseId = await copySeedToUserCase(db, u, "PAT-SURGERY-002");
     const d = await loadDashboard(db, u, caseId, "all");
-    expect(d.metrics.observations).toBe(8);
+    expect(d.metrics.observations).toBe(30); // the imported month of synthetic notes
     expect(d.metrics.needReview).toBe(2); // the deterministic safety notices are still counted
     if (saved !== undefined) process.env.PORTKEY_API_KEY = saved;
   });

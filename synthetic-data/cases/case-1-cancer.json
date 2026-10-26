@@ -1,8 +1,8 @@
 {
   "seedKey": "PAT-CANCER-001",
   "synthetic": true,
-  "title": "Cancer treatment at home — pattern and clinician review",
-  "demonstrates": "A multi-day pattern of tiredness, eating and drinking less, and new help with dressing, organized into evidence-linked questions for the care team. Includes a clearly labeled fictional clinician response.",
+  "title": "Fictional adult receiving active cancer treatment at home — 30 days of notes",
+  "demonstrates": "A month of notes: tiredness reported repeatedly and described as worse, variable eating and drinking with one low-fluid report, and a new need for help dressing compared with the baseline — shown alongside the fictional treatment visit on the timeline (timing only, never a cause). Includes a clearly labeled fictional clinician response.",
   "demoAccount": {
     "userId": "0d1e7a10-0000-4000-8000-000000000001",
     "username": "demo-cancer",
@@ -16,8 +16,8 @@
     "primaryCondition": "Cancer treatment (fictional)",
     "carePhase": "active_treatment",
     "careSetting": "home_with_visiting_care",
-    "careContext": "Fictional. Jordan is receiving cancer treatment and recovering at home between clinic visits. A visiting nurse comes twice a week.",
-    "milestones": "Next clinic visit on the treatment schedule; visiting nurse twice a week.",
+    "careContext": "Fictional. Fictional adult receiving active cancer treatment at home. Active treatment; fictional treatment visit during window.",
+    "milestones": "Treatment visit (2026-10-06); Care-team check-in (2026-10-07)",
     "synthetic": true
   },
   "caregiver": {
@@ -26,125 +26,162 @@
   },
   "baselines": [
     {
-      "category": "energy_sleep",
-      "description": "Usually up by 7 and active most of the day; walks the dog around the block each morning."
+      "category": "mobility_function",
+      "description": "Usually walks dog, dresses and showers independently."
     },
     {
       "category": "eating_drinking",
-      "description": "Normally eats three small meals and drinks about six glasses of fluid a day."
+      "description": "Usually eats three small meals and drinks fluids throughout day."
     },
     {
-      "category": "mobility_function",
-      "description": "Dresses, showers and gets around the house without help."
+      "category": "energy_sleep",
+      "description": "Usually active much of day; sleeps about 7 hours."
     }
   ],
   "observations": [
     {
       "fixtureId": "OBS-C1-01",
+      "datasetId": "OBS-JORDAN-001",
       "at": {
-        "dayOffset": -7,
-        "time": "08:40"
+        "dayOffset": -30,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Jordan walked the dog around the block this morning like usual. Ate oatmeal and half a banana.",
+      "text": "Jordan walked the dog around the block and ate oatmeal and half a banana.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mobility_daily_functioning",
-        "secondaryCategories": [
-          "sleep_nutrition_hydration"
-        ],
+        "primaryCategory": "other",
+        "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "ordinary",
-          "multi_category",
-          "matches_baseline"
+          "ordinary"
         ]
       }
     },
     {
       "fixtureId": "OBS-C1-02",
+      "datasetId": "OBS-JORDAN-002",
       "at": {
-        "dayOffset": -6,
-        "time": "19:10"
+        "dayOffset": -29,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Treatment day at the clinic. Came home tired and went straight to bed after only a few bites of soup.",
+      "text": "Jordan seemed a little more tired after lunch but still got dressed without help.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "physical_symptoms_comfort",
-        "secondaryCategories": [
-          "sleep_nutrition_hydration",
-          "treatment_care_coordination"
-        ],
+        "primaryCategory": "other",
+        "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "multi_category"
+          "ambiguous"
         ]
       }
     },
     {
       "fixtureId": "OBS-C1-03",
+      "datasetId": "OBS-JORDAN-003",
       "at": {
-        "dayOffset": -5,
-        "time": "09:15"
+        "dayOffset": -28,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Too tired to walk the dog today, sat on the porch instead. Said food \"tastes like metal\" and left most of lunch.",
+      "text": "Jordan slept about 7 hours. Ate most of breakfast and a small lunch.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "physical_symptoms_comfort",
-        "secondaryCategories": [
-          "mobility_daily_functioning",
-          "sleep_nutrition_hydration"
-        ],
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "multi_category",
-          "differs_from_baseline"
+          "ordinary"
         ]
       }
     },
     {
       "fixtureId": "OBS-C1-04",
+      "datasetId": "OBS-JORDAN-004",
       "at": {
-        "dayOffset": -4,
-        "time": "21:30"
+        "dayOffset": -27,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Felt queasy after lunch. Only drank about 2 glasses of water all day.",
+      "text": "Jordan said food tasted metallic and left most of lunch.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
         "primaryCategory": "sleep_nutrition_hydration",
-        "secondaryCategories": [
-          "physical_symptoms_comfort"
-        ],
+        "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "multi_category",
-          "differs_from_baseline"
+          "ordinary"
         ]
       }
     },
     {
       "fixtureId": "OBS-C1-05",
+      "datasetId": "OBS-JORDAN-005",
       "at": {
-        "dayOffset": -3,
-        "time": "10:30"
+        "dayOffset": -26,
+        "time": "20:00"
       },
-      "eventTime": {
-        "dayOffset": -3,
-        "time": "08:00"
-      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Needed help getting dressed this morning — first time I've had to help with that.",
+      "text": "Jordan was tired after errands and rested for an hour. Still showered independently.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-06",
+      "datasetId": "OBS-JORDAN-006",
+      "at": {
+        "dayOffset": -25,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan ate a small dinner and said they were not very hungry.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-07",
+      "datasetId": "OBS-JORDAN-007",
+      "at": {
+        "dayOffset": -24,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan walked the dog more slowly than usual and came home early.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
@@ -152,139 +189,562 @@
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "differs_from_baseline"
-        ]
-      }
-    },
-    {
-      "fixtureId": "OBS-C1-06",
-      "at": {
-        "dayOffset": -3,
-        "time": "18:45"
-      },
-      "eventTime": null,
-      "author": null,
-      "text": "Visiting nurse came by. Jordan told her the tiredness is \"worse than last cycle.\" Nurse asked us to write down how much Jordan eats and drinks each day.",
-      "isTestScenario": false,
-      "synthetic": true,
-      "expected": {
-        "primaryCategory": "treatment_care_coordination",
-        "secondaryCategories": [
-          "physical_symptoms_comfort",
-          "sleep_nutrition_hydration"
-        ],
-        "safetyTier": "none",
-        "tags": [
-          "multi_category",
-          "relayed_report"
-        ]
-      }
-    },
-    {
-      "fixtureId": "OBS-C1-07",
-      "at": {
-        "dayOffset": -1,
-        "time": "20:10"
-      },
-      "eventTime": null,
-      "author": null,
-      "text": "Ate half a sandwich at lunch and skipped dinner. Took the morning pills from the weekly box; not sure whether the evening ones were taken.",
-      "isTestScenario": false,
-      "synthetic": true,
-      "expected": {
-        "primaryCategory": "sleep_nutrition_hydration",
-        "secondaryCategories": [
-          "treatment_care_coordination"
-        ],
-        "safetyTier": "review",
-        "tags": [
-          "multi_category",
-          "ambiguous",
-          "routine_safety_example"
+          "ordinary"
         ]
       }
     },
     {
       "fixtureId": "OBS-C1-08",
+      "datasetId": "OBS-JORDAN-008",
       "at": {
-        "dayOffset": -1,
-        "time": "21:05"
+        "dayOffset": -23,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Quieter than usual tonight, said they're \"just worn out.\"",
+      "text": "Jordan slept poorly and said they felt worn out this morning.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "emotional_wellbeing_behavior",
-        "secondaryCategories": [
-          "physical_symptoms_comfort"
-        ],
+        "primaryCategory": "other",
+        "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
           "ordinary"
         ]
       }
+    },
+    {
+      "fixtureId": "OBS-C1-09",
+      "datasetId": "OBS-JORDAN-009",
+      "at": {
+        "dayOffset": -22,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan ate half a sandwich at lunch and skipped the afternoon snack.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-10",
+      "datasetId": "OBS-JORDAN-010",
+      "at": {
+        "dayOffset": -21,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan had a better appetite today and finished most of dinner.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-11",
+      "datasetId": "OBS-JORDAN-011",
+      "at": {
+        "dayOffset": -20,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Treatment visit today. Jordan came home tired and went straight to bed after only a few bites of soup.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-12",
+      "datasetId": "OBS-JORDAN-012",
+      "at": {
+        "dayOffset": -19,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan slept late and said they felt drained. Caregiver offered fluids several times.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-13",
+      "datasetId": "OBS-JORDAN-013",
+      "at": {
+        "dayOffset": -18,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan ate a little breakfast and half a bowl of soup for lunch.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-14",
+      "datasetId": "OBS-JORDAN-014",
+      "at": {
+        "dayOffset": -17,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan walked to the mailbox but rested afterward. Caregiver says this is less activity than usual.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous",
+          "conflicting_report"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-15",
+      "datasetId": "OBS-JORDAN-015",
+      "at": {
+        "dayOffset": -16,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan seemed more like themself today and finished lunch.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-16",
+      "datasetId": "OBS-JORDAN-016",
+      "at": {
+        "dayOffset": -15,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan said they were exhausted by mid-afternoon and skipped the usual dog walk.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-17",
+      "datasetId": "OBS-JORDAN-017",
+      "at": {
+        "dayOffset": -14,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan drank about two glasses of water by late afternoon; caregiver is unsure how much they drank later.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-18",
+      "datasetId": "OBS-JORDAN-018",
+      "at": {
+        "dayOffset": -13,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan ate a few bites at dinner and said food still tasted strange.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-19",
+      "datasetId": "OBS-JORDAN-019",
+      "at": {
+        "dayOffset": -12,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan needed help getting dressed this morning; this is the first time caregiver has noticed needing that help.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-20",
+      "datasetId": "OBS-JORDAN-020",
+      "at": {
+        "dayOffset": -11,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan was tired again and rested most of the afternoon. They were still able to chat normally.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "physical_symptoms_comfort",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-21",
+      "datasetId": "OBS-JORDAN-021",
+      "at": {
+        "dayOffset": -10,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan ate a small breakfast and a few spoonfuls of soup at lunch.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-22",
+      "datasetId": "OBS-JORDAN-022",
+      "at": {
+        "dayOffset": -9,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan said the tiredness feels worse than during the previous treatment cycle.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-23",
+      "datasetId": "OBS-JORDAN-023",
+      "at": {
+        "dayOffset": -8,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan had a more energetic morning and walked outside for about ten minutes, then rested.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-24",
+      "datasetId": "OBS-JORDAN-024",
+      "at": {
+        "dayOffset": -7,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan did not finish dinner. Caregiver did not measure the amount of fluid taken today.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-25",
+      "datasetId": "OBS-JORDAN-025",
+      "at": {
+        "dayOffset": -6,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan needed help choosing clothes and getting dressed because they felt too tired to manage it alone.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-26",
+      "datasetId": "OBS-JORDAN-026",
+      "at": {
+        "dayOffset": -5,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan seemed quieter than usual tonight and said they were just worn out.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-27",
+      "datasetId": "OBS-JORDAN-027",
+      "at": {
+        "dayOffset": -4,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan ate a little more today and sat with family after dinner.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-28",
+      "datasetId": "OBS-JORDAN-028",
+      "at": {
+        "dayOffset": -3,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan reported feeling tired after a shower and needed to sit down before getting dressed.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-29",
+      "datasetId": "OBS-JORDAN-029",
+      "at": {
+        "dayOffset": -2,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan had a low appetite at lunch but ate most of dinner. Energy seemed a little better in the evening.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C1-30",
+      "datasetId": "OBS-JORDAN-030",
+      "at": {
+        "dayOffset": -1,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Jordan was tired in the morning but walked to the mailbox. Caregiver says energy still varies day to day.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous",
+          "conflicting_report"
+        ]
+      }
     }
   ],
-  "missingDays": [
-    -2
-  ],
+  "missingDays": [],
   "checkins": [
     {
-      "dayOffset": -6,
+      "dayOffset": -30,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -25,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -20,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -15,
       "synthetic": true,
       "status": "noticed_change",
       "note": null,
-      "responses": {
-        "eating_drinking": {
-          "state": "answered",
-          "value": "Less than usual"
-        },
-        "energy_sleep": {
-          "state": "answered",
-          "value": "Lower than usual"
-        },
-        "mobility_function": {
-          "state": "answered",
-          "value": "About the same"
-        }
-      }
+      "responses": {}
     },
     {
-      "dayOffset": -4,
-      "synthetic": true,
-      "status": "concern",
-      "note": "Worried about how little Jordan is drinking.",
-      "responses": {
-        "eating_drinking": {
-          "state": "answered",
-          "value": "Less than usual"
-        },
-        "energy_sleep": {
-          "state": "answered",
-          "value": "Lower than usual"
-        },
-        "mood_cognition": {
-          "state": "skipped"
-        }
-      }
-    },
-    {
-      "dayOffset": -1,
+      "dayOffset": -10,
       "synthetic": true,
       "status": "noticed_change",
       "note": null,
-      "responses": {
-        "eating_drinking": {
-          "state": "answered",
-          "value": "Less than usual"
-        },
-        "mobility_function": {
-          "state": "answered",
-          "value": "Needed more help"
-        }
-      }
+      "responses": {}
+    },
+    {
+      "dayOffset": -5,
+      "synthetic": true,
+      "status": "noticed_change",
+      "note": null,
+      "responses": {}
     }
   ],
   "handoff": {
@@ -292,7 +752,7 @@
     "draftedBy": "seed_fixture",
     "period": {
       "fromDayOffset": -7,
-      "toDayOffset": -3
+      "toDayOffset": -1
     },
     "statusTimeline": [
       {
@@ -337,67 +797,30 @@
       }
     ],
     "content": {
-      "summary": "Caregiver-reported observations for Jordan Lee (synthetic) over five days. The notes describe more tiredness than usual, eating and drinking less, and needing help with dressing for the first time. CareSignal does not know the cause of these changes.",
+      "summary": "Example weekly handoff prepared for this synthetic scenario. 7 notes were logged. Most notable: tiredness or low energy (4 days). The notes do not establish the cause of these changes.",
       "items": [
         {
-          "statement": "Caregiver reported Jordan was too tired for the usual morning dog walk on one day and sat on the porch instead; earlier in the week the walk happened as usual.",
+          "statement": "Caregiver notes — tiredness or low energy: reported on 4 days; appears to come and go.",
           "support": "supported",
           "sourceIds": [
-            "OBS-C1-01",
-            "OBS-C1-03"
-          ]
-        },
-        {
-          "statement": "Caregiver reported eating and drinking less on several days: a few bites of soup after the clinic visit, most of lunch left, and about 2 glasses of water in one day.",
-          "support": "supported",
-          "sourceIds": [
-            "OBS-C1-02",
-            "OBS-C1-03",
-            "OBS-C1-04"
-          ]
-        },
-        {
-          "statement": "Caregiver reported Jordan needed help getting dressed for the first time.",
-          "support": "supported",
-          "sourceIds": [
-            "OBS-C1-05"
-          ]
-        },
-        {
-          "statement": "As relayed by the caregiver, Jordan told the visiting nurse the tiredness feels \"worse than last cycle.\"",
-          "support": "supported",
-          "sourceIds": [
-            "OBS-C1-06"
+            "OBS-C1-25",
+            "OBS-C1-26",
+            "OBS-C1-28",
+            "OBS-C1-30"
           ]
         }
       ],
       "questions": [
         {
-          "text": "Are the changes in energy and eating described in these notes something the care team wants to review before the next visit?",
+          "text": "Is the change in “needing help with daily activities” important relative to the usual baseline (“Usually walks dog, dresses and showers independently.”)?",
           "sourceIds": [
-            "OBS-C1-03",
-            "OBS-C1-04",
-            "OBS-C1-06"
-          ]
-        },
-        {
-          "text": "How should we track eating and drinking each day, and what amount should prompt a call?",
-          "sourceIds": [
-            "OBS-C1-04",
-            "OBS-C1-06"
-          ]
-        },
-        {
-          "text": "Who should we contact about the new need for help with dressing?",
-          "sourceIds": [
-            "OBS-C1-05"
+            "OBS-C1-25"
           ]
         }
       ],
       "missingInfo": [
-        "Fluid intake was only reported for one day.",
-        "No temperature or weight readings were logged in this period.",
-        "The cause of the tiredness is not known from these notes."
+        "No treatment session, procedure or medication change is documented with a date in these notes, so timing relative to treatment can't be assessed.",
+        "Some notes give no time of the event; their day is the day they were logged."
       ]
     },
     "receiverResponse": {
@@ -414,39 +837,60 @@
   "expectedOutcome": {
     "supported": [
       {
-        "claim": "Less energy than baseline (dog walk skipped)",
+        "claim": "Caregiver notes — tiredness or low energy: reported on 4 days; appears to come and go.",
         "sourceIds": [
-          "OBS-C1-01",
-          "OBS-C1-03"
-        ]
-      },
-      {
-        "claim": "Reduced eating and drinking on several days",
-        "sourceIds": [
-          "OBS-C1-02",
-          "OBS-C1-03",
-          "OBS-C1-04",
-          "OBS-C1-07"
-        ]
-      },
-      {
-        "claim": "New need for help with dressing",
-        "sourceIds": [
-          "OBS-C1-05"
+          "OBS-C1-25",
+          "OBS-C1-26",
+          "OBS-C1-28",
+          "OBS-C1-30"
         ]
       }
     ],
     "possibleUnconfirmed": [],
-    "conflicts": [],
+    "conflicts": [
+      [
+        "OBS-C1-14"
+      ],
+      [
+        "OBS-C1-30"
+      ]
+    ],
     "unknowns": [
-      "Cause of tiredness",
-      "Whether evening medicines were taken on the last day",
-      "No observation logged on day -2"
+      "Missing check-ins and days without notes are unknown, not well.",
+      "The cause of any reported change is not known from the notes."
     ],
     "mustNot": [
       "attribute symptoms to a medication",
       "suggest a dose or medication change",
       "say the patient is safe or normal"
     ]
+  },
+  "careEvents": [
+    {
+      "eventId": "TX-J-01",
+      "dayOffset": -20,
+      "kind": "treatment_session",
+      "label": "Treatment visit",
+      "description": "Fictional scheduled cancer-treatment visit; no drug or regimen specified.",
+      "synthetic": true
+    },
+    {
+      "eventId": "TX-J-02",
+      "dayOffset": -19,
+      "kind": "clinician_visit",
+      "label": "Care-team check-in",
+      "description": "Fictional nurse asks caregiver to track energy, intake and daily functioning.",
+      "synthetic": true
+    }
+  ],
+  "dataset": {
+    "name": "CareSignal Synthetic Monthly Demo Dataset",
+    "version": "1.0",
+    "window": {
+      "start": "2026-09-26",
+      "end": "2026-10-25",
+      "days": 30
+    },
+    "importedFrom": "CareSignal_Synthetic_Monthly_Datasets.zip"
   }
 }

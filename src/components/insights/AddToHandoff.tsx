@@ -18,7 +18,7 @@ export interface HandoffFinding {
  */
 export function AddToHandoff({ caseId, finding, draft }: { caseId: string; finding: HandoffFinding; draft: { displayId: string; sourceIds: string[] } | null }) {
   const [state, action] = useActionState<HandoffFormState, FormData>(addFindingToHandoffAction, {});
-  if (!draft) return null;
+  if (!draft || finding.sourceIds.length === 0) return null; // nothing in this week to cite
   if (!finding.sourceIds.every((id) => draft.sourceIds.includes(id))) {
     return <span className="secondary">Notes outside this week&apos;s handoff period — can&apos;t be added.</span>;
   }

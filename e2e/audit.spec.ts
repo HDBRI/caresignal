@@ -85,7 +85,7 @@ for (const c of CASES) {
 
 test("AI content is visibly separate from the caregiver's original note", async ({ page }) => {
   const base = await openDemo(page, "Alex Rivera");
-  await page.goto(`${base}/observations/OBS-C3-06`);
+  await page.goto(`${base}/observations/OBS-C3-26`);
   await expect(page.getByRole("heading", { name: /Caregiver's note — original, exactly as entered/ })).toBeVisible();
   await expect(page.locator("section.ai-box")).toContainText("Categories (separate from the original note)");
   await page.goto(`${base}/handoffs`);
@@ -116,7 +116,7 @@ test("post-surgery urgent rule shows emergency guidance with the AI offline", as
   await expect(page.getByText("AI analysis unavailable — safety rules and note-taking still work")).toBeVisible();
   const banner = page.getByRole("alert").filter({ hasText: "Possible emergency described" });
   await expect(banner).toContainText("call 911");
-  await expect(banner).toContainText("Hard to wake Morgan this morning");
+  await expect(banner).toContainText("Morgan suddenly became confused and was difficult to wake");
   await page.getByRole("button", { name: "+ Add observation" }).first().click();
   // The phrase that exposed the audit gap — caught since rules 2026-10-26.1.
   await page.getByLabel("What did you notice?").fill("He is not breathing normally and won't wake up");

@@ -24,7 +24,7 @@ import { buildInsightInput, buildInsightMessages, validateInsightOutput, INSIGHT
 import { MODEL_NAME } from "../src/lib/config";
 import { createDatabase, type Database, type Principal } from "../src/lib/db/client";
 import { migrate } from "../src/lib/db/migrate";
-import { EVALUATION_CASES, SEED_CASES } from "../src/lib/fixtures";
+import { EVALUATION_CASES, LEGACY_CASES, SEED_CASES } from "../src/lib/fixtures";
 import { createUserCase, getCase, NotFoundError } from "../src/lib/repo/cases";
 import { handleSubmitRequest } from "../src/lib/repo/handoff-api";
 import { acknowledgeHandoff, addFictionalResponse, approveHandoff, createOrRegenerateDraft } from "../src/lib/repo/handoff-workflow";
@@ -392,7 +392,7 @@ interface CatCase { id: string; fixtureId?: string; evaluationCaseId?: string; t
 
 function resolveCat(c: CatCase) {
   if (c.fixtureId) {
-    const o = SEED_CASES.flatMap((s) => s.observations).find((x) => x.fixtureId === c.fixtureId)!;
+    const o = LEGACY_CASES.flatMap((s) => s.observations).find((x) => x.fixtureId === c.fixtureId)!;
     return { text: o.text, primary: o.expected.primaryCategory as string, acceptable: [] as string[], secondary: o.expected.secondaryCategories as string[] };
   }
   if (c.evaluationCaseId) {

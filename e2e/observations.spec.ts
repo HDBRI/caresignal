@@ -34,9 +34,9 @@ test("correcting categories and wording keeps the original note", async ({ page 
   await openDemo(page, "Jordan Lee");
   await page.goto(page.url().replace("/overview", "/observations/OBS-C1-04"));
   await expect(page.getByRole("heading", { level: 1, name: "OBS-C1-04" })).toBeVisible();
-  // Seeded notes carry real labels generated once with the demo (npm run seed:ai), shown as AI output.
-  await expect(page.getByText("AI suggested:")).toBeVisible();
-  await expect(page.getByText(/gpt-6-luna/).first()).toBeVisible();
+  // Monthly dataset notes carry the scenario's own labels, shown as such — never as AI output.
+  await expect(page.getByText("Categories from the synthetic scenario dataset (not AI):")).toBeVisible();
+  await expect(page.getByText("No AI suggestion stored for this note.")).toBeVisible();
 
   await page.getByText("Correct the categories").click();
   await page.getByRole("radio", { name: "Sleep, nutrition and hydration" }).check();
@@ -50,7 +50,7 @@ test("correcting categories and wording keeps the original note", async ({ page 
   await page.getByRole("button", { name: "Save as new version" }).click();
   await expect(page.getByText(/Saved as version 2\. The original wording is kept\./)).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Felt queasy after lunch. Only drank about 2 glasses of water all day.").first()).toBeVisible();
+  await expect(page.getByText("Jordan said food tasted metallic and left most of lunch.").first()).toBeVisible(); // original kept
   await expect(page.getByText(/Version 2 · edited/)).toBeVisible();
 });
 

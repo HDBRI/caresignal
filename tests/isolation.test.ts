@@ -9,6 +9,7 @@ import { createUserCase, getCase, listCases, NotFoundError } from "@/lib/repo/ca
 import { listHandoffs } from "@/lib/repo/handoffs";
 import { addObservation, listAlerts, listObservations, markAlertSeen } from "@/lib/repo/observations";
 import { copySeedToUserCase, resetDemoSession, startDemoSession } from "@/lib/repo/seed";
+import { LEGACY_CASES, SEED_CASES } from "@/lib/fixtures";
 import { ANCHOR, demoUserId, freshDb, registeredUser } from "./helpers/db";
 
 let db: Database;
@@ -47,7 +48,7 @@ describe("cross-user isolation (registered accounts)", () => {
     db = await freshDb();
     const a = await registeredUser(db, "A");
     const b = await registeredUser(db, "B");
-    await copySeedToUserCase(db, a, "PAT-CANCER-001", ANCHOR); // fills every table incl. receipt + response
+    await copySeedToUserCase(db, a, "PAT-CANCER-001", ANCHOR, LEGACY_CASES[0]); // legacy notes fill every table incl. alerts, receipt + response
     for (const t of CASE_TABLES.filter((t) => !["observation_edits", "observation_analyses", "insight_runs", "insights"].includes(t))) {
       expect(await rawCount(db, a, t), `owner sees ${t}`).toBeGreaterThan(0);
     }
@@ -133,7 +134,7 @@ describe("demo isolation", () => {
     await expect(getCase(db, v1, s2.caseId)).rejects.toBeInstanceOf(NotFoundError);
     const [alert2] = (await listAlerts(db, v2, s2.caseId)).filter((a) => a.tier === "emergency");
     await expect(markAlertSeen(db, v1, alert2.id)).rejects.toBeInstanceOf(NotFoundError);
-    expect(await rawCount(db, v1, "observations")).toBe(8);
+    expect(await rawCount(db, v1, "observations")).toBe(SEED_CASES[1].observations.length);
   });
 
   it("resetting one visitor's copy leaves other visitors untouched", async () => {
@@ -144,7 +145,7 @@ describe("demo isolation", () => {
     const v2 = { userId: uid, demoSessionId: s2.demoSessionId };
     await addObservation(db, v2, { caseId: s2.caseId, text: "Visitor 2 note" });
     await resetDemoSession(db, { userId: uid, demoSessionId: s1.demoSessionId }, ANCHOR);
-    expect(await listObservations(db, v2, s2.caseId)).toHaveLength(9);
+    expect(await listObservations(db, v2, s2.caseId)).toHaveLength(SEED_CASES[1].observations.length + 1);
   });
 
   it("a demo login without a demo session sees nothing; demo users cannot create private cases", async () => {

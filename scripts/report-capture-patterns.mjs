@@ -1,5 +1,5 @@
 /** Captures the pattern-detection screens (Insights + structured handoff) from the running local app. No new AI calls:
- * Case 1's handoff reuses the validated run prepared with the demo. Output: docs/report/img/5x-*.jpg */
+ * run with AI offline (PORTKEY_API_KEY unset); monthly-dataset notes. Output: docs/report/img/5x-*.jpg */
 import path from "node:path";
 import { chromium } from "@playwright/test";
 
@@ -15,6 +15,8 @@ await page.getByRole("button", { name: "Open Jordan Lee demo" }).click();
 await page.waitForURL(/\/overview/);
 const base = page.url().replace(/\/overview.*$/, "");
 await page.goto(`${base}/insights`);
+await page.getByRole("link", { name: "Last 30 days" }).click();
+await page.waitForURL(/period=/);
 await page.addStyleTag({ content: css });
 await page.locator("section.patterns").screenshot({ path: path.join(IMG, "50-insights-patterns.jpg"), type: "jpeg", quality: 80 });
 await page.goto(`${base}/handoffs`);

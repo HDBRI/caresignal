@@ -39,8 +39,8 @@ test("every case screen passes automated accessibility checks (incl. an urgent b
     await audit(page, screen);
   }
   await page.getByRole("link", { name: "Observations", exact: true }).first().click();
-  await page.getByRole("link", { name: "OBS-C2-08" }).first().click();
-  await expect(page.getByRole("heading", { level: 1, name: "OBS-C2-08" })).toBeVisible();
+  await page.getByRole("link", { name: "OBS-C2-18" }).first().click();
+  await expect(page.getByRole("heading", { level: 1, name: "OBS-C2-18" })).toBeVisible();
   await audit(page, "Observation detail");
   await page.getByRole("link", { name: "Handoffs", exact: true }).first().click();
   await page.getByRole("link", { name: /Review this draft/ }).click();

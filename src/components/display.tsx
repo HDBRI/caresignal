@@ -138,8 +138,8 @@ export function ObservationItem({
       </div>
       {!compact && (
         <div className="ai-box" style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-          <span className="ai-box-label">{analysis?.source === "caregiver" ? "Categories (corrected by caregiver)" : "AI-generated categories"}</span>
-          {analysis && (analysis.source === "caregiver" || o.aiState === "complete") ? (
+          <span className="ai-box-label">{analysis?.source === "caregiver" ? "Categories (corrected by caregiver)" : analysis?.source === "scenario" ? "Categories from the synthetic scenario dataset (not AI)" : "AI-generated categories"}</span>
+          {analysis && (analysis.source !== "ai" || o.aiState === "complete") ? (
             <span className="chip-row" style={{ display: "inline-flex" }}>
               {[analysis.primaryCategory, ...analysis.secondaryCategories].map((c) => (
                 <Link key={c} className="chip" href={`/cases/${caseId}/observations?category=${c}`}>

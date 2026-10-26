@@ -28,7 +28,8 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
   const history = await listAnalysisHistory(db, p, o.id);
   const latestAi = history.find((h) => h.source === "ai");
   const latestCaregiver = history.find((h) => h.source === "caregiver");
-  const effective = latestCaregiver ?? (o.aiState === "complete" ? latestAi : undefined);
+  const scenario = history.find((h) => h.source === "scenario");
+  const effective = latestCaregiver ?? scenario ?? (o.aiState === "complete" ? latestAi : undefined);
   const currentText = edits.length ? edits[edits.length - 1].editedText : o.originalText;
 
   return (
@@ -122,6 +123,12 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
             </ul>
           </div>
         )}
+        {scenario && (
+          <p>
+            <strong>Categories from the synthetic scenario dataset (not AI):</strong>{" "}
+            {[scenario.primaryCategory, ...scenario.secondaryCategories].map((c) => categoryLabel(c)).join(", ")}
+          </p>
+        )}
         {latestCaregiver && (
           <p>
             <strong>Your correction (in use):</strong>{" "}
@@ -150,7 +157,7 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
             <ol style={{ paddingLeft: 20 }}>
               {history.map((h) => (
                 <li key={h.id}>
-                  {h.source === "ai" ? "AI" : "Caregiver"}: {[h.primaryCategory, ...h.secondaryCategories].map((c) => categoryLabel(c)).join(", ")} ·{" "}
+                  {h.source === "ai" ? "AI" : h.source === "scenario" ? "Synthetic scenario dataset" : "Caregiver"}: {[h.primaryCategory, ...h.secondaryCategories].map((c) => categoryLabel(c)).join(", ")} ·{" "}
                   {fmtDateTime(h.createdAt)}
                 </li>
               ))}

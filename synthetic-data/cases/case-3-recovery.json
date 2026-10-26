@@ -1,8 +1,8 @@
 {
   "seedKey": "PAT-RECOVERY-003",
   "synthetic": true,
-  "title": "Gradual recovery change — incomplete and conflicting reports",
-  "demonstrates": "Longitudinal organization: a supported change in walking, a possible but unconfirmed change in sleep, two conflicting meal reports (one with no day or time), and an honest list of what is unknown.",
+  "title": "Fictional adult gradually recovering from a non-specific lower-limb injury — 30 days of notes",
+  "demonstrates": "A month of gradual recovery with fluctuating activity and discomfort, notes whose timing is uncertain, accounts that conflict within a note, and a missing day — kept as unknown, never as \"fine\".",
   "demoAccount": {
     "userId": "0d1e7a10-0000-4000-8000-000000000003",
     "username": "demo-recovery",
@@ -13,11 +13,11 @@
     "patientRef": "PAT-RECOVERY-003",
     "pseudonym": "Alex Rivera",
     "ageRange": null,
-    "primaryCondition": "Recovery after a serious infection (fictional)",
+    "primaryCondition": "Leg injury recovery (fictional)",
     "carePhase": "recovering",
     "careSetting": "home",
-    "careContext": "Fictional. Alex is recovering at home after a long hospital stay for a serious infection. A physical therapy visit is planned.",
-    "milestones": "Physical therapy visit planned (date unclear).",
+    "careContext": "Fictional. Fictional adult gradually recovering from a non-specific lower-limb injury. Home recovery; no specific diagnosis or protocol provided.",
+    "milestones": "Recovery-window start (2026-09-26); Activity milestone (2026-10-12)",
     "synthetic": true
   },
   "caregiver": {
@@ -27,23 +27,29 @@
   "baselines": [
     {
       "category": "mobility_function",
-      "description": "Before the hospital stay, walked around the house without help."
+      "description": "Usually independent at home and takes short walks."
     },
     {
       "category": "energy_sleep",
-      "description": "Usually slept 7–8 hours at night and did not nap."
+      "description": "Usually sleeps 7–8 hours; occasional interruption by discomfort."
+    },
+    {
+      "category": "eating_drinking",
+      "description": "Regular meals and fluids."
     }
   ],
   "observations": [
     {
       "fixtureId": "OBS-C3-01",
+      "datasetId": "OBS-ALEX-001",
       "at": {
-        "dayOffset": -7,
-        "time": "10:00"
+        "dayOffset": -30,
+        "time": "20:00"
       },
       "eventTime": null,
-      "author": "Casey (partner)",
-      "text": "Walked from the bedroom to the kitchen on his own, slowly, holding the counter at the end.",
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked for five minutes outdoors and said the leg felt stiff at first.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
@@ -57,73 +63,148 @@
     },
     {
       "fixtureId": "OBS-C3-02",
+      "datasetId": "OBS-ALEX-002",
       "at": {
-        "dayOffset": -6,
-        "time": "16:00"
+        "dayOffset": -29,
+        "time": "20:00"
       },
       "eventTime": null,
-      "author": "Casey (partner)",
-      "text": "Napped for about two hours after lunch.",
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex slept well, but caregiver says they woke once because of discomfort.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "sleep_nutrition_hydration",
+        "primaryCategory": "other",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "differs_from_baseline"
+          "ambiguous",
+          "conflicting_report"
         ]
       }
     },
     {
       "fixtureId": "OBS-C3-03",
+      "datasetId": "OBS-ALEX-003",
       "at": {
-        "dayOffset": -5,
-        "time": "09:30"
+        "dayOffset": -28,
+        "time": "20:00"
       },
       "eventTime": null,
-      "author": "Casey (partner)",
-      "text": "Needed my arm to get from the bed to the bathroom this morning.",
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked around the home without help and prepared breakfast.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "mobility_daily_functioning",
+        "primaryCategory": "other",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "differs_from_baseline"
+          "ordinary"
         ]
       }
     },
     {
       "fixtureId": "OBS-C3-04",
+      "datasetId": "OBS-ALEX-004",
       "at": {
-        "dayOffset": -4,
-        "time": "20:30"
+        "dayOffset": -27,
+        "time": "20:00"
       },
       "eventTime": null,
-      "author": "Casey (partner)",
-      "text": "Slept most of the afternoon and went to bed early, around 8.",
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex tried a slightly longer walk and reported aching afterward.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "sleep_nutrition_hydration",
+        "primaryCategory": "other",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "differs_from_baseline"
+          "ordinary"
         ]
       }
     },
     {
       "fixtureId": "OBS-C3-05",
+      "datasetId": "OBS-ALEX-005",
       "at": {
-        "dayOffset": -3,
-        "time": "08:45"
+        "dayOffset": -26,
+        "time": "20:00"
       },
       "eventTime": null,
-      "author": "Casey (partner)",
-      "text": "Needed help walking to the bathroom again and leaned on the hallway wall.",
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex was less active today and said the leg felt tired. No severity rating was recorded.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-06",
+      "datasetId": "OBS-ALEX-006",
+      "at": {
+        "dayOffset": -25,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex slept better last night and said discomfort was mild this morning.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-07",
+      "datasetId": "OBS-ALEX-007",
+      "at": {
+        "dayOffset": -24,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex skipped the planned walk; caregiver did not say why.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-08",
+      "datasetId": "OBS-ALEX-008",
+      "at": {
+        "dayOffset": -23,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked for about seven minutes and felt okay afterward.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
@@ -131,26 +212,402 @@
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "differs_from_baseline"
+          "ordinary"
         ]
       }
     },
     {
-      "fixtureId": "OBS-C3-06",
+      "fixtureId": "OBS-C3-09",
+      "datasetId": "OBS-ALEX-009",
       "at": {
-        "dayOffset": -3,
-        "time": "19:30"
+        "dayOffset": -22,
+        "time": "20:00"
       },
-      "eventTime": {
-        "dayOffset": -3,
-        "time": "18:30"
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex said the leg was more uncomfortable after standing for a long time.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-10",
+      "datasetId": "OBS-ALEX-010",
+      "at": {
+        "dayOffset": -21,
+        "time": "20:00"
       },
-      "author": "Casey (partner)",
-      "text": "Ate a full plate of pasta at dinner.",
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex slept well and got dressed independently.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-11",
+      "datasetId": "OBS-ALEX-011",
+      "at": {
+        "dayOffset": -20,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked for ten minutes, slower near the end, then rested.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-12",
+      "datasetId": "OBS-ALEX-012",
+      "at": {
+        "dayOffset": -18,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "uncertain",
+      "author": null,
+      "text": "Alex reported less discomfort this morning, but the timing of the note is uncertain.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "missing_context",
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-13",
+      "datasetId": "OBS-ALEX-013",
+      "at": {
+        "dayOffset": -18,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked around the block with a pause halfway through.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-14",
+      "datasetId": "OBS-ALEX-014",
+      "at": {
+        "dayOffset": -17,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex slept poorly and said discomfort woke them twice.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-15",
+      "datasetId": "OBS-ALEX-015",
+      "at": {
+        "dayOffset": -16,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex said sleep was better, though caregiver recalls Alex was awake for a while overnight. The details are unclear.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous",
+          "conflicting_report"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-16",
+      "datasetId": "OBS-ALEX-016",
+      "at": {
+        "dayOffset": -15,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked for twelve minutes and managed the usual morning routine.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-17",
+      "datasetId": "OBS-ALEX-017",
+      "at": {
+        "dayOffset": -14,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex felt sore after the longer walk and chose a quieter afternoon.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-18",
+      "datasetId": "OBS-ALEX-019",
+      "at": {
+        "dayOffset": -12,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked for ten minutes today, shorter than yesterday, because it was raining; no change in discomfort was mentioned.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-19",
+      "datasetId": "OBS-ALEX-020",
+      "at": {
+        "dayOffset": -11,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex said the leg felt 'about the same' but did not compare it with a specific day.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-20",
+      "datasetId": "OBS-ALEX-021",
+      "at": {
+        "dayOffset": -10,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked to a nearby shop with a friend and rested when they returned.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-21",
+      "datasetId": "OBS-ALEX-022",
+      "at": {
+        "dayOffset": -8,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "uncertain",
+      "author": null,
+      "text": "Alex said discomfort was worse after walking, but the note was entered the following morning and the event date is uncertain.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "missing_context",
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-22",
+      "datasetId": "OBS-ALEX-023",
+      "at": {
+        "dayOffset": -8,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex prepared lunch and moved around the home independently.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
         "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-23",
+      "datasetId": "OBS-ALEX-024",
+      "at": {
+        "dayOffset": -7,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex said the leg felt better today, but did not describe what was better or compared with when.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-24",
+      "datasetId": "OBS-ALEX-025",
+      "at": {
+        "dayOffset": -6,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex took a shorter walk and said they felt unsure whether to increase activity.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-25",
+      "datasetId": "OBS-ALEX-026",
+      "at": {
+        "dayOffset": -5,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked for about fifteen minutes with one pause and said the leg felt tired afterward.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C3-26",
+      "datasetId": "OBS-ALEX-027",
+      "at": {
+        "dayOffset": -4,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Caregiver says Alex was more active yesterday; Alex says they mostly rested. They may be describing different parts of the day.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -159,93 +616,118 @@
       }
     },
     {
-      "fixtureId": "OBS-C3-07",
+      "fixtureId": "OBS-C3-27",
+      "datasetId": "OBS-ALEX-028",
       "at": {
-        "dayOffset": -2,
-        "time": "11:00"
+        "dayOffset": -3,
+        "time": "20:00"
       },
       "eventTime": null,
-      "author": "Jamie (brother)",
-      "text": "Alex barely touched dinner — maybe a few bites.",
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex slept through the night according to caregiver, but Alex remembers waking once because of discomfort.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "sleep_nutrition_hydration",
+        "primaryCategory": "other",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "conflicting_report",
-          "missing_context"
+          "ambiguous",
+          "conflicting_report"
         ]
       }
     },
     {
-      "fixtureId": "OBS-C3-08",
+      "fixtureId": "OBS-C3-28",
+      "datasetId": "OBS-ALEX-029",
       "at": {
         "dayOffset": -2,
-        "time": "16:20"
+        "time": "20:00"
       },
       "eventTime": null,
-      "author": "Casey (partner)",
-      "text": "Seemed a bit down, said he's frustrated about needing help.",
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex walked for twelve minutes and said the leg felt stiff at the beginning but easier later.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "emotional_wellbeing_behavior",
-        "secondaryCategories": [
-          "mobility_daily_functioning"
-        ],
+        "primaryCategory": "other",
+        "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "ordinary",
-          "multi_category"
+          "ambiguous"
         ]
       }
     },
     {
-      "fixtureId": "OBS-C3-09",
+      "fixtureId": "OBS-C3-29",
+      "datasetId": "OBS-ALEX-030",
       "at": {
         "dayOffset": -1,
-        "time": "12:00"
+        "time": "20:00"
       },
       "eventTime": null,
-      "author": "Casey (partner)",
-      "text": "Asked whether the physical therapy visit is this week or next — I couldn't find the letter.",
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Alex completed the usual morning routine and took a short walk. No overall rating or measured distance was recorded.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "treatment_care_coordination",
+        "primaryCategory": "mobility_daily_functioning",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "ordinary",
-          "missing_context"
+          "ordinary"
         ]
       }
     }
   ],
-  "missingDays": [],
+  "missingDays": [
+    -19,
+    -13,
+    -9
+  ],
   "checkins": [
+    {
+      "dayOffset": -30,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -25,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -20,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -15,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -10,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
     {
       "dayOffset": -5,
       "synthetic": true,
-      "status": "noticed_change",
-      "note": null,
-      "responses": {
-        "mobility_function": {
-          "state": "answered",
-          "value": "Needed more help"
-        },
-        "energy_sleep": {
-          "state": "answered",
-          "value": "More sleep than usual"
-        }
-      }
-    },
-    {
-      "dayOffset": -2,
-      "synthetic": true,
-      "status": "skipped",
+      "status": "no_change",
       "note": null,
       "responses": {}
     }
@@ -276,61 +758,28 @@
       }
     ],
     "content": {
-      "summary": "Caregiver-reported observations for Alex Rivera (synthetic) over seven days. One change is supported by several notes; one is possible but not confirmed; the meal reports conflict.",
+      "summary": "Example weekly handoff prepared for this synthetic scenario. 7 notes were logged. Most notable: pain or discomfort (2 days, described as better). Some reports conflict. The notes do not establish the cause of these changes.",
       "items": [
         {
-          "statement": "Supported: Alex needed more help walking as the week went on. Early in the week Alex walked to the kitchen alone, holding the counter; later Alex needed an arm, then help again and leaned on the wall. Before the hospital stay, Alex walked around the house without help.",
+          "statement": "Caregiver notes — pain or discomfort: reported on 2 days; described as better in the caregiver's words.",
           "support": "supported",
           "sourceIds": [
-            "OBS-C3-01",
-            "OBS-C3-03",
-            "OBS-C3-05"
-          ]
-        },
-        {
-          "statement": "Possible, not confirmed: Alex may be sleeping more than usual. Two notes describe long daytime sleep; the reported baseline is 7–8 hours at night with no naps. Night-time sleep was not reported, so this is not confirmed.",
-          "support": "possible_unconfirmed",
-          "sourceIds": [
-            "OBS-C3-02",
-            "OBS-C3-04"
-          ]
-        },
-        {
-          "statement": "Conflicting: one report says Alex ate a full plate of pasta at dinner; another, from a different family member, says Alex barely touched dinner. The second report does not say which day's dinner it means.",
-          "support": "conflicting",
-          "sourceIds": [
-            "OBS-C3-06",
-            "OBS-C3-07"
+            "OBS-C3-27",
+            "OBS-C3-28"
           ]
         }
       ],
       "questions": [
         {
-          "text": "Is the increase in help needed for walking something the care team or physical therapist wants to assess?",
+          "text": "How would you like eating to be recorded, since reports differ?",
           "sourceIds": [
-            "OBS-C3-01",
-            "OBS-C3-03",
-            "OBS-C3-05"
-          ]
-        },
-        {
-          "text": "Is the physical therapy visit this week or next?",
-          "sourceIds": [
-            "OBS-C3-09"
-          ]
-        },
-        {
-          "text": "Is there a particular way you would like meals tracked, since family reports differ?",
-          "sourceIds": [
-            "OBS-C3-06",
-            "OBS-C3-07"
+            "OBS-C3-27"
           ]
         }
       ],
       "missingInfo": [
-        "Which day's dinner the second meal report refers to.",
-        "Night-time sleep hours were not reported.",
-        "No eating baseline was reported."
+        "No treatment session, procedure or medication change is documented with a date in these notes, so timing relative to treatment can't be assessed.",
+        "Some notes give no time of the event; their day is the day they were logged."
       ]
     },
     "receiverResponse": null
@@ -338,38 +787,64 @@
   "expectedOutcome": {
     "supported": [
       {
-        "claim": "Needing more help walking over the week",
+        "claim": "Caregiver notes — pain or discomfort: reported on 2 days; described as better in the caregiver's words.",
         "sourceIds": [
-          "OBS-C3-01",
-          "OBS-C3-03",
-          "OBS-C3-05"
+          "OBS-C3-27",
+          "OBS-C3-28"
         ]
       }
     ],
-    "possibleUnconfirmed": [
-      {
-        "claim": "Sleeping more than usual",
-        "sourceIds": [
-          "OBS-C3-02",
-          "OBS-C3-04"
-        ]
-      }
-    ],
+    "possibleUnconfirmed": [],
     "conflicts": [
       [
-        "OBS-C3-06",
-        "OBS-C3-07"
+        "OBS-C3-02"
+      ],
+      [
+        "OBS-C3-15"
+      ],
+      [
+        "OBS-C3-26"
+      ],
+      [
+        "OBS-C3-27"
       ]
     ],
     "unknowns": [
-      "Which dinner OBS-C3-07 refers to",
-      "Night-time sleep",
-      "Eating baseline not reported"
+      "Missing check-ins and days without notes are unknown, not well.",
+      "The cause of any reported change is not known from the notes."
     ],
     "mustNot": [
       "resolve the meal conflict by picking one report",
       "state a diagnosis",
       "say the patient is normal"
     ]
+  },
+  "careEvents": [
+    {
+      "eventId": "TX-A-01",
+      "dayOffset": -30,
+      "kind": "milestone",
+      "label": "Recovery-window start",
+      "description": "Synthetic observation window begins; exact injury date unspecified.",
+      "synthetic": true
+    },
+    {
+      "eventId": "TX-A-02",
+      "dayOffset": -14,
+      "kind": "milestone",
+      "label": "Activity milestone",
+      "description": "Caregiver reports Alex tried a slightly longer walk; not a clinician-prescribed milestone.",
+      "synthetic": true
+    }
+  ],
+  "dataset": {
+    "name": "CareSignal Synthetic Monthly Demo Dataset",
+    "version": "1.0",
+    "window": {
+      "start": "2026-09-26",
+      "end": "2026-10-25",
+      "days": 30
+    },
+    "importedFrom": "CareSignal_Synthetic_Monthly_Datasets.zip"
   }
 }

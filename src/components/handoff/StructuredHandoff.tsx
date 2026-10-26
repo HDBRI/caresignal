@@ -109,9 +109,15 @@ export function StructuredHandoff({ caseId, content, notes }: { caseId: string; 
           <ul className="list-plain" style={{ gap: 6 }}>
             {content.timeline!.map((e) => (
               <li key={e.sourceId + e.label}>
-                <strong>{e.dateCertainty === "relative_unresolved" ? `Date given as “${e.relativeText}”` : fmtDay(e.day)}</strong> · {e.label} — “{e.quote}”{" "}
-                <span className="secondary">(documented in a caregiver note</span> <NoteRef caseId={caseId} id={e.sourceId} notes={notes} />
-                <span className="secondary">)</span>
+                <strong>{e.dateCertainty === "relative_unresolved" ? `Date given as “${e.relativeText}”` : fmtDay(e.day)}</strong> · {e.label} — {e.sourceId ? `“${e.quote}”` : e.quote}{" "}
+                {e.sourceId ? (
+                  <>
+                    <span className="secondary">(documented in a caregiver note</span> <NoteRef caseId={caseId} id={e.sourceId} notes={notes} />
+                    <span className="secondary">)</span>
+                  </>
+                ) : (
+                  <span className="pill pill-unknown">Synthetic scenario timeline</span>
+                )}
                 {e.relatedThemes.length > 0 && (
                   <p className="secondary" style={{ margin: "2px 0 0" }}>
                     Reported in the days after: {e.relatedThemes.join(", ").toLowerCase()}. The notes do not show whether these are related.

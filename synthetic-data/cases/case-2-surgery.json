@@ -1,8 +1,8 @@
 {
   "seedKey": "PAT-SURGERY-002",
   "synthetic": true,
-  "title": "Post-surgery recovery — predefined urgent test scenario",
-  "demonstrates": "Routine recovery notes, then a predefined synthetic urgent note. The deterministic safety rules show emergency guidance immediately — before and without any AI — and the weekly handoff is never what delivers urgent guidance.",
+  "title": "Fictional adult recovering at home after non-specific surgery — 30 days of notes",
+  "demonstrates": "A month of post-surgery recovery that is variable but generally improving, then a predefined synthetic urgent note (sudden confusion and difficult to wake). The deterministic rules show emergency guidance immediately — before and without any AI — and the weekly handoff is never what delivers urgent guidance.",
   "demoAccount": {
     "userId": "0d1e7a10-0000-4000-8000-000000000002",
     "username": "demo-surgery",
@@ -13,11 +13,11 @@
     "patientRef": "PAT-SURGERY-002",
     "pseudonym": "Morgan Patel",
     "ageRange": "65_79",
-    "primaryCondition": "Recovery after abdominal surgery (fictional)",
+    "primaryCondition": "Recovery after surgery (fictional)",
     "carePhase": "recovering",
     "careSetting": "home",
-    "careContext": "Fictional. Morgan is recovering at home after abdominal surgery, using a walker, with a follow-up visit scheduled.",
-    "milestones": "Follow-up visit with the surgeon’s office (moved once).",
+    "careContext": "Fictional. Fictional adult recovering at home after non-specific surgery. Post-operative home recovery; surgery occurred before this window.",
+    "milestones": "Recovery-window start (2026-09-26); Follow-up appointment (2026-10-03)",
     "synthetic": true
   },
   "caregiver": {
@@ -27,23 +27,29 @@
   "baselines": [
     {
       "category": "mobility_function",
-      "description": "Discharge plan: walk short distances several times a day with the walker."
+      "description": "Initially walks short distances indoors with family nearby."
     },
     {
-      "category": "mood_communication",
-      "description": "Usually upbeat and chatty."
+      "category": "eating_drinking",
+      "description": "Small meals, appetite gradually returning."
+    },
+    {
+      "category": "energy_sleep",
+      "description": "Tired at times but usually alert and conversational."
     }
   ],
   "observations": [
     {
       "fixtureId": "OBS-C2-01",
+      "datasetId": "OBS-MORGAN-001",
       "at": {
-        "dayOffset": -6,
-        "time": "09:00"
+        "dayOffset": -30,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "First full day home. Walked to the kitchen and back twice with the walker.",
+      "text": "Morgan walked from the bedroom to the kitchen with a family member nearby. The incision area felt sore when standing.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
@@ -51,40 +57,21 @@
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "ordinary",
-          "matches_baseline"
+          "ordinary"
         ]
       }
     },
     {
       "fixtureId": "OBS-C2-02",
+      "datasetId": "OBS-MORGAN-002",
       "at": {
-        "dayOffset": -6,
-        "time": "20:30"
+        "dayOffset": -29,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Incision dressing looks clean and dry. Pain is manageable — Morgan rated it 4 out of 10 when I asked.",
-      "isTestScenario": false,
-      "synthetic": true,
-      "expected": {
-        "primaryCategory": "physical_symptoms_comfort",
-        "secondaryCategories": [],
-        "safetyTier": "none",
-        "tags": [
-          "routine_safety_example"
-        ]
-      }
-    },
-    {
-      "fixtureId": "OBS-C2-03",
-      "at": {
-        "dayOffset": -5,
-        "time": "13:00"
-      },
-      "eventTime": null,
-      "author": null,
-      "text": "Had soup and crackers for lunch and kept sipping water through the afternoon.",
+      "text": "Morgan ate a small breakfast and lunch. Needed a rest after washing up.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
@@ -97,43 +84,64 @@
       }
     },
     {
-      "fixtureId": "OBS-C2-04",
+      "fixtureId": "OBS-C2-03",
+      "datasetId": "OBS-MORGAN-003",
       "at": {
-        "dayOffset": -4,
-        "time": "15:40"
+        "dayOffset": -28,
+        "time": "20:00"
       },
-      "eventTime": {
-        "dayOffset": -4,
-        "time": "15:20"
-      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "A little dizzy after standing up too fast. Sat down and it passed after a minute.",
+      "text": "Morgan said getting out of the chair was uncomfortable but managed with help.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "physical_symptoms_comfort",
-        "secondaryCategories": [
-          "mobility_daily_functioning"
-        ],
-        "safetyTier": "review",
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
         "tags": [
-          "routine_safety_example"
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-04",
+      "datasetId": "OBS-MORGAN-004",
+      "at": {
+        "dayOffset": -27,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan slept poorly and woke several times because of discomfort.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
         ]
       }
     },
     {
       "fixtureId": "OBS-C2-05",
+      "datasetId": "OBS-MORGAN-005",
       "at": {
-        "dayOffset": -3,
-        "time": "11:00"
+        "dayOffset": -26,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Surgeon's office called — the follow-up visit moved to next Tuesday.",
+      "text": "Morgan walked around the home twice today and seemed steadier than at the start of the week.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "treatment_care_coordination",
+        "primaryCategory": "mobility_daily_functioning",
         "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
@@ -143,36 +151,169 @@
     },
     {
       "fixtureId": "OBS-C2-06",
+      "datasetId": "OBS-MORGAN-006",
       "at": {
-        "dayOffset": -2,
-        "time": "21:00"
+        "dayOffset": -25,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "In good spirits, watched the game with our neighbor.",
+      "text": "Morgan ate most of a small dinner and said the appetite was coming back.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "emotional_wellbeing_behavior",
-        "secondaryCategories": [
-          "other"
-        ],
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
         "safetyTier": "none",
         "tags": [
-          "ordinary",
-          "matches_baseline"
+          "ordinary"
         ]
       }
     },
     {
       "fixtureId": "OBS-C2-07",
+      "datasetId": "OBS-MORGAN-007",
       "at": {
-        "dayOffset": -2,
-        "time": "22:15"
+        "dayOffset": -24,
+        "time": "20:00"
       },
       "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Took the evening medicines as listed on the discharge sheet.",
+      "text": "Morgan felt tired after a short walk and rested. No new concern was reported.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-08",
+      "datasetId": "OBS-MORGAN-008",
+      "at": {
+        "dayOffset": -23,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan walked to the mailbox with family nearby, then returned indoors to rest.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-09",
+      "datasetId": "OBS-MORGAN-009",
+      "at": {
+        "dayOffset": -22,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan said soreness was less noticeable while sitting, but movement still felt uncomfortable.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-10",
+      "datasetId": "OBS-MORGAN-010",
+      "at": {
+        "dayOffset": -21,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan ate breakfast and lunch. Caregiver says portions are still smaller than usual.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "conflicting_report"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-11",
+      "datasetId": "OBS-MORGAN-011",
+      "at": {
+        "dayOffset": -20,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan slept better overnight but was tired after showering.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-12",
+      "datasetId": "OBS-MORGAN-012",
+      "at": {
+        "dayOffset": -19,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan walked around the block with family at a slow pace and wanted to turn back early.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-13",
+      "datasetId": "OBS-MORGAN-013",
+      "at": {
+        "dayOffset": -18,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "At follow-up, caregiver was reminded to keep recording changes and contact the care team with concerns.",
       "isTestScenario": false,
       "synthetic": true,
       "expected": {
@@ -185,28 +326,377 @@
       }
     },
     {
-      "fixtureId": "OBS-C2-08",
+      "fixtureId": "OBS-C2-14",
+      "datasetId": "OBS-MORGAN-014",
       "at": {
-        "dayOffset": -1,
-        "time": "07:10"
+        "dayOffset": -17,
+        "time": "20:00"
       },
-      "eventTime": {
-        "dayOffset": -1,
-        "time": "07:00"
-      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
       "author": null,
-      "text": "Hard to wake Morgan this morning, and Morgan's breathing seemed difficult.",
+      "text": "Morgan said they felt a little stronger today and prepared a simple snack while seated.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-15",
+      "datasetId": "OBS-MORGAN-015",
+      "at": {
+        "dayOffset": -16,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan had a poor night of sleep and felt low-energy in the morning.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-16",
+      "datasetId": "OBS-MORGAN-016",
+      "at": {
+        "dayOffset": -15,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan walked a little farther than last week but had more soreness later that evening.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-17",
+      "datasetId": "OBS-MORGAN-017",
+      "at": {
+        "dayOffset": -14,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan ate most of lunch and dinner. Caregiver noticed no new issue in today's routine.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-18",
+      "datasetId": "OBS-MORGAN-018",
+      "at": {
+        "dayOffset": -13,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan suddenly became confused and was difficult to wake. This was a sharp change from their usual alert, conversational state.",
       "isTestScenario": true,
       "synthetic": true,
       "expected": {
-        "primaryCategory": "physical_symptoms_comfort",
-        "secondaryCategories": [
-          "cognition_communication"
-        ],
+        "primaryCategory": "other",
+        "secondaryCategories": [],
         "safetyTier": "emergency",
         "tags": [
           "urgent_scenario",
           "predefined_test_scenario"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-19",
+      "datasetId": "OBS-MORGAN-019",
+      "at": {
+        "dayOffset": -12,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "In this fictional scenario, the caregiver called emergency services after the sudden confusion and difficulty waking. Morgan was assessed by emergency clinicians.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "treatment_care_coordination",
+        "secondaryCategories": [],
+        "safetyTier": "review",
+        "tags": [
+          "routine_safety_example"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-20",
+      "datasetId": "OBS-MORGAN-020",
+      "at": {
+        "dayOffset": -11,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Fictional follow-up: Morgan is home again after hospital assessment. Caregiver is following the discharge instructions provided by the fictional care team.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "treatment_care_coordination",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-21",
+      "datasetId": "OBS-MORGAN-021",
+      "at": {
+        "dayOffset": -10,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan was alert during breakfast and walked a short distance indoors with family nearby.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-22",
+      "datasetId": "OBS-MORGAN-022",
+      "at": {
+        "dayOffset": -9,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan felt tired after activity, but recovered after resting. No new confusion was reported.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "physical_symptoms_comfort",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-23",
+      "datasetId": "OBS-MORGAN-023",
+      "at": {
+        "dayOffset": -8,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan ate small regular meals today and took two short walks indoors.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-24",
+      "datasetId": "OBS-MORGAN-024",
+      "at": {
+        "dayOffset": -7,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan slept through most of the night and said soreness was less bothersome today.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-25",
+      "datasetId": "OBS-MORGAN-025",
+      "at": {
+        "dayOffset": -6,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan needed help with a household task but managed dressing independently.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-26",
+      "datasetId": "OBS-MORGAN-026",
+      "at": {
+        "dayOffset": -5,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan felt more tired than yesterday and chose to rest instead of taking a walk.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "other",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-27",
+      "datasetId": "OBS-MORGAN-027",
+      "at": {
+        "dayOffset": -4,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan walked indoors several times and said movement felt a little easier.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-28",
+      "datasetId": "OBS-MORGAN-028",
+      "at": {
+        "dayOffset": -3,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan had a low appetite at lunch but ate a snack later in the afternoon.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "sleep_nutrition_hydration",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ambiguous"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-29",
+      "datasetId": "OBS-MORGAN-029",
+      "at": {
+        "dayOffset": -2,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan reported feeling more confident moving around the home, though still slower than before surgery.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
+        ]
+      }
+    },
+    {
+      "fixtureId": "OBS-C2-30",
+      "datasetId": "OBS-MORGAN-030",
+      "at": {
+        "dayOffset": -1,
+        "time": "20:00"
+      },
+      "eventTime": null,
+      "dateConfidence": "day_reported",
+      "author": null,
+      "text": "Morgan walked indoors independently for short distances and rested afterward. Recovery still varies day to day.",
+      "isTestScenario": false,
+      "synthetic": true,
+      "expected": {
+        "primaryCategory": "mobility_daily_functioning",
+        "secondaryCategories": [],
+        "safetyTier": "none",
+        "tags": [
+          "ordinary"
         ]
       }
     }
@@ -214,52 +704,54 @@
   "missingDays": [],
   "checkins": [
     {
+      "dayOffset": -30,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -25,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -20,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -15,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
+      "dayOffset": -10,
+      "synthetic": true,
+      "status": "no_change",
+      "note": null,
+      "responses": {}
+    },
+    {
       "dayOffset": -5,
       "synthetic": true,
       "status": "no_change",
       "note": null,
-      "responses": {
-        "eating_drinking": {
-          "state": "answered",
-          "value": "About the same"
-        },
-        "energy_sleep": {
-          "state": "answered",
-          "value": "About the same"
-        },
-        "mobility_function": {
-          "state": "answered",
-          "value": "Walking with walker"
-        },
-        "mood_cognition": {
-          "state": "answered",
-          "value": "Good"
-        }
-      }
-    },
-    {
-      "dayOffset": -3,
-      "synthetic": true,
-      "status": "no_change",
-      "note": null,
-      "responses": {
-        "mobility_function": {
-          "state": "answered",
-          "value": "Walking with walker"
-        },
-        "mood_cognition": {
-          "state": "answered",
-          "value": "Good"
-        }
-      }
+      "responses": {}
     }
   ],
   "handoff": {
     "synthetic": true,
     "draftedBy": "seed_fixture",
     "period": {
-      "fromDayOffset": -6,
-      "toDayOffset": -3
+      "fromDayOffset": -7,
+      "toDayOffset": -1
     },
     "statusTimeline": [
       {
@@ -272,66 +764,56 @@
       }
     ],
     "content": {
-      "summary": "Caregiver-reported observations for Morgan Patel (synthetic) during the first days home after surgery. This weekly draft is not how urgent concerns are handled: urgent guidance appears immediately when a note is saved.",
+      "summary": "Example weekly handoff prepared for this synthetic scenario. 7 notes were logged. Most notable: tiredness or low energy (1 day, described as worse). The notes do not establish the cause of these changes.",
       "items": [
         {
-          "statement": "Caregiver reported Morgan walked to the kitchen and back twice with the walker on the first full day home.",
-          "support": "supported",
+          "statement": "Caregiver notes — tiredness or low energy: reported on 1 day; described as worse in the caregiver's words; not mentioned in the most recent notes.",
+          "support": "possible_unconfirmed",
           "sourceIds": [
-            "OBS-C2-01"
-          ]
-        },
-        {
-          "statement": "Caregiver reported the incision dressing looked clean and dry, and Morgan rated pain 4 out of 10 when asked.",
-          "support": "supported",
-          "sourceIds": [
-            "OBS-C2-02"
-          ]
-        },
-        {
-          "statement": "Caregiver reported a brief episode of dizziness after standing up quickly that passed after sitting down.",
-          "support": "supported",
-          "sourceIds": [
-            "OBS-C2-04"
+            "OBS-C2-26"
           ]
         }
       ],
       "questions": [
         {
-          "text": "Is brief dizziness after standing up something to bring up at the follow-up visit?",
+          "text": "What should we watch for regarding “tiredness or low energy”, which was described as worse?",
           "sourceIds": [
-            "OBS-C2-04",
-            "OBS-C2-05"
+            "OBS-C2-26"
           ]
         }
       ],
       "missingInfo": [
-        "No observations about sleep were logged in this period.",
-        "Pain was only rated once."
+        "No treatment session, procedure or medication change is documented with a date in these notes, so timing relative to treatment can't be assessed.",
+        "Some notes give no time of the event; their day is the day they were logged."
       ]
     },
     "receiverResponse": null
   },
   "expectedOutcome": {
-    "supported": [
+    "supported": [],
+    "possibleUnconfirmed": [
       {
-        "claim": "Walking with the walker as planned early in the week",
+        "claim": "Caregiver notes — tiredness or low energy: reported on 1 day; described as worse in the caregiver's words; not mentioned in the most recent notes.",
         "sourceIds": [
-          "OBS-C2-01"
+          "OBS-C2-26"
         ]
       }
     ],
-    "possibleUnconfirmed": [],
-    "conflicts": [],
+    "conflicts": [
+      [
+        "OBS-C2-10"
+      ]
+    ],
     "unknowns": [
-      "Sleep was not reported"
+      "Missing check-ins and days without notes are unknown, not well.",
+      "The cause of any reported change is not known from the notes."
     ],
     "urgent": {
-      "sourceId": "OBS-C2-08",
+      "sourceId": "OBS-C2-18",
       "safetyTier": "emergency",
       "ruleIds": [
-        "EMG-BREATHING",
-        "EMG-HARD-TO-WAKE"
+        "EMG-HARD-TO-WAKE",
+        "REV-CONFUSION"
       ],
       "mustWorkWithoutAi": true
     },
@@ -340,5 +822,33 @@
       "say the situation is safe",
       "diagnose the cause"
     ]
+  },
+  "careEvents": [
+    {
+      "eventId": "TX-M-01",
+      "dayOffset": -30,
+      "kind": "milestone",
+      "label": "Recovery-window start",
+      "description": "Synthetic timeline anchor; exact surgery date unspecified.",
+      "synthetic": true
+    },
+    {
+      "eventId": "TX-M-02",
+      "dayOffset": -23,
+      "kind": "clinician_visit",
+      "label": "Follow-up appointment",
+      "description": "Fictional follow-up; caregiver asked to record changes and raise concerns.",
+      "synthetic": true
+    }
+  ],
+  "dataset": {
+    "name": "CareSignal Synthetic Monthly Demo Dataset",
+    "version": "1.0",
+    "window": {
+      "start": "2026-09-26",
+      "end": "2026-10-25",
+      "days": 30
+    },
+    "importedFrom": "CareSignal_Synthetic_Monthly_Datasets.zip"
   }
 }

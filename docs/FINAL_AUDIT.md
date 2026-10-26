@@ -61,6 +61,15 @@ Every item below was actually run on 2026-10-26 unless marked otherwise. "Pass" 
 
 Deterministic pattern engine, treatment/care timeline from note-documented events, Insights "What appears to be changing", and the structured handoff (A–F) rendered identically on the receiver. Tests: 17 pattern scenarios + 4 structured-handoff tests + 1 browser test. No AI contract change and no new AI calls (patterns are computed from stored notes). Not covered by the earlier live model evaluation. Smallest data-model extension still needed: a `care_events` table (date, kind, date certainty, medication status).
 
+## 4c. Monthly synthetic dataset import (2026-10-26)
+
+- The demo cases now hold ~30 days of synthetic notes each (import script `scripts/import-monthly.ts`, deterministic and idempotent; migration `0013` adds the `scenario` category source).
+- Safety tiers come from the app's rules, not the dataset labels (4 disagreements reported by the import; the rules win).
+- No AI calls were made for the import or the new screenshots; the AI output generated for the earlier notes is not attached to the new notes.
+- Evaluation, tokenomics and the traced run are unchanged and refer to the earlier notes, kept in `synthetic-data/evaluation/legacy-v1/` (tests that need those notes use them).
+- Fixed while importing: an Insights finding with no notes in the current week showed an "Add to this week's handoff" button that could not succeed; long finding text was rejected (limit raised).
+- Verification: 376 unit tests, 41 e2e tests, build OK; report 15 pages, slides 10.
+
 ## 5. Known limitations (unchanged)
 
 Small predefined safety rule set (3 documented misses, 2 false positives on the set; other paraphrases will be missed); synthetic data only; no clinical validation; no real EHR/care team (receiver simulated; not HIPAA compliant); AI depends on the Portkey/API availability and daily caps; model errors remain (6/40 model cases failed); one live evaluation run; no user research; cost estimates use an unverified stand-in price; Handoffs and observation detail still show internal note IDs; the "open demo" step occasionally stalls in automated tests on a slow machine (passed in the final full run).

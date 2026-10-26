@@ -89,6 +89,7 @@ export function EvidenceProvider({
                   <span className="pill pill-unknown">Not yet categorized</span>
                 )}
                 {o.categorySource === "caregiver" && <span className="secondary">categories set by caregiver</span>}
+                {o.categorySource === "scenario" && <span className="secondary">categories from the synthetic scenario dataset</span>}
                 {TIER[o.safetyTier] && (
                   <span className={`pill ${TIER[o.safetyTier].cls}`}>
                     {TIER[o.safetyTier].text}

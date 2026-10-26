@@ -205,7 +205,7 @@ export function payloadSourceIds(p: Pick<HandoffPayload, "items" | "questions" |
       ...(p.urgent ?? []).map((u) => u.sourceId),
       ...(p.patterns ?? []).flatMap((x) => x.sourceIds),
       ...(p.notable ?? []).map((x) => x.sourceId),
-      ...(p.timeline ?? []).map((x) => x.sourceId),
+      ...(p.timeline ?? []).map((x) => x.sourceId).filter(Boolean), // scenario-timeline events are not notes
     ]),
   ];
 }
@@ -399,7 +399,7 @@ export interface FindingForHandoff {
  */
 export async function addFindingToDraft(db: Database, p: Principal, caseId: string, f: FindingForHandoff): Promise<{ handoff: Handoff; added: boolean }> {
   const statement = f.statement.trim();
-  if (!statement || statement.length > 800 || f.sourceIds.length === 0) throw new HandoffError("bad_edit", "This finding can't be added.");
+  if (!statement || statement.length > 2000 || f.sourceIds.length === 0) throw new HandoffError("bad_edit", "This finding can't be added.");
   return db.asPrincipal(p, async (sql) => {
     const rows = await sql.query(`select * from handoffs where case_id = $1 and owner_id = $2 and status in ('draft', 'reviewed')`, [caseId, p.userId]);
     if (rows.length !== 1) throw new HandoffError("not_open", "There is no open weekly draft. Create this week's draft first.");

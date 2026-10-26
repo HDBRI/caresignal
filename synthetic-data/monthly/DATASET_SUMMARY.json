@@ -1,0 +1,11 @@
+{
+  "observations_total": 90,
+  "observations_by_profile": {
+    "DEMO-JORDAN": 30,
+    "DEMO-MORGAN": 30,
+    "DEMO-ALEX": 30
+  },
+  "checkins_total": 90,
+  "timeline_events_total": 6,
+  "date_window": "2026-09-26 to 2026-10-25"
+}

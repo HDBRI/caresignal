@@ -37,7 +37,7 @@ function PatternCard({ f }: { f: PatternFinding }) {
       )}
       {f.relatedEvents[0] && (
         <p className="pattern-line">
-          <strong>Documented event:</strong> {f.relatedEvents[0].label}, {fmtDay(f.relatedEvents[0].day)} (from a caregiver note) — timing only, not a cause.
+          <strong>Documented event:</strong> {f.relatedEvents[0].label}, {fmtDay(f.relatedEvents[0].day)} ({f.relatedEvents[0].sourceId ? "from a caregiver note" : "synthetic scenario timeline"}) — timing only, not a cause.
         </p>
       )}
       {f.uncertainty[0] && <p className="pattern-line secondary">{f.uncertainty[0]}</p>}
@@ -105,13 +105,13 @@ export function PatternSections({ caseId, r, periodLabel }: { caseId: string; r:
         <ol className="timeline">
           {r.events.map((e) => (
             <li key={e.sourceId + e.kind}>
-              <strong>{e.dateCertainty === "relative_unresolved" ? `“${e.relativeText}” (as written, ${fmtDay(e.day)} note)` : fmtDay(e.day)}</strong> · {e.label} — “{e.quote}”{" "}
-              <EvidenceButton ids={[e.sourceId]} title={`${e.label}: the note that documents it`} label="Review" />
+              <strong>{e.dateCertainty === "relative_unresolved" ? `“${e.relativeText}” (as written, ${fmtDay(e.day)} note)` : fmtDay(e.day)}</strong> · {e.label} — {e.sourceId ? `“${e.quote}”` : e.quote}{" "}
+              {e.sourceId ? <EvidenceButton ids={[e.sourceId]} title={`${e.label}: the note that documents it`} label="Review" /> : <span className="pill pill-unknown">Synthetic scenario timeline</span>}
             </li>
           ))}
         </ol>
       )}
-      <p className="secondary">Events come only from what notes document. CareSignal does not know the treatment schedule, and a medicine counts as taken only if the caregiver said so.</p>
+      <p className="secondary">Events come from the case&apos;s synthetic scenario timeline or from what notes document — never invented. Timing is shown for review only, never as a cause; a medicine counts as taken only if the caregiver said so.</p>
 
       {(r.conflicts.length > 0 || r.eventNotes.length > 0 || r.gaps.length > 0) && (
         <>

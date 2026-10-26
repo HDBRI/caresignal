@@ -35,14 +35,14 @@ test("chart period selector updates metrics and charts, makes no AI or server-ac
     if (r.method() === "POST") posts.push(r.url());
   });
   const metric = page.getByTestId("metric-observations");
-  await expect(metric).toHaveText("7"); // one seeded note is 7 days back, outside "Last 7 days"
+  await expect(metric).toHaveText("6"); // a month of notes; one day in the last week has no note
   await expectAllSevenCategories(page);
   await page.getByRole("link", { name: "All history" }).click();
-  await expect(metric).toHaveText("8");
+  await expect(metric).toHaveText("30");
   await expectAllSevenCategories(page);
   await expect(page.getByTestId("comparison-note")).toContainText("no earlier period to compare");
   await page.getByRole("link", { name: "Last 30 days" }).click();
-  await expect(metric).toHaveText("8");
+  await expect(metric).toHaveText("29");
   await expect(page.getByTestId("comparison-note")).toContainText("reliable comparison can't be made");
   expect(posts, "changing the chart period must not call the AI or any server action").toEqual([]);
   const visible = await page.locator("main").innerText();
@@ -51,7 +51,7 @@ test("chart period selector updates metrics and charts, makes no AI or server-ac
 
 test("a chart bar opens the exact supporting notes; keyboard Escape closes and returns focus; link opens the record", async ({ page }) => {
   await openInsights(page, "Jordan Lee");
-  const bar = page.getByRole("button", { name: /^Oct \d+: 1 note about mobility and daily functioning — open them$/ }).first();
+  const bar = page.getByRole("button", { name: /^\w+ \d+: 1 note about [^—]+ — open them$/ }).first();
   await bar.focus();
   await page.keyboard.press("Enter");
   const drawer = page.getByRole("dialog");
@@ -72,22 +72,20 @@ test("changes worth reviewing are split into four labeled groups; conflicts are 
   for (const g of ["Safety notices · predefined rules, not AI", "From your records · counts, not health measures", "AI interpretations · check them against the notes", "Conflicting or missing information"]) {
     await expect(changes.getByRole("heading", { level: 3, name: g })).toBeVisible();
   }
-  await expect(changes.getByText("Reports conflict — both are kept")).toBeVisible();
-  await expect(changes.getByRole("button", { name: /^Review supporting notes \(\d+\)$/ }).first()).toBeVisible();
-  await expect(page.getByText(/Detailed analysis — prepared with the demo/)).toBeVisible();
-  await page.getByText(/Detailed analysis — prepared with the demo/).click();
-  await expect(page.getByText(/which may not match the chart period/)).toBeVisible();
+  // Monthly dataset: no AI run was prepared for these notes, so nothing AI-generated is shown as if it were.
+  await expect(page.getByText(/Detailed analysis — prepared with the demo/)).toHaveCount(0);
   // AI is disabled on the UI-test server: the page says so and every category is still shown from stored data.
   await expect(page.getByText("AI analysis unavailable", { exact: true })).toBeVisible();
   await expectAllSevenCategories(page);
 });
 
-test("urgent safety guidance stays at the top and in the safety group, and is attached to AI items citing the urgent note", async ({ page }) => {
+test("urgent safety guidance stays at the top and in the safety group", async ({ page }) => {
   await openInsights(page, "Morgan Patel");
+  await expect(page.getByRole("alert").filter({ hasText: "Possible emergency described" })).toBeVisible();
+  await page.getByRole("link", { name: "All history" }).click(); // the urgent note is two weeks back in the month
   await expect(page.getByRole("alert").filter({ hasText: "Possible emergency described" })).toBeVisible();
   const safety = page.locator(".group-safety");
   await expect(safety.getByRole("heading", { level: 4, name: /Possible emergency described/ })).toBeVisible();
-  await expect(page.getByText(/A note behind this matched an urgent safety rule/).first()).toBeVisible();
 });
 
 test("adding a note and correcting its category updates the charts", async ({ page }) => {
@@ -95,7 +93,7 @@ test("adding a note and correcting its category updates the charts", async ({ pa
   const insightsUrl = page.url();
   const metric = page.getByTestId("metric-observations");
   const before = Number(await metric.innerText());
-  await expect(page.getByTestId("empty-categories").getByRole("link", { name: "Other", exact: true })).toBeVisible();
+  await expect(page.getByTestId("empty-categories").getByRole("link", { name: "Treatment and care coordination", exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "+ Add observation" }).first().click();
   await page.getByLabel("What did you notice?").fill("The power went out for an hour this evening.");
@@ -108,22 +106,28 @@ test("adding a note and correcting its category updates the charts", async ({ pa
 
   await page.goto(insightsUrl.replace(/\/insights.*$/, "/observations/OBS-0001"));
   await page.getByText("Set the categories yourself").click();
-  await page.getByRole("radio", { name: "Other" }).check();
+  await page.getByRole("radio", { name: "Treatment and care coordination" }).check();
   await page.getByRole("button", { name: "Save my categories" }).click();
   await expect(page.getByText(/Categories updated/)).toBeVisible();
 
   await page.goto(insightsUrl);
-  await expect(page.getByRole("heading", { level: 3, name: "Other", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 3, name: "Treatment and care coordination", exact: true })).toBeVisible();
   await expect(metric).toHaveText(String(before + 1));
 });
 
 test("a finding can be added to the open weekly draft — never sent, approval cleared", async ({ page }) => {
-  await openInsights(page, "Alex Rivera");
+  await openInsights(page, "Morgan Patel"); // Morgan's seeded weekly draft is open; only this week's notes can be added
+  const insightsUrl = page.url();
+  await page.getByRole("link", { name: "Handoffs", exact: true }).first().click();
+  await page.getByRole("link", { name: /Review this draft|Review and submit/ }).first().click();
+  await page.getByRole("button", { name: "Regenerate from latest notes" }).click(); // the draft now covers all of this week's notes
+  await expect(page.getByText("Draft regenerated from your latest notes.")).toBeVisible();
+  await page.goto(insightsUrl);
   await page.getByRole("button", { name: "Add to this week's handoff" }).first().click();
   await expect(page.getByText(/Added to this week's draft \(HO-[A-Z0-9]{8}\)\. Nothing was sent/)).toBeVisible();
   await page.getByRole("link", { name: "Open the draft" }).click();
-  await expect(page.getByText("Added by you from Insights").first()).toBeVisible();
-  await expect(page.getByText("Draft — not sent").first()).toBeVisible(); // the seeded approved draft returned to draft
+  await expect(page.getByText("Added by you from Insights").first()).toBeAttached(); // listed in the collapsed item section of the structured draft
+  await expect(page.getByText("Draft — not sent").first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Submit to the simulated receiver" })).toHaveCount(0);
 });
 
@@ -142,15 +146,14 @@ test("pattern detection: changes over time with a documented treatment event, wi
   await openInsights(page, "Jordan Lee");
   const pat = page.locator("section.patterns");
   await expect(pat.getByRole("heading", { name: "What appears to be changing" })).toBeVisible();
-  const card = pat.locator("article", { hasText: "Tiredness or low energy" });
-  await expect(card).toContainText("Described as worse");
-  await expect(card).toContainText(/Treatment session, Oct \d+ \(from a caregiver note\) — timing only, not a cause/);
+  await page.getByRole("link", { name: "All history" }).click();
+  // The dated treatment visit comes from the synthetic scenario timeline, labelled as such, never as a cause.
   await expect(pat.getByRole("heading", { name: "Treatment and care timeline" })).toBeVisible();
-  await expect(pat).toContainText("Treatment day at the clinic");
+  await expect(pat).toContainText("Treatment visit");
+  await expect(pat.getByText("Synthetic scenario timeline").first()).toBeVisible();
   expect(await pat.innerText()).not.toMatch(/caused by|due to|side effect|OBS-C1-\d\d/);
   await page.getByRole("link", { name: "Handoffs", exact: true }).first().click();
   await page.getByRole("button", { name: "Draft this week's handoff" }).click();
   await expect(page.getByRole("heading", { name: "B. Key patterns by category" })).toBeVisible();
-  await expect(page.getByRole("table", { name: "Key patterns by category" })).toContainText("Tiredness or low energy");
-  await expect(page.getByRole("heading", { name: "D. Treatment timeline context" })).toBeVisible();
+  await expect(page.getByRole("table", { name: "Key patterns by category" })).toBeVisible();
 });

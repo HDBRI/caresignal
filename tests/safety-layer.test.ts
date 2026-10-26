@@ -99,13 +99,13 @@ describe("independent of AI and the network", () => {
     const f = SEED_CASES.find((c) => c.seedKey === "PAT-SURGERY-002")!;
     const s = await startDemoSession(db, f.demoAccount.userId, f.seedKey);
     const p = { userId: f.demoAccount.userId, demoSessionId: s.demoSessionId };
-    const { observation } = await getObservationByDisplayId(db, p, s.caseId, "OBS-C2-08");
+    const { observation } = await getObservationByDisplayId(db, p, s.caseId, "OBS-C2-18");
     if (chat) await categorizeObservation(db, p, observation.id, { chat: vi.fn(chat), available: () => available });
     const urgent = (await listAlerts(db, p, s.caseId, { unseenOnly: true })).find((a) => a.tier === "emergency")!;
-    expect(urgent.ruleIds.sort()).toEqual(["EMG-BREATHING", "EMG-HARD-TO-WAKE"]);
+    expect(urgent.ruleIds.sort()).toEqual(["EMG-HARD-TO-WAKE", "REV-CONFUSION"]);
     expect(urgent.isTestScenario).toBe(true);
-    const after = (await listObservations(db, p, s.caseId)).find((o) => o.displayId === "OBS-C2-08")!;
-    expect(after.originalText).toBe("Hard to wake Morgan this morning, and Morgan's breathing seemed difficult.");
+    const after = (await listObservations(db, p, s.caseId)).find((o) => o.displayId === "OBS-C2-18")!;
+    expect(after.originalText).toBe(f.observations.find((o) => o.fixtureId === "OBS-C2-18")!.text);
   });
 
   it("a NEW urgent note gets its alert in the same save, before any AI call — even if the AI call later throws", async () => {

@@ -51,7 +51,7 @@ describe("demo sessions (cookie -> principal)", () => {
     const cases = await listCases(db, { userId: resolved!.userId, demoSessionId });
     expect(cases.map((c) => c.id)).toEqual([caseId]);
     expect(cases[0].kind).toBe("demo_copy");
-    expect(await listObservations(db, { userId: resolved!.userId, demoSessionId }, caseId)).toHaveLength(8);
+    expect(await listObservations(db, { userId: resolved!.userId, demoSessionId }, caseId)).toHaveLength(fixture.observations.length);
   });
 
   it("garbage, unknown or malformed cookies resolve to nobody", async () => {

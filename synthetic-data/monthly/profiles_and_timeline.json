@@ -1,0 +1,801 @@
+{
+  "profiles": [
+    {
+      "profile_id": "DEMO-JORDAN",
+      "display_name": "Jordan Lee",
+      "scenario": "Fictional adult receiving active cancer treatment at home",
+      "care_phase": "Active treatment; fictional treatment visit during window",
+      "baseline": {
+        "mobility": "Usually walks dog, dresses and showers independently.",
+        "nutrition": "Usually eats three small meals and drinks fluids throughout day.",
+        "energy": "Usually active much of day; sleeps about 7 hours."
+      },
+      "timeline_events": [
+        {
+          "event_id": "TX-J-01",
+          "date": "2026-10-06",
+          "type": "Treatment visit",
+          "description": "Fictional scheduled cancer-treatment visit; no drug or regimen specified."
+        },
+        {
+          "event_id": "TX-J-02",
+          "date": "2026-10-07",
+          "type": "Care-team check-in",
+          "description": "Fictional nurse asks caregiver to track energy, intake and daily functioning."
+        }
+      ]
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "display_name": "Morgan Patel",
+      "scenario": "Fictional adult recovering at home after non-specific surgery",
+      "care_phase": "Post-operative home recovery; surgery occurred before this window",
+      "baseline": {
+        "mobility": "Initially walks short distances indoors with family nearby.",
+        "nutrition": "Small meals, appetite gradually returning.",
+        "energy": "Tired at times but usually alert and conversational."
+      },
+      "timeline_events": [
+        {
+          "event_id": "TX-M-01",
+          "date": "2026-09-26",
+          "type": "Recovery-window start",
+          "description": "Synthetic timeline anchor; exact surgery date unspecified."
+        },
+        {
+          "event_id": "TX-M-02",
+          "date": "2026-10-03",
+          "type": "Follow-up appointment",
+          "description": "Fictional follow-up; caregiver asked to record changes and raise concerns."
+        }
+      ]
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "display_name": "Alex Rivera",
+      "scenario": "Fictional adult gradually recovering from a non-specific lower-limb injury",
+      "care_phase": "Home recovery; no specific diagnosis or protocol provided",
+      "baseline": {
+        "mobility": "Usually independent at home and takes short walks.",
+        "sleep": "Usually sleeps 7\u20138 hours; occasional interruption by discomfort.",
+        "nutrition": "Regular meals and fluids."
+      },
+      "timeline_events": [
+        {
+          "event_id": "TX-A-01",
+          "date": "2026-09-26",
+          "type": "Recovery-window start",
+          "description": "Synthetic observation window begins; exact injury date unspecified."
+        },
+        {
+          "event_id": "TX-A-02",
+          "date": "2026-10-12",
+          "type": "Activity milestone",
+          "description": "Caregiver reports Alex tried a slightly longer walk; not a clinician-prescribed milestone."
+        }
+      ]
+    }
+  ],
+  "daily_checkins": [
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-26",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-27",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-28",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-29",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-09-30",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-01",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-02",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-03",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-04",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-05",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-06",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-07",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-08",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-09",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-10",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-11",
+      "status": "completed",
+      "response": "noticed_a_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-12",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-13",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-14",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-15",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-16",
+      "status": "completed",
+      "response": "noticed_a_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-17",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-18",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-19",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-20",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-21",
+      "status": "completed",
+      "response": "noticed_a_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-22",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-23",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-24",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-JORDAN",
+      "date": "2026-10-25",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-26",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-27",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-28",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-29",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-09-30",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-01",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-02",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-03",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-04",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-05",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-06",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-07",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-08",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-09",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-10",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-11",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-12",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-13",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-14",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-15",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-16",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-17",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-18",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-19",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-20",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-21",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-22",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-23",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-24",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-MORGAN",
+      "date": "2026-10-25",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-26",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-27",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-28",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-29",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-09-30",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-01",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-02",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-03",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-04",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-05",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-06",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-07",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-08",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-09",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-10",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-11",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-12",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-13",
+      "status": "not_completed",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-14",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-15",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-16",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-17",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-18",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-19",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-20",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-21",
+      "status": "completed",
+      "response": "no_meaningful_change",
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-22",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-23",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-24",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    },
+    {
+      "profile_id": "DEMO-ALEX",
+      "date": "2026-10-25",
+      "status": "no_response_recorded",
+      "response": null,
+      "synthetic": true,
+      "rule": "No response means unknown/not reported, never that the person was well."
+    }
+  ]
+}

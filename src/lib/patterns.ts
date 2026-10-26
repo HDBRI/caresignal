@@ -65,12 +65,12 @@ export const THEMES: Theme[] = [
   { id: "dizziness", label: "Dizziness", category: "physical_symptoms_comfort", patterns: [/\b(dizz\w*|light-?headed)\b/i] },
   { id: "confusion", label: "Confusion or memory changes", category: "cognition_communication", patterns: [/\b(confused|disoriented|didn'?t recognize|lost track|forgetful|kept asking)\b/i] },
   { id: "low_mood", label: "Low mood or frustration", category: "emotional_wellbeing_behavior", patterns: [/\b(seem(ed|s)?|felt|feel(s|ing)?|look(ed|s)?|been|a bit|very|really) (a bit |very |really |pretty )?(down|low|sad|blue)\b/i, /\b(frustrated|quieter than usual|withdrawn|anxious|tearful|irritable)\b/i] },
-  { id: "pain", label: "Pain", category: "physical_symptoms_comfort", patterns: [/\b(pain|hurts|hurting|sore|aching)\b/i] },
+  { id: "pain", label: "Pain or discomfort", category: "physical_symptoms_comfort", patterns: [/\b(pain|hurts|hurting|sore|aching|discomfort|uncomfortable|stiff)\b/i] },
   { id: "medication_uncertain", label: "Unsure whether medicines were taken", category: "treatment_care_coordination", patterns: [/\bnot sure (whether|if) .{0,40}\b(pills?|medicines?|medications?|doses?|taken|took)\b/i, /\bmissed (a |the )?(dose|pills?|medicines?)\b/i] },
 ];
 
-const WORSE = /\b(worse|getting worse|more than (before|usual|last)|increasing|worst)\b/i;
-const BETTER = /\b(better|improv\w*|easier|less than (before|usual)|more energy|back to (normal|usual))\b/i;
+const WORSE = /\b(worse|getting worse|more than (before|usual|last)|increasing|worst|more (uncomfortable|tired|sore|painful))\b/i;
+const BETTER = /\b(better|improv\w*|easier|less than (before|usual)|more energy|back to (normal|usual)|less (discomfort|pain|tired|sore))\b/i;
 const NEW = /\b(first time|new|never (had|needed|did) (this|that|to)? ?before)\b/i;
 const NEGATION = /\b(no|not|without|never|denies|denied)\b[^.;,!?]{0,20}$/i;
 const CLAUSE_BREAK = /[.;,!?]|\b(and|but|then|so)\b/gi;
@@ -110,13 +110,13 @@ export function findMentions(theme: Theme, notes: PatternNote[]): Mention[] {
 
 // ---------------- Care / treatment events documented in notes ----------------
 
-export type CareEventKind = "treatment_session" | "procedure" | "clinician_visit" | "medication_change" | "medication_taken" | "medication_status_unknown" | "appointment_change";
+export type CareEventKind = "treatment_session" | "procedure" | "clinician_visit" | "medication_change" | "medication_taken" | "medication_status_unknown" | "appointment_change" | "milestone";
 
 export interface CareEvent {
   kind: CareEventKind;
   label: string;
   day: string; // the note's day
-  dateCertainty: "note_day" | "relative_unresolved"; // never a computed date
+  dateCertainty: "note_day" | "relative_unresolved" | "scenario_date"; // never a computed date
   relativeText: string | null; // e.g. "next Tuesday" — kept as written
   sourceId: string;
   quote: string;
@@ -174,6 +174,8 @@ export interface PatternInput {
   periodStart: string;
   periodEnd: string;
   baselines: { domain: string; description: string }[];
+  /** Dated events from the case's scenario timeline (sourceId "" — they are not caregiver notes). */
+  timelineEvents?: CareEvent[];
 }
 
 const dayDiff = (a: string, b: string) => Math.round((Date.parse(b) - Date.parse(a)) / 86_400_000);
@@ -196,8 +198,9 @@ export function detectPatterns(input: PatternInput): PatternResult {
   const notes = [...input.notes].sort((a, b) => a.day.localeCompare(b.day));
   const noteDays = [...new Set(notes.map((n) => n.day))];
   // Only treatment sessions, procedures and medication changes are used for timing; visits are shown on the timeline only.
-  const events = documentedCareEvents(notes).filter((e) => e.kind === "treatment_session" || e.kind === "procedure" || e.kind === "medication_change");
-  const allEvents = documentedCareEvents(notes);
+  const scenarioEvents = (input.timelineEvents ?? []).filter((e) => e.day <= input.periodEnd);
+  const events = [...scenarioEvents, ...documentedCareEvents(notes)].filter((e) => e.kind === "treatment_session" || e.kind === "procedure" || e.kind === "medication_change");
+  const allEvents = [...scenarioEvents, ...documentedCareEvents(notes)].sort((a, b) => a.day.localeCompare(b.day));
   const findings: PatternFinding[] = [];
 
   for (const theme of THEMES) {
@@ -245,7 +248,6 @@ export function detectPatterns(input: PatternInput): PatternResult {
       uncertainty.push("A change in how often something was written down is not necessarily a change in how the person is.");
     if (directions.includes("not_mentioned_recently")) uncertainty.push("Not mentioned in recent notes — that is not the same as resolved.");
     if (related.length) uncertainty.push("The timing overlaps a documented care event; the notes do not show whether they are related.");
-    if (mentions.some((m) => !notes.find((n) => n.id === m.noteId)?.hasEventTime)) uncertainty.push("Some notes give no time of the event; their day is the day they were logged.");
 
     const parts: string[] = [`Reported on ${days.length} day${days.length === 1 ? "" : "s"}`];
     if (directions.includes("described_worse")) parts.push("described as worse in the caregiver's words");
@@ -285,6 +287,13 @@ export function detectPatterns(input: PatternInput): PatternResult {
     if (other) conflicts.push({ theme: "Eating", sourceIds: [g.noteId, other.noteId], detail: `“${g.quote}” and “${other.quote}” were reported within a day of each other, possibly by different people; it is unclear whether they describe the same meal.` });
   }
 
+  // Accounts that differ inside one note ("caregiver says … Alex remembers …") are kept as a conflict, not resolved.
+  const DIFFERING = /\b(caregiver says|according to (the )?caregiver|caregiver recalls)\b[^.]*\b(but|;)|\bmay be describing different\b|\bthe details are unclear\b/i;
+  for (const n of notes) {
+    if (DIFFERING.test(n.text) && !conflicts.some((c) => c.sourceIds.includes(n.id)))
+      conflicts.push({ theme: "Accounts", sourceIds: [n.id], detail: `Accounts differ within one note (${fmtDay(n.day)}): “${n.text}”` });
+  }
+
   const eventNotes: string[] = [];
   for (const e of events) {
     const after = noteDays.filter((d) => d > e.day);
@@ -299,6 +308,7 @@ export function detectPatterns(input: PatternInput): PatternResult {
   if (missing > 0) gaps.push(`No note on ${missing} of ${periodDays} days (not reported — not the same as "nothing happened").`);
   if (!events.length) gaps.push("No treatment session, procedure or medication change is documented with a date in these notes, so timing relative to treatment can't be assessed.");
   if (notes.length < 3) gaps.push("Not enough information to establish trends in this period.");
+  if (notes.some((n) => !n.hasEventTime)) gaps.push("Some notes give no time of the event; their day is the day they were logged.");
 
   const top = findings.filter((f) => f.level !== "observation").slice(0, 3);
   const overview = notes.length === 0

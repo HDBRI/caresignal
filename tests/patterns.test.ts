@@ -109,7 +109,7 @@ describe("treatment timeline (only what notes document)", () => {
     const ev = documentedCareEvents([note(3, "Surgeon's office called — the follow-up visit moved to next Tuesday.", { hasEventTime: false })]);
     expect(ev[0]).toMatchObject({ kind: "appointment_change", dateCertainty: "relative_unresolved", relativeText: "next Tuesday" });
     const r = run([note(1, "Tired today.", { hasEventTime: false }), note(3, "Tired again.")]);
-    expect(finding(r, "fatigue")!.uncertainty.join(" ")).toMatch(/no time of the event/);
+    expect(r.gaps.join(" ")).toMatch(/no time of the event/);
   });
 
   it("medication status: taken only when the caregiver says so; unknown stays unknown", () => {

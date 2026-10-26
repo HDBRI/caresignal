@@ -20,6 +20,8 @@ import { listInsightRuns } from "../repo/handoffs";
 import { listAlerts, listAnalyses, listObservations } from "../repo/observations";
 import { listBaselines } from "../repo/cases";
 import { detectPatterns, fmtDay as fmtPatternDay, type PatternResult } from "../patterns";
+import { scenarioTimeline } from "../scenario-timeline";
+import { getCase } from "../repo/cases";
 import { buildInsightInput, generateInsights } from "./insights";
 import type { CategorizeDeps } from "./categorize";
 
@@ -103,7 +105,7 @@ function structuredFromPatterns(pr: PatternResult, urgent: NonNullable<HandoffCo
       timeframe: f.timeframe,
       sourceIds: f.sourceIds,
       keySourceIds: f.keySourceIds,
-      event: f.relatedEvents[0] ? `${f.relatedEvents[0].label}, ${fmtPatternDay(f.relatedEvents[0].day)} (from a caregiver note)` : null,
+      event: f.relatedEvents[0] ? `${f.relatedEvents[0].label}, ${fmtPatternDay(f.relatedEvents[0].day)} (${f.relatedEvents[0].sourceId ? "from a caregiver note" : "synthetic scenario timeline"})` : null,
       uncertainty: f.uncertainty[0] ?? "",
     }));
   const notable = [
@@ -152,13 +154,14 @@ export async function buildHandoffDraft(db: Database, p: Principal, caseId: stri
     };
   }
 
-  const [categories, urgent, baselines] = await Promise.all([categoryGroups(db, p, caseId, ids), urgentNotes(db, p, caseId, ids), listBaselines(db, p, caseId)]);
+  const [categories, urgent, baselines, theCase] = await Promise.all([categoryGroups(db, p, caseId, ids), urgentNotes(db, p, caseId, ids), listBaselines(db, p, caseId), getCase(db, p, caseId)]);
   // Deterministic pattern detection over the same notes (no AI call).
   const pr = detectPatterns({
     notes: input.notes.map((x) => ({ id: x.id, day: x.day, hasEventTime: x.eventTime !== null, text: x.text, author: x.author })),
     periodStart: input.periodStart,
     periodEnd: input.periodEnd,
     baselines: baselines.map((b) => ({ domain: b.category, description: b.description })),
+    timelineEvents: scenarioTimeline(theCase).filter((e) => e.day >= input.periodStart),
   });
   const structured = structuredFromPatterns(pr, urgent);
 
