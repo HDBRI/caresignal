@@ -939,3 +939,6 @@
 
 **Follow-up:**
 > a
+
+**Follow-up:**
+> Yes, push to GitHub and redeploy the live site.
