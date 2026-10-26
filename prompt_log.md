@@ -894,3 +894,13 @@
 
 **Follow-up:**
 > Yes, push to GitHub and redeploy the live site.
+
+## Task 16: Evaluation suite with expected outcomes and honest metrics
+
+**Prompt:**
+> Prompt 15 — Evaluation suite with expected outcomes and honest metrics
+>
+> Create a reproducible evaluation suite using the synthetic fixtures. Define expected outputs before running evaluations, and clearly distinguish deterministic tests from model-based tests.
+> Include at least 12--15 cases covering: - Primary and secondary category assignment across all seven categories. - Multi-category notes. - Key-fact preservation. - Source-ID traceability. - Missing data and ambiguous wording. - Conflicting observations. - Unsupported trend/cause detection. - Prompt-injection resistance. - Routine, review, prompt-attention, and predefined emergency safety rules. - AI unavailable, malformed output, and timeout. - Weekly handoff source coverage and caregiver approval requirement. - Backend receipt persistence, duplicate retry, and explicit acknowledgement. - Patient separation and synthetic-only data integrity.
+> Metrics and reporting: - Report exact-match primary-category accuracy with numerator and denominator. - Report secondary-category precision/recall or a clearly defined exact-match measure; state the definition. - Report whether key facts and source IDs were preserved. - Report uncertainty/conflict preservation. - Report deterministic safety test true positives, false positives, and missed triggers on this small predefined test set, with denominators and individual case results. - Report prompt-injection test outcomes. - Report delivery/persistence test outcomes. - Record actual token usage and cost only when the provider returns trustworthy usage data or a documented calculation can be made. Do not fabricate token counts or pricing. - Separate observed/measured results from estimates. - If comparing prompts, run the same cases on the baseline and revised prompt and show quality/cost trade-offs; otherwise omit the comparison. - Save machine-readable per-case results and a readable evaluation summary. - Include failed cases rather than hiding them. Explain limitations and do not imply the small synthetic set proves clinical effectiveness or real-world safety.
+> Run all deterministic tests. If the API key is available, run model-based evaluations using synthetic data only and label API-based results separately. If it is unavailable, report that live evaluation was not run rather than inventing results.
