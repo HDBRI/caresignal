@@ -83,6 +83,27 @@ export function CheckinCard({
       </form>
 
       {state.observationError && <FormError message={state.observationError} />}
+      {state.noteSafety && !saved && (
+        <div
+          role={state.noteSafety.tier === "review" ? "status" : "alert"}
+          className={
+            state.noteSafety.tier === "emergency"
+              ? "safety-banner safety-emergency"
+              : state.noteSafety.tier === "contact_care_team"
+                ? "safety-banner safety-contact"
+                : "card"
+          }
+        >
+          <h3 className="safety-title" style={state.noteSafety.tier === "review" ? { fontSize: 17 } : undefined}>
+            {state.noteSafety.tier === "review" ? <InfoIcon size={18} /> : <AlertIcon size={22} />} {state.noteSafety.title}
+          </h3>
+          <p className={state.noteSafety.tier === "emergency" ? "safety-instruction" : undefined}>{state.noteSafety.body}</p>
+          <p className="secondary">
+            About your check-in note. {state.noteSafety.why} Limited prototype rules — no alert would not mean the situation is safe.
+          </p>
+          <p className="secondary">Tick “Also save this as an observation” to keep it in the timeline with a notice on every screen.</p>
+        </div>
+      )}
       {saved && (
         <div
           role={urgent ? "alert" : "status"}

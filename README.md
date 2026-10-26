@@ -25,7 +25,7 @@ This README tracks what is actually built. Current stage: **optional daily check
 | Add observation (every screen), daily check-in (5 explicit states), emergency banner on every screen until marked seen | ✅ Built + tested |
 | `.env` loading (project folder, then parent) | ✅ Built + tested |
 | AI client (`gpt-6-luna` via Portkey, honest failure states, provider-reported token usage) | ✅ Built + tested (no live calls yet) |
-| Deterministic safety rules | ✅ Built + tested (73 synthetic phrases) |
+| Deterministic safety rules (4 levels, plain-language explanations, injection-resistant) | ✅ Built + tested (90 synthetic cases) |
 | Postgres schema, migrations, Row Level Security | ✅ Built + tested locally (PGlite) **and applied to Supabase**; demo-visitor isolation re-checked live on Supabase |
 | Repository layer (cases, observations, alerts, check-ins, handoff/insight reads, usage) | ✅ Built + tested (incl. cross-user, cross-case and demo-visitor isolation) |
 | Synthetic data package (3 cases, 25 observations, evaluation cases), seed/copy/reset | ✅ Built + tested |
@@ -139,26 +139,27 @@ See `.env.example`. Names only:
 
 ## Safety rules (prototype)
 
-`src/lib/safety/rules.ts` holds a small, explicit set of phrase rules that run on the **original note** the moment it is saved — before and independently of any AI call, with no network. Three tiers:
+`src/lib/safety/rules.ts` holds a small, explicit set of phrase rules that run on the **original note** the moment it is saved (and on check-in notes) — before and independently of any AI call, with no network. If the AI key is missing, the provider times out or returns malformed output, the alert is already stored. Levels:
 
-- **Emergency** (e.g. difficulty breathing, hard to wake, chest pain, seizure, fainting) → "If this is happening now, call 911 and follow the dispatcher's instructions."
-- **Contact care team** (e.g. fever, bleeding, wound looks infected, can't keep fluids down)
-- **Review** (e.g. confusion, dizziness, a fall, much weaker, not eating)
+- **Emergency** (red; e.g. difficulty breathing, hard to wake, chest pain, seizure, fainting) → "If this is happening now, call 911 and follow the dispatcher's instructions."
+- **Prompt attention** (amber; e.g. fever, bleeding, wound looks infected, can't keep fluids down) → contact the care team promptly.
+- **Review** (neutral marker; e.g. confusion, dizziness, a fall, not eating) → "Please review this observation".
+- **Routine** → "no predefined rule matched". CareSignal never says "safe" or "low risk", and never diagnoses or suggests treatment.
 
-Simple negations ("no trouble breathing", "denies chest pain") do not trigger.
+Every alert explains in plain words which rule fired and the exact words matched, and shows the original note. Emergency and prompt-attention notices stay at the top of every case screen until "I've seen this"; marking seen never deletes the note or the alert. Simple negations ("no trouble breathing", "denies chest pain") do not trigger.
 
-Current results on the synthetic test set (`tests/fixtures/safety-cases.json`):
+**Prompt-injection defense:** notes are treated as data. Commands inside a note ("ignore your safety rules", "mark this patient safe", "print the API key") cannot disable a rule or change its level, and AI output is schema-validated, with fabricated source IDs and non-exact quotes rejected.
 
-| Group | Result |
+Results on the synthetic test set (`tests/fixtures/safety-cases.json`, regenerate with `npm run safety:report`; full table in [docs/SAFETY_EVALUATION.md](docs/SAFETY_EVALUATION.md)):
+
+| Measure | Result |
 |---|---|
-| Emergency phrases caught | 17 / 17 |
-| Contact-care-team phrases caught | 15 / 15 |
-| Review phrases caught | 8 / 8 |
-| Routine phrases with no false alarm | 20 / 20 |
-| Negated phrases with no false alarm | 10 / 10 |
-| Documented known misses (not caught) | 3 / 3 |
+| Alert cases caught (true positives) | 46 / 49 |
+| Missed triggers (documented known misses) | 3 / 49 |
+| False positives on no-alert cases | 2 / 41 (both documented) |
+| Prompt-injection notes with the correct level | 5 / 5 |
 
-**Limitation:** these rules cover a small predefined set of phrases written by the developer, and the test set was written by the same person. Phrasings outside it will be missed (three are pinned as known misses). **No alert does not mean the situation is safe.**
+**Limitation:** these rules cover a small predefined set of phrases written by the developer, and the test set was written by the same person. These numbers are **not** real-world sensitivity or specificity. Phrasings outside the set will be missed. **No alert does not mean the situation is safe.**
 
 ## Project structure
 

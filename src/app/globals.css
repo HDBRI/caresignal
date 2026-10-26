@@ -243,3 +243,6 @@ pre.payload { background: var(--bg); padding: 12px; border-radius: var(--radius-
 .finding .meta { gap: 6px; }
 .evidence-drawer { width: min(720px, calc(100vw - 24px)); }
 @media (max-width: 640px) { .chart-grid { grid-template-columns: 1fr; } .bars { height: 116px; } }
+
+/* Neutral "Please review this observation" marker (Task 12): not amber, not red — icon + text. */
+.pill-review { background: #eef1f6; color: #33415c; border: 1px solid #d5dbe6; }

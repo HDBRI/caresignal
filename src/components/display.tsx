@@ -55,18 +55,18 @@ export function SafetyPill({ tier }: { tier: Observation["safetyTier"] }) {
   if (tier === "contact_care_team")
     return (
       <span className="pill pill-attention">
-        <AlertIcon size={13} /> Contact care team
+        <AlertIcon size={13} /> Prompt attention · contact care team
       </span>
     );
   if (tier === "review")
     return (
-      <span className="pill pill-attention">
-        <AlertIcon size={13} /> Please review
+      <span className="pill pill-review">
+        <InfoIcon size={13} /> Please review this observation
       </span>
     );
   return (
     <span className="pill pill-unknown" title="No predefined rule matched — this does not mean the situation is safe.">
-      <InfoIcon size={13} /> No rule matched
+      <InfoIcon size={13} /> Routine · no rule matched
     </span>
   );
 }

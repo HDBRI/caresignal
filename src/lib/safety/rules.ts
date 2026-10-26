@@ -31,7 +31,7 @@ export interface SafetyResult {
   rulesVersion: string;
 }
 
-export const RULES_VERSION = "2026-10-25.1";
+export const RULES_VERSION = "2026-10-25.2";
 
 export const SAFETY_LIMITATION =
   "These prototype rules cover a small predefined set of phrases. No alert does not mean the situation is safe.";
@@ -92,7 +92,7 @@ export const SAFETY_RULES: SafetyRule[] = [
     id: "EMG-BLUE",
     tier: "emergency",
     label: "Blue or grey lips or face",
-    patterns: [/\b(lips|face)\s+(look(ed|s)?\s+|turned\s+|went\s+|are\s+|were\s+)?(blue|bluish|grey|gray)\b/i],
+    patterns: [/\b(lips|face)\s+(look(ed|s)?\s+|turned\s+|went\s+|are\s+|were\s+|seem(ed|s)?\s+)?(a (bit|little)\s+|slightly\s+|kind of\s+|very\s+)?(blue|bluish|grey|gray)\b/i],
   },
   {
     id: "EMG-SEIZURE",
@@ -112,7 +112,7 @@ export const SAFETY_RULES: SafetyRule[] = [
     id: "CTC-FEVER",
     tier: "contact_care_team",
     label: "Fever",
-    patterns: [/\bfever\b/i, /\btemp(erature)?\s+(of\s+|was\s+|is\s+)?(10[1-9]|100\.[4-9])\b/i],
+    patterns: [/\bfever\b(?![- ]?free)/i, /\btemp(erature)?\s+(of\s+|was\s+|is\s+)?(10[1-9]|100\.[4-9])\b/i],
   },
   {
     id: "CTC-BLEEDING",
@@ -159,7 +159,7 @@ export const SAFETY_RULES: SafetyRule[] = [
     id: "REV-FALL",
     tier: "review",
     label: "Fall",
-    patterns: [/\b(fell|fall|fallen|tripped)\b/i],
+    patterns: [/\b(fell|fall|fallen)\b(?!\s+(back\s+)?asleep)/i, /\btripped\b/i],
   },
   {
     id: "REV-WEAKER",
@@ -185,6 +185,24 @@ function isNegated(text: string, index: number): boolean {
   const window = text.slice(Math.max(0, index - 30), index);
   return NEGATION.test(window);
 }
+
+export function ruleLabel(ruleId: string): string {
+  return SAFETY_RULES.find((r) => r.id === ruleId)?.label ?? ruleId;
+}
+
+/** e.g. 'Prototype rule "Breathing difficulty" matched the words "breathing seemed difficult".' */
+export function explainMatches(ruleIds: string[], matchedText: string[]): string {
+  const parts = ruleIds.map((id, i) => `"${ruleLabel(id)}"${matchedText[i] ? ` matched the words \u201c${matchedText[i]}\u201d` : ""}`);
+  return `Prototype rule${parts.length > 1 ? "s" : ""} ${parts.join("; ")}.`;
+}
+
+/** Behaviour levels used across the app (Task 12). "Routine" = no predefined rule matched — never "safe". */
+export const LEVEL_LABEL = {
+  emergency: "Emergency guidance",
+  contact_care_team: "Prompt attention",
+  review: "Please review this observation",
+  none: "Routine — no predefined rule matched",
+} as const;
 
 export function evaluateSafety(originalText: string): SafetyResult {
   const matches: SafetyMatch[] = [];

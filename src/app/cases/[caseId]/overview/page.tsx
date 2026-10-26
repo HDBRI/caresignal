@@ -8,13 +8,13 @@ import { listHandoffs, listInsightRuns } from "@/lib/repo/handoffs";
 import { listAlerts, listAnalyses, listObservations } from "@/lib/repo/observations";
 import { addDays, localDate } from "@/lib/time";
 import { formatTime12, isReminderDue } from "@/lib/reminder";
-import { TIER_GUIDANCE } from "@/lib/safety/rules";
+import { explainMatches, TIER_GUIDANCE } from "@/lib/safety/rules";
 import { markSeen } from "@/app/actions/alerts";
 import { AddObservationButton } from "@/components/AddObservation";
 import { CheckinCard } from "@/components/CheckinCard";
 import { AutoRefreshWhilePending } from "@/components/ObservationTools";
 import { EmptyState, fmtDateTime, fmtDay, ObservationItem } from "@/components/display";
-import { AlertIcon, CheckIcon, InfoIcon } from "@/components/icons";
+import { CheckIcon, InfoIcon } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
 
@@ -115,8 +115,8 @@ export default async function OverviewPage({
       {reviewAlerts.length > 0 && (
         <section className="card" aria-labelledby="review-h">
           <div className="section-head">
-            <h2 id="review-h" style={{ display: "flex", gap: 8, alignItems: "center", color: "var(--attention)" }}>
-              <AlertIcon size={18} /> Notes flagged for review ({reviewAlerts.length})
+            <h2 id="review-h" style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <InfoIcon size={18} /> Please review these observations ({reviewAlerts.length})
             </h2>
             <span className="secondary">{TIER_GUIDANCE.review.body}</span>
           </div>
@@ -131,7 +131,7 @@ export default async function OverviewPage({
                         {o.displayId}
                       </Link>
                     )}{" "}
-                    “{o?.originalText}” <span className="secondary">· rule {a.ruleIds.join(", ")}</span>
+                    “{o?.originalText}” <span className="secondary">· {explainMatches(a.ruleIds, a.matchedText)}</span>
                   </span>
                   <form action={markSeen}>
                     <input type="hidden" name="alertId" value={a.id} />

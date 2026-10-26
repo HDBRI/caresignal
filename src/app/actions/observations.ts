@@ -7,7 +7,7 @@ import { getActor, principalOf } from "@/lib/auth/session";
 import { getDb } from "@/lib/repo/db";
 import { upsertCheckin } from "@/lib/repo/checkins";
 import { addObservation, addObservationEdit, correctCategories } from "@/lib/repo/observations";
-import { TIER_GUIDANCE, type SafetyTier } from "@/lib/safety/rules";
+import { evaluateSafety, explainMatches, TIER_GUIDANCE, type SafetyTier } from "@/lib/safety/rules";
 import { STATUSES_WITH_NOTE } from "@/lib/repo/checkin-labels";
 
 export interface AddObservationState {
@@ -115,6 +115,8 @@ export interface CheckinState {
   ok?: boolean;
   error?: string;
   status?: string;
+  /** Deterministic rules applied to the check-in note itself (no AI). */
+  noteSafety?: { tier: SafetyTier; title: string; body: string; why: string };
   savedObservation?: SavedInfo;
   observationError?: string;
 }
@@ -135,6 +137,17 @@ export async function saveCheckinAction(_prev: CheckinState, fd: FormData): Prom
   }
   revalidatePath(`/cases/${caseId}`, "layout");
   const result: CheckinState = { ok: true, status };
+  if (withNote && note.trim()) {
+    const s = evaluateSafety(note);
+    if (s.tier) {
+      result.noteSafety = {
+        tier: s.tier,
+        title: TIER_GUIDANCE[s.tier].title,
+        body: TIER_GUIDANCE[s.tier].body,
+        why: explainMatches(s.matches.map((m) => m.ruleId), s.matches.map((m) => m.matchedText)),
+      };
+    }
+  }
   // Offered, never automatic: only when the caregiver ticked the box and wrote something.
   if (withNote && fd.get("saveAsObservation") === "on" && note.trim()) {
     try {

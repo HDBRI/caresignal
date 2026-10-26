@@ -5,7 +5,7 @@ import { requireActor, principalOf } from "@/lib/auth/session";
 import { getDb } from "@/lib/repo/db";
 import { NotFoundError } from "@/lib/repo/cases";
 import { getObservationByDisplayId, listAnalysisHistory } from "@/lib/repo/observations";
-import { SAFETY_LIMITATION, SAFETY_RULES, TIER_GUIDANCE } from "@/lib/safety/rules";
+import { explainMatches, SAFETY_LIMITATION, TIER_GUIDANCE } from "@/lib/safety/rules";
 import { AiStateText, fmtDateTime, OriginTag, RetryAiButton, SafetyPill } from "@/components/display";
 import { AutoRefreshWhilePending, CategoryCorrectionForm, EditWordingForm } from "@/components/ObservationTools";
 
@@ -30,7 +30,6 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
   const latestCaregiver = history.find((h) => h.source === "caregiver");
   const effective = latestCaregiver ?? (o.aiState === "complete" ? latestAi : undefined);
   const currentText = edits.length ? edits[edits.length - 1].editedText : o.originalText;
-  const ruleLabel = (id: string) => SAFETY_RULES.find((r) => r.id === id)?.label ?? id;
 
   return (
     <>
@@ -75,7 +74,8 @@ export default async function ObservationDetail({ params }: { params: Promise<{ 
               {TIER_GUIDANCE[o.safetyTier as keyof typeof TIER_GUIDANCE]?.body}
             </p>
             <p className="secondary">
-              Rules: {o.safetyRuleIds.map((id) => `${ruleLabel(id)} (${id})`).join(", ")} · rules version {o.safetyRulesVersion}
+              Why: {explainMatches(o.safetyRuleIds, alert?.matchedText ?? [])} Rule IDs {o.safetyRuleIds.join(", ")} · rules version {o.safetyRulesVersion}.
+              Limited prototype rules, not validated triage.
             </p>
             <p className="secondary">
               Notice status: {alert?.seenAt ? `marked as seen ${fmtDateTime(alert.seenAt)} (seen is not “resolved”)` : "not yet marked as seen"}

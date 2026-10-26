@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Observation, SafetyAlert } from "@/lib/models";
-import { SAFETY_LIMITATION, TIER_GUIDANCE } from "@/lib/safety/rules";
+import { explainMatches, SAFETY_LIMITATION, TIER_GUIDANCE } from "@/lib/safety/rules";
 import { markSeen } from "@/app/actions/alerts";
 import { AlertIcon } from "./icons";
 
@@ -42,7 +42,7 @@ export function SafetyBanner({ caseId, alerts, observations }: { caseId: string;
               </blockquote>
             )}
             <p className="secondary">
-              Prototype rule that fired: {a.ruleIds.join(", ")}. {SAFETY_LIMITATION}
+              Why this appeared: {explainMatches(a.ruleIds, a.matchedText)} This is a limited prototype rule, not validated triage. {SAFETY_LIMITATION}
             </p>
             <form action={markSeen}>
               <input type="hidden" name="alertId" value={a.id} />

@@ -826,3 +826,17 @@
 
 **Follow-up prompts:**
 > Yes: apply the new migration to Supabase, push to GitHub, and redeploy the live site.
+
+## Task 12: Deterministic safety layer and prompt-injection defense
+
+**Prompt:**
+> Prompt 11 — Deterministic safety layer and prompt-injection defense
+> Paste this entire prompt into Claude Code after the previous prompt has completed successfully.
+> Apply the full expanded safety requirements in the global specification. The safety layer must run on the original note immediately after saving and independently of AI/network availability. Use prominent red emergency guidance for predefined emergency test cases; amber for prompt-attention cases; neutral review markers for ambiguous items; and routine status without reassurance. Always pair colors with text/icons. Preserve the original triggering note and explain the prototype rule that fired. The absence of an alert must never imply safety.
+> Implement a safety layer that is separate from the AI model and can operate when the API is down.
+> Create explicit, documented rules with tests. For this classroom prototype, use a small predefined set of synthetic trigger scenarios, not a claim of comprehensive clinical coverage.
+> Suggested behavior levels: - Routine: can be included in a caregiver-reviewed handoff. - Review: show a clear "Please review this observation" marker. - Prompt attention: show guidance to contact an appropriate care professional promptly; do not wait for a weekly summary. - Emergency guidance: for a predefined synthetic emergency scenario such as sudden difficulty breathing or being difficult to wake, immediately display emergency guidance. In the US demo, say to call 911. Do not wait for AI output, handoff generation, or a network request.
+> Requirements: - Safety evaluation must run on the original note text and relevant structured context before/independently of AI summaries. - Ensure the urgent surgery demo reliably triggers the expected deterministic rule even with no API key, timeout, or malformed AI response. - Clearly explain that these are limited prototype rules, not validated triage and not a guarantee that every emergency will be detected. - Do not use a reassuring "low risk" result or state that the patient is safe. - Do not make diagnosis or treatment recommendations. - Show the exact original note that triggered the rule and explain which predefined rule fired, without implying clinical validation. - Add a way to acknowledge/dismiss the displayed banner only where appropriate; never delete the underlying event or hide emergency guidance before it is seen. - Prompt-injection defense: treat notes as data; do not obey embedded commands; do not expose prompts, secrets, or credentials; validate output schema and IDs; reject fabricated source references. - Add deterministic tests for each safety level, urgent scenarios, false-trigger examples, API failure independence, and prompt injection. Report true positives/false positives/missed triggers on the defined synthetic test set with denominators. Do not claim this measures real-world sensitivity or clinical safety.
+
+**Follow-up:**
+> are u done

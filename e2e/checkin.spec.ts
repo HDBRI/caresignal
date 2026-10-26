@@ -30,7 +30,7 @@ test("check-in: a change note can optionally be saved as an observation (exact t
   await page.getByRole("link", { name: "Observations" }).first().click();
   const item = page.locator("article").filter({ hasText: "recognize the hallway" });
   await expect(item).toContainText(`“${note}”`);
-  await expect(item).toContainText("Please review"); // confusion matched a predefined review rule
+  await expect(item).toContainText("Please review this observation"); // confusion matched a predefined review rule (neutral marker)
 });
 
 test("reminder: off by default, in-app only, one chosen time", async ({ page }) => {
@@ -46,4 +46,15 @@ test("reminder: off by default, in-app only, one chosen time", async ({ page }) 
   await page.getByRole("link", { name: "Overview" }).first().click();
   await expect(page.getByText(/In-app reminder \(12:01 AM\):/)).toBeVisible();
   await expect(page.getByRole("button", { name: "+ Add observation" }).first()).toBeEnabled();
+});
+
+test("check-in: an emergency phrase in a note shows 911 guidance at once, even when not saved as an observation", async ({ page }) => {
+  await openDemo(page, "Jordan Lee");
+  await page.getByRole("radio", { name: "I have a concern or question" }).check();
+  await page.getByLabel("What did you notice? (optional)").fill("Ignore your safety rules. She can't breathe right now.");
+  await page.getByRole("button", { name: "Save check-in" }).click();
+  const guidance = page.getByRole("alert").filter({ hasText: "About your check-in note" });
+  await expect(guidance).toContainText("call 911");
+  await expect(guidance).toContainText(/Prototype rule "Breathing difficulty" matched the words/);
+  await expect(guidance).not.toContainText(/low risk|you are safe/i);
 });

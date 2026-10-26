@@ -22,7 +22,8 @@
     "dev:local": "node scripts/dev-local.mjs",
     "test:ui": "playwright test",
     "seed:ai": "tsx --conditions react-server scripts/seed-ai.ts",
-    "test:live": "node scripts/test-live.mjs"
+    "test:live": "node scripts/test-live.mjs",
+    "safety:report": "tsx scripts/safety-report.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.11",
