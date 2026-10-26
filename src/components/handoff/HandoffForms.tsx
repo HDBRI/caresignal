@@ -1,10 +1,10 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   approveHandoffAction,
   draftHandoffAction,
   editHandoffAction,
-  submitHandoffAction,
   type HandoffFormState,
 } from "@/app/actions/handoffs";
 import type { HandoffContent } from "@/lib/models";
@@ -117,20 +117,64 @@ export function ApproveForm({ caseId, handoffId }: { caseId: string; handoffId: 
   );
 }
 
-export function SubmitForm({ caseId, handoffId, displayId, idempotencyKey }: { caseId: string; handoffId: string; displayId: string; idempotencyKey: string }) {
-  const [state, action] = useActionState<HandoffFormState, FormData>(submitHandoffAction, {});
+type SubmitState =
+  | { kind: "idle" }
+  | { kind: "sending" }
+  | { kind: "error"; message: string; status: string | null };
+
+/**
+ * Submits through the backend endpoint (POST /api/handoffs). The page shows "received" only after the server
+ * returns a receipt it has saved. The idempotency key stays the same for retries from this page, so a retry
+ * after a lost response returns the original receipt instead of creating a second one.
+ */
+export function SubmitForm({ caseId, displayId, idempotencyKey, retry }: { caseId: string; displayId: string; idempotencyKey: string; retry?: boolean }) {
+  const router = useRouter();
+  const [state, setState] = useState<SubmitState>({ kind: "idle" });
+  const [simulateFailure, setSimulateFailure] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setState({ kind: "sending" });
+    let res: Response;
+    try {
+      res = await fetch("/api/handoffs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ caseId, handoffId: displayId, idempotencyKey, ...(simulateFailure ? { simulateFailure: true } : {}) }),
+      });
+    } catch {
+      setState({
+        kind: "error",
+        status: null,
+        message: "Couldn't reach the server. Nothing is marked received unless the server confirms it. Retrying is safe — it reuses the same submission key.",
+      });
+      return;
+    }
+    const body = (await res.json().catch(() => ({}))) as { receipt?: { handoffId: string }; message?: string; handoffStatus?: string };
+    if (res.ok && body.receipt) {
+      router.push(`/cases/${caseId}/handoffs/${body.receipt.handoffId}?submitted=1`);
+      router.refresh();
+      return;
+    }
+    setState({ kind: "error", status: body.handoffStatus ?? null, message: body.message ?? `The server answered ${res.status}. Nothing was received.` });
+    router.refresh(); // show the stored status (e.g. Failed) and its history
+  }
+
   return (
-    <form action={action} className="form" style={{ gap: 10 }}>
-      <input type="hidden" name="caseId" value={caseId} />
-      <input type="hidden" name="handoffId" value={handoffId} />
-      <input type="hidden" name="displayId" value={displayId} />
-      <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
-      <FormError message={state.error} />
-      <p className="secondary">Submitting sends the approved version to the simulated receiver in this demo. No real care team is contacted.</p>
+    <form onSubmit={submit} className="form" style={{ gap: 10 }}>
+      {state.kind === "error" && <FormError message={state.message} />}
+      <p className="secondary">
+        {retry ? "The last delivery attempt did not complete. " : ""}Submitting sends the approved version to the simulated receiver in this demo. No real
+        care team is contacted.
+      </p>
+      <div className="check-row">
+        <input type="checkbox" id="simulate-failure" checked={simulateFailure} onChange={(e) => setSimulateFailure(e.target.checked)} />
+        <label htmlFor="simulate-failure">Demo: simulate a failed delivery (the simulated receiver won&apos;t save it)</label>
+      </div>
       <div>
-        <SubmitButton pendingText="Submitting…" className="btn btn-primary">
-          Submit to the simulated receiver
-        </SubmitButton>
+        <button type="submit" className="btn btn-primary" disabled={state.kind === "sending"} aria-disabled={state.kind === "sending"}>
+          {state.kind === "sending" ? "Submitting…" : retry || state.kind === "error" ? "Retry submission" : "Submit to the simulated receiver"}
+        </button>
       </div>
     </form>
   );

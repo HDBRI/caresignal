@@ -11,6 +11,8 @@ import { fmtDateTime } from "@/components/display";
 import { ApproveForm, DraftButton, EditForm, SubmitForm } from "@/components/handoff/HandoffForms";
 import {
   CategoryGroups,
+  FictionalResponse,
+  StatusBadge,
   HANDOFF_STATUS,
   HistoryList,
   ItemRow,
@@ -20,7 +22,7 @@ import {
   StatusPath,
   UrgentList,
 } from "@/components/handoff/HandoffView";
-import { CheckIcon, InfoIcon } from "@/components/icons";
+import { CheckIcon } from "@/components/icons";
 import { addFictionalResponseAction } from "@/app/actions/handoffs";
 
 export const dynamic = "force-dynamic";
@@ -62,7 +64,8 @@ export default async function HandoffDetail({
   const isEdited = (s: string) => Boolean(gen) && !generatedStatements.has(s);
   const sources = h.sourceIds.length ? h.sourceIds : [...new Set(d.items.flatMap((i) => i.sourceIds))];
   const open = h.status === "draft" || h.status === "reviewed";
-  const canRespond = !!fictionalResponseFor(c.seedKey) && (h.status === "received" || h.status === "acknowledged") && bundle.responses.length === 0;
+  const canRespond = !!fictionalResponseFor(c.seedKey) && h.status === "acknowledged" && bundle.responses.length === 0;
+  const receipt = bundle.receipt;
 
   return (
     <>
@@ -76,7 +79,8 @@ export default async function HandoffDetail({
         </h1>
         <p className="meta">
           <span>Handoff ID {h.displayId}</span>
-          <span>· {HANDOFF_STATUS[h.status]}</span>
+          <StatusBadge status={h.status} />
+          <span>{HANDOFF_STATUS[h.status]}</span>
           <span>· Synthetic data — classroom prototype</span>
         </p>
       </header>
@@ -212,7 +216,7 @@ export default async function HandoffDetail({
           {h.status === "draft" ? (
             <ApproveForm caseId={caseId} handoffId={h.id} />
           ) : (
-            <SubmitForm caseId={caseId} handoffId={h.id} displayId={h.displayId} idempotencyKey={randomUUID()} />
+            <SubmitForm caseId={caseId} displayId={h.displayId} idempotencyKey={randomUUID()} />
           )}
           <details>
             <summary className="muted-link" style={{ cursor: "pointer" }}>
@@ -229,27 +233,55 @@ export default async function HandoffDetail({
         </section>
       )}
 
-      {bundle.receipt && (
+      {(h.status === "submitted" || h.status === "failed") && (
+        <section className="card" aria-labelledby="delivery-h" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <h2 id="delivery-h" style={{ fontSize: 19, display: "flex", gap: 10, alignItems: "center" }}>
+            Delivery <StatusBadge status={h.status} />
+          </h2>
+          <p>
+            {h.status === "failed"
+              ? `The simulated receiver did not save this handoff, so nothing was received.${h.lastError ? ` Reason: ${h.lastError}.` : ""}`
+              : "Submitted, but the simulated receiver has not confirmed it saved the handoff — it is not marked received."}{" "}
+            The approved version is unchanged ({h.submitAttempts} attempt{h.submitAttempts === 1 ? "" : "s"} so far).
+          </p>
+          <SubmitForm caseId={caseId} displayId={h.displayId} idempotencyKey={randomUUID()} retry />
+        </section>
+      )}
+
+      {receipt && (
         <section className="card" aria-labelledby="receipt-h" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <h2 id="receipt-h" style={{ fontSize: 19 }}>Receipt (simulated receiver)</h2>
           <p>
-            Saved by the simulated receiver {fmtDateTime(bundle.receipt.receivedAt)}. No real care team was contacted.{" "}
+            Saved by the simulated receiver {fmtDateTime(receipt.receivedAt)}. No real care team was contacted.{" "}
             <Link href={`/cases/${caseId}/receiver`}>Open the Demo receiver</Link>
           </p>
+          <dl className="secondary" style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "4px 14px", margin: 0 }}>
+            <dt>Handoff ID</dt>
+            <dd style={{ margin: 0 }}>{h.displayId} (version {h.version})</dd>
+            <dt>Receipt ID</dt>
+            <dd style={{ margin: 0 }}>{receipt.receiptCode ?? "example receipt (seeded scenario)"}</dd>
+            <dt>Status</dt>
+            <dd style={{ margin: 0 }}>
+              <StatusBadge status={receipt.acknowledgedAt ? "acknowledged" : "received"} />
+            </dd>
+            {receipt.payloadSha256 && (
+              <>
+                <dt>Payload fingerprint</dt>
+                <dd style={{ margin: 0, wordBreak: "break-all" }}>
+                  SHA-256 {receipt.payloadSha256.slice(0, 16)}…{" "}
+                  {receipt.payloadSha256 === h.approvedPayloadSha256 ? "— matches the version you approved" : "— DOES NOT match the approved version"}
+                </dd>
+              </>
+            )}
+          </dl>
           {bundle.responses.map((r) => (
-            <div key={r.id} className="card" style={{ background: "var(--unknown-bg)" }}>
-              <p className="stat-label" style={{ fontWeight: 600, display: "flex", gap: 6 }}>
-                <InfoIcon size={14} /> Simulated receiver response — fictional
-              </p>
-              <p style={{ marginTop: 4 }}>{r.text}</p>
-              <p className="secondary">{r.label}</p>
-            </div>
+            <FictionalResponse key={r.id} text={r.text} label={r.label} at={r.at} />
           ))}
           {canRespond && (
             <form action={addFictionalResponseAction}>
               <input type="hidden" name="caseId" value={caseId} />
               <input type="hidden" name="handoffId" value={h.id} />
-              <button className="btn btn-secondary" type="submit">Show this scenario&apos;s fictional receiver response</button>
+              <button className="btn btn-secondary" type="submit">Add this scenario&apos;s fictional outcome (synthetic)</button>
             </form>
           )}
         </section>

@@ -10,6 +10,9 @@ function code(length: number): string {
 /** Unique, human-readable handoff ID shown to users and stored with the receipt. */
 export const newHandoffDisplayId = () => `HO-${code(8)}`;
 
+/** Receipt ID returned by the simulated receiver once it has saved a payload. */
+export const newReceiptCode = () => `RC-${code(10)}`;
+
 /** Patient reference for a user-created fictional case. */
 export const newUserPatientRef = () => `PAT-USER-${code(6)}`;
 

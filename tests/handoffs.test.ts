@@ -114,7 +114,7 @@ describe("review before submit; never auto-sent", () => {
     const again = await submitHandoff(db, u, handoff.id, "key-submit-0001"); // retry with same key
     expect(again.duplicate).toBe(true);
     expect(again.receipt.id).toBe(first.receipt.id);
-    await expect(submitHandoff(db, u, handoff.id, "key-other-00001")).rejects.toEqual(err("not_reviewed"));
+    await expect(submitHandoff(db, u, handoff.id, "key-other-00001")).rejects.toEqual(err("already_received"));
     expect(await receiptCount(u, c.id)).toBe(1);
 
     await acknowledgeHandoff(db, u, handoff.id);
@@ -242,18 +242,20 @@ describe("uncertainty and conflicting reports are kept", () => {
 });
 
 describe("simulated receiver response (Case 1 only, labeled fictional)", () => {
-  it("can be added after the handoff is received, and is labeled as a simulated scenario outcome", async () => {
+  it("can be added only after the explicit acknowledgement, and is labeled as a simulated scenario outcome", async () => {
     const { p, caseId } = await demo("PAT-CANCER-001");
     const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
-    await expect(addFictionalResponse(db, p, handoff.id)).rejects.toEqual(err("not_received"));
+    await expect(addFictionalResponse(db, p, handoff.id)).rejects.toEqual(err("not_acknowledged"));
     await approveHandoff(db, p, handoff.id, true);
     await submitHandoff(db, p, handoff.id, "key-response-01");
+    await expect(addFictionalResponse(db, p, handoff.id)).rejects.toEqual(err("not_acknowledged")); // received is not enough
+    await acknowledgeHandoff(db, p, handoff.id);
     await addFictionalResponse(db, p, handoff.id);
     await addFictionalResponse(db, p, handoff.id); // second click does nothing
     const b = (await listHandoffs(db, p, caseId)).find((h) => h.handoff.id === handoff.id)!;
     expect(b.responses).toHaveLength(1);
     expect(b.responses[0].label).toMatch(/^Simulated scenario outcome — not an AI recommendation or a real clinical event\.$/);
-    expect(b.handoff.status).toBe("received"); // a response does not change the status
+    expect(b.handoff.status).toBe("acknowledged"); // a response does not change the status
   });
 
   it("is not offered for the recovery case", async () => {
@@ -261,6 +263,7 @@ describe("simulated receiver response (Case 1 only, labeled fictional)", () => {
     const { handoff } = await createOrRegenerateDraft(db, p, caseId, noAi);
     await approveHandoff(db, p, handoff.id, true);
     await submitHandoff(db, p, handoff.id, "key-response-03");
+    await acknowledgeHandoff(db, p, handoff.id);
     await expect(addFictionalResponse(db, p, handoff.id)).rejects.toEqual(err("no_response"));
   });
 });

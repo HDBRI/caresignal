@@ -5,15 +5,39 @@ import { localDate } from "@/lib/time";
 import { fmtDateTime, fmtDay } from "../display";
 import { AlertIcon, CheckIcon, InfoIcon } from "../icons";
 
+export const RECEIVER_BANNER = "Simulated receiver — no real care team is connected.";
+
 /** Plain status words. "Received"/"Acknowledged" belong to the SIMULATED receiver; no clinician acts here. */
 export const HANDOFF_STATUS: Record<HandoffStatus, string> = {
   draft: "Draft — not sent",
-  reviewed: "Approved by you — not sent yet",
-  submitted: "Submitted by you",
-  received: "Received by the simulated receiver",
-  acknowledged: "Acknowledged in the simulated receiver (fictional)",
-  failed: "Didn't go through — you can try again",
+  reviewed: "Reviewed and approved by you — not sent yet",
+  submitted: "Submitted — waiting for the simulated receiver to confirm",
+  received: "Received — saved by the simulated receiver",
+  acknowledged: "Acknowledged in the simulated receiver (no clinician acted)",
+  failed: "Failed — nothing was received; safe to retry",
 };
+
+/** Six visually distinct statuses: each has its own shape/glyph AND word, not color alone. */
+const BADGE: Record<HandoffStatus, { label: string; glyph: string }> = {
+  draft: { label: "Draft", glyph: "✎" },
+  reviewed: { label: "Reviewed", glyph: "☑" },
+  submitted: { label: "Submitted", glyph: "↑" },
+  received: { label: "Received", glyph: "✓" },
+  acknowledged: { label: "Acknowledged", glyph: "✓✓" },
+  failed: { label: "Failed", glyph: "!" },
+};
+
+export function StatusBadge({ status }: { status: HandoffStatus }) {
+  const b = BADGE[status];
+  return (
+    <span className={`hs-badge hs-${status}`} title={HANDOFF_STATUS[status]}>
+      <span aria-hidden="true" className="hs-glyph">
+        {b.glyph}
+      </span>
+      {b.label}
+    </span>
+  );
+}
 
 const STEPS: { status: HandoffStatus; label: string }[] = [
   { status: "draft", label: "Draft" },
@@ -24,18 +48,22 @@ const STEPS: { status: HandoffStatus; label: string }[] = [
 ];
 
 export function StatusPath({ status }: { status: HandoffStatus }) {
-  const reached = STEPS.findIndex((s) => s.status === status);
+  const failed = status === "failed";
+  const reached = failed ? 2 : STEPS.findIndex((s) => s.status === status);
   return (
     <ol className="status-path" aria-label="Handoff status">
       {STEPS.map((s, i) => {
-        const state = i < reached || (i === reached && status === "acknowledged") ? "done" : i === reached ? "current" : "todo";
+        const state =
+          failed && i === 2 ? "failed" : i < reached || (i === reached && status === "acknowledged") ? "done" : i === reached ? "current" : "todo";
         return (
           <li key={s.status} className={`status-step status-${state}`} aria-current={state === "current" ? "step" : undefined}>
             <span className="status-dot" aria-hidden="true">
-              {state === "done" ? <CheckIcon size={12} /> : i + 1}
+              {state === "done" ? <CheckIcon size={12} /> : state === "failed" ? "!" : i + 1}
             </span>
-            {s.label}
-            <span className="sr-only">{state === "done" ? " (done)" : state === "current" ? " (current step)" : " (not yet)"}</span>
+            {state === "failed" ? "Submission failed — not received" : s.label}
+            <span className="sr-only">
+              {state === "done" ? " (done)" : state === "current" ? " (current step)" : state === "failed" ? " (failed — retry is safe)" : " (not yet)"}
+            </span>
           </li>
         );
       })}
@@ -160,7 +188,7 @@ const EVENT_LABEL: Record<HandoffStatusEvent["event"], string> = {
   status: "",
   edited: "Edited",
   regenerated: "Regenerated",
-  response_added: "Simulated response",
+  response_added: "Synthetic scenario outcome",
 };
 
 export function HistoryList({ history }: { history: HandoffStatusEvent[] }) {
@@ -168,11 +196,25 @@ export function HistoryList({ history }: { history: HandoffStatusEvent[] }) {
     <ol style={{ margin: "6px 0 0", paddingLeft: 20, display: "flex", flexDirection: "column", gap: 4 }}>
       {history.map((e) => (
         <li key={e.id}>
-          <strong>{e.event === "status" ? HANDOFF_STATUS[e.status] ?? e.status : EVENT_LABEL[e.event]}</strong>{" "}
+          {e.event === "status" ? <StatusBadge status={e.status} /> : <strong>{EVENT_LABEL[e.event]}</strong>}{" "}
           <span className="secondary">· {fmtDateTime(e.at)}</span>
           {e.note ? <span className="secondary"> — {e.note}</span> : null}
         </li>
       ))}
     </ol>
+  );
+}
+
+/** A scenario artifact written in advance for Case 1 — never AI output, never a real clinical action. */
+export function FictionalResponse({ text, label, at }: { text: string; label: string; at: string }) {
+  return (
+    <div className="card" style={{ background: "var(--unknown-bg)", borderStyle: "dashed" }}>
+      <p className="stat-label" style={{ fontWeight: 600, display: "flex", gap: 6, alignItems: "center" }}>
+        <InfoIcon size={14} /> Synthetic scenario outcome — fictional
+      </p>
+      <p style={{ marginTop: 4 }}>{text}</p>
+      <p className="secondary" style={{ fontWeight: 600 }}>{label}</p>
+      <p className="secondary">Written in advance for this synthetic scenario — not generated by AI, and no clinician or care team took any action. · {fmtDateTime(at)}</p>
+    </div>
   );
 }

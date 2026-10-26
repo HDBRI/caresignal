@@ -7,6 +7,7 @@
  * - Every status change and every edit/regeneration writes a handoff_status_history row.
  * - The "receiver" is simulated: a receipt exists only once this server has saved the approved payload.
  */
+import { createHash } from "node:crypto";
 import { z } from "zod";
 import { buildHandoffDraft } from "../ai/handoff";
 import type { CategorizeDeps } from "../ai/categorize";
@@ -15,13 +16,13 @@ import { SEED_CASES } from "../fixtures";
 import type { Handoff, HandoffContent, HandoffPayload, ReceiverRecord } from "../models";
 import { addDays, localDate, wallTimeToUtc } from "../time";
 import { getCase, NotFoundError } from "./cases";
-import { newHandoffDisplayId } from "./ids";
+import { newHandoffDisplayId, newReceiptCode } from "./ids";
 import { toHandoff, toReceiverRecord } from "./mappers";
 import { HANDOFF_DISCLAIMER } from "./seed";
 
 export class HandoffError extends Error {
   constructor(
-    public code: "not_found" | "not_open" | "not_draft" | "not_reviewed" | "not_confirmed" | "invalid_payload" | "unknown_source" | "not_received" | "no_response" | "bad_edit",
+    public code: "not_found" | "not_open" | "not_draft" | "not_reviewed" | "not_confirmed" | "invalid_payload" | "unknown_source" | "not_received" | "not_acknowledged" | "no_response" | "bad_edit" | "already_received" | "delivery_failed",
     message: string,
   ) {
     super(message);
@@ -219,9 +220,12 @@ export async function approveHandoff(db: Database, p: Principal, handoffId: stri
       disclaimer: HANDOFF_DISCLAIMER,
     };
     if (!HANDOFF_PAYLOAD_SCHEMA.safeParse(payload).success) throw new HandoffError("invalid_payload", "The draft is incomplete and can't be approved yet.");
+    // The approved snapshot: exact text + hash. Later edits make a new draft/version; this text never changes.
+    const text = JSON.stringify(payload);
     const rows = await sql.query(
-      `update handoffs set status = 'reviewed', approved_payload = $1, reviewed_at = now(), updated_at = now() where id = $2 and owner_id = $3 returning *`,
-      [JSON.stringify(payload), h.id, p.userId],
+      `update handoffs set status = 'reviewed', approved_payload = $1, approved_payload_text = $2, approved_payload_sha256 = $3,
+              reviewed_at = now(), updated_at = now() where id = $4 and owner_id = $5 returning *`,
+      [text, text, sha256(text), h.id, p.userId],
     );
     await history(sql, h, p.userId, "reviewed", "Reviewed and approved by the caregiver — not sent yet");
     return toHandoff(rows[0]);
@@ -230,66 +234,133 @@ export async function approveHandoff(db: Database, p: Principal, handoffId: stri
 
 // ---------------- Submit to the simulated receiver ----------------
 
+export const sha256 = (text: string) => createHash("sha256").update(text, "utf8").digest("hex");
+
+export interface SubmitOptions {
+  /** Demo control: the simulated receiver fails BEFORE saving anything, so the handoff ends up Failed. */
+  simulateFailure?: boolean;
+}
+
+export interface SubmitResult {
+  handoff: Handoff;
+  receipt: ReceiverRecord;
+  /** True when this request was a retry of one that had already been received (same idempotency key). */
+  duplicate: boolean;
+}
+
+const RETRYABLE = ["reviewed", "submitted", "failed"];
+
 /**
- * Submit an approved handoff. Checks, in order: owner, status is reviewed, payload schema, every source ID
- * exists in this case. Then, in ONE transaction: status submitted -> received, receipt saved, history written.
- * The same idempotency key returns the original receipt instead of creating a duplicate.
+ * Deliver an approved handoff to the simulated receiver.
+ *
+ *   1. Validate (no state change on failure): owner, status, payload schema, exact snapshot hash, and every
+ *      source ID exists as an observation of THIS case and is one of the handoff's sources.
+ *   2. Transaction A: status -> Submitted (attempt counted, idempotency key stored, history row).
+ *   3. Transaction B: the simulated receiver saves the exact approved text -> receipt row, status -> Received.
+ *      Received is written in the same transaction as the receipt, so it can never appear without one.
+ *   4. If B fails: status -> Failed with the reason (history row). Retrying is safe.
+ * A retry with the same idempotency key after success returns the original receipt; a concurrent duplicate
+ * finds the existing receipt (one receipt per handoff is enforced by the database).
  */
-export async function submitHandoff(db: Database, p: Principal, handoffId: string, idempotencyKey: string): Promise<{ handoff: Handoff; receipt: ReceiverRecord; duplicate: boolean }> {
-  if (!/^[A-Za-z0-9-]{8,80}$/.test(idempotencyKey)) throw new HandoffError("invalid_payload", "Missing submission key. Reload and try again.");
-  return db.asPrincipal(p, async (sql) => {
+export async function submitHandoff(db: Database, p: Principal, handoffId: string, idempotencyKey: string, opts: SubmitOptions = {}): Promise<SubmitResult> {
+  if (!/^[A-Za-z0-9-]{8,80}$/.test(idempotencyKey)) throw new HandoffError("invalid_payload", "Missing or malformed submission key. Reload and try again.");
+
+  const existingReceipt = async (sql: Sql, h: Handoff) => {
+    const r = await sql.query(`select * from receiver_records where handoff_id = $1 and owner_id = $2`, [h.id, p.userId]);
+    return r.length ? toReceiverRecord(r[0]) : null;
+  };
+
+  // 1 + 2: validate and mark Submitted.
+  const step = await db.asPrincipal(p, async (sql): Promise<{ done: SubmitResult } | { handoff: Handoff }> => {
     const h = await loadHandoff(sql, p, handoffId);
-    const prior = await sql.query(`select * from handoffs where id = $1 and owner_id = $2 and idempotency_key = $3`, [h.id, p.userId, idempotencyKey]);
-    if (prior.length === 1) {
-      const receipt = await sql.query(`select * from receiver_records where handoff_id = $1`, [h.id]);
-      if (receipt.length === 1) return { handoff: toHandoff(prior[0]), receipt: toReceiverRecord(receipt[0]), duplicate: true };
+    const [{ idempotency_key: priorKey }] = await sql.query<{ idempotency_key: string | null }>(`select idempotency_key from handoffs where id = $1`, [h.id]);
+    if (h.status === "received" || h.status === "acknowledged") {
+      const receipt = await existingReceipt(sql, h);
+      if (receipt && priorKey === idempotencyKey) return { done: { handoff: h, receipt, duplicate: true } };
+      throw new HandoffError("already_received", "This handoff was already received by the simulated receiver. Nothing was sent twice.");
     }
-    if (h.status !== "reviewed" || !h.approvedPayload) throw new HandoffError("not_reviewed", "Only a reviewed and approved handoff can be submitted.");
-    const parsed = HANDOFF_PAYLOAD_SCHEMA.safeParse(h.approvedPayload);
-    if (!parsed.success) throw new HandoffError("invalid_payload", "The approved handoff failed validation, so it was not sent.");
+    if (!RETRYABLE.includes(h.status) || !h.approvedPayload) throw new HandoffError("not_reviewed", "Only a reviewed and approved handoff can be submitted.");
+    if (!HANDOFF_PAYLOAD_SCHEMA.safeParse(h.approvedPayload).success)
+      throw new HandoffError("invalid_payload", "The approved handoff failed validation, so it was not sent.");
+    if (h.approvedPayloadText !== null && (sha256(h.approvedPayloadText) !== h.approvedPayloadSha256 || h.approvedPayload.handoffId !== h.displayId))
+      throw new HandoffError("invalid_payload", "The approved snapshot does not match what was approved, so it was not sent.");
     const known = new Set(
       (await sql.query<{ display_id: string }>(`select display_id from observations where case_id = $1 and owner_id = $2`, [h.caseId, p.userId])).map((r) => r.display_id),
     );
     if (payloadSourceIds(h.approvedPayload).some((id) => !known.has(id) || !h.sourceIds.includes(id)))
-      throw new HandoffError("unknown_source", "The handoff refers to a note that isn't in this case, so it was not sent.");
+      throw new HandoffError("unknown_source", "The handoff refers to a note that isn't part of this patient's records, so it was not sent.");
 
     const rows = await sql.query(
-      `update handoffs set status = 'received', submitted_at = now(), idempotency_key = $1, updated_at = now()
-        where id = $2 and owner_id = $3 and status = 'reviewed' returning *`,
+      `update handoffs set status = 'submitted', submitted_at = now(), idempotency_key = $1, submit_attempts = submit_attempts + 1,
+              last_error = null, updated_at = now()
+        where id = $2 and owner_id = $3 and status in ('reviewed', 'submitted', 'failed') returning *`,
       [idempotencyKey, h.id, p.userId],
     );
     if (rows.length !== 1) throw new HandoffError("not_reviewed", "This handoff is no longer waiting to be submitted.");
-    await history(sql, h, p.userId, "submitted", "Submitted by the caregiver to the simulated receiver");
-    const [r] = await sql.query(
-      `insert into receiver_records (handoff_id, case_id, owner_id, payload, synthetic, received_at) values ($1, $2, $3, $4, true, clock_timestamp()) returning *`,
-      [h.id, h.caseId, p.userId, JSON.stringify(h.approvedPayload)],
-    );
-    await history(sql, h, p.userId, "received", "Saved by the simulated receiver — no real care team was contacted");
-    return { handoff: toHandoff(rows[0]), receipt: toReceiverRecord(r), duplicate: false };
+    const updated = toHandoff(rows[0]);
+    await history(sql, h, p.userId, "submitted", `Submitted by the caregiver to the simulated receiver (attempt ${updated.submitAttempts})`);
+    return { handoff: updated };
   });
+  if ("done" in step) return step.done;
+  const h = step.handoff;
+
+  // 3: the simulated receiver persists the exact approved text.
+  try {
+    return await db.asPrincipal(p, async (sql) => {
+      if (opts.simulateFailure) throw new Error("Simulated receiver unavailable (demo failure)");
+      const text = h.approvedPayloadText ?? JSON.stringify(h.approvedPayload);
+      const inserted = await sql.query(
+        `insert into receiver_records (handoff_id, case_id, owner_id, payload, payload_text, payload_sha256, receipt_code, synthetic, received_at)
+         values ($1, $2, $3, $4, $5, $6, $7, true, clock_timestamp())
+         on conflict (handoff_id) do nothing returning *`,
+        [h.id, h.caseId, p.userId, text, text, sha256(text), newReceiptCode()],
+      );
+      if (!inserted.length) {
+        // A concurrent request already delivered it: return that receipt, never a second one.
+        const receipt = (await existingReceipt(sql, h))!;
+        return { handoff: await loadHandoff(sql, p, h.id), receipt, duplicate: true };
+      }
+      const rows = await sql.query(`update handoffs set status = 'received', updated_at = now() where id = $1 and owner_id = $2 returning *`, [h.id, p.userId]);
+      await history(sql, h, p.userId, "received", "Saved by the simulated receiver — no real care team was contacted");
+      return { handoff: toHandoff(rows[0]), receipt: toReceiverRecord(inserted[0]), duplicate: false };
+    });
+  } catch (e) {
+    // 4: nothing was received. Record Failed (retryable) — never Received.
+    const reason = e instanceof Error ? e.message.slice(0, 200) : "Unknown error";
+    await db.asPrincipal(p, async (sql) => {
+      await sql.query(`update handoffs set status = 'failed', last_error = $1, updated_at = now() where id = $2 and owner_id = $3 and status = 'submitted'`, [
+        reason,
+        h.id,
+        p.userId,
+      ]);
+      await history(sql, h, p.userId, "failed", `Delivery failed — nothing was received (${reason}). Safe to retry.`);
+    });
+    throw new HandoffError("delivery_failed", "The simulated receiver did not save the handoff, so nothing was received. It is marked Failed — you can retry safely.");
+  }
 }
 
-/** Simulated receiver: a separate click, only for a received handoff. Not a real clinical action. */
+/** Simulated receiver: a separate, explicit action, only for a received handoff. Not a clinical action. */
 export async function acknowledgeHandoff(db: Database, p: Principal, handoffId: string): Promise<Handoff> {
   return db.asPrincipal(p, async (sql) => {
     const h = await loadHandoff(sql, p, handoffId);
     if (h.status !== "received") throw new HandoffError("not_received", "Only a received handoff can be acknowledged.");
     await sql.query(`update receiver_records set acknowledged_at = now() where handoff_id = $1 and owner_id = $2`, [h.id, p.userId]);
     const rows = await sql.query(`update handoffs set status = 'acknowledged', updated_at = now() where id = $1 and owner_id = $2 returning *`, [h.id, p.userId]);
-    await history(sql, h, p.userId, "acknowledged", "Acknowledged in the simulated receiver (fictional — no real person acted)");
+    await history(sql, h, p.userId, "acknowledged", "Acknowledged in the simulated receiver — no clinician acted and no care changed");
     return toHandoff(rows[0]);
   });
 }
 
-/** The scenario's fictional receiver response (Case 1), if its fixture defines one. */
+/** The scenario's fictional receiver response (Case 1), if its fixture defines one. Written in advance, not by AI. */
 export function fictionalResponseFor(seedKey: string | null) {
   return SEED_CASES.find((c) => c.seedKey === seedKey)?.handoff.receiverResponse ?? null;
 }
 
+/** Adds the scenario's fictional response as a separate artifact — only after the explicit acknowledgement. */
 export async function addFictionalResponse(db: Database, p: Principal, handoffId: string): Promise<void> {
   await db.asPrincipal(p, async (sql) => {
     const h = await loadHandoff(sql, p, handoffId);
-    if (!["received", "acknowledged"].includes(h.status)) throw new HandoffError("not_received", "The handoff has not been received.");
+    if (h.status !== "acknowledged") throw new HandoffError("not_acknowledged", "The simulated receiver has to acknowledge the handoff first.");
     const [c] = await sql.query<{ seed_key: string | null }>(`select seed_key from cases where id = $1`, [h.caseId]);
     const r = fictionalResponseFor(c.seed_key);
     if (!r) throw new HandoffError("no_response", "This scenario has no simulated response.");
@@ -299,6 +370,6 @@ export async function addFictionalResponse(db: Database, p: Principal, handoffId
       `insert into receiver_responses (handoff_id, case_id, owner_id, kind, text, label, synthetic, at) values ($1, $2, $3, $4, $5, $6, true, now())`,
       [h.id, h.caseId, p.userId, r.kind, r.text, r.label],
     );
-    await history(sql, h, p.userId, h.status, "Simulated receiver response added — fictional scenario outcome, not a real clinical event", "response_added");
+    await history(sql, h, p.userId, h.status, "Synthetic scenario outcome added — written in advance for this scenario, not generated by AI, not a real clinical event", "response_added");
   });
 }

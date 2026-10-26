@@ -255,6 +255,11 @@ export interface Handoff {
   generatedContent: HandoffContent | null;
   generation: HandoffGeneration;
   editedAt: string | null;
+  /** Exact approved payload text (byte for byte) and its SHA-256, frozen at approval. */
+  approvedPayloadText: string | null;
+  approvedPayloadSha256: string | null;
+  submitAttempts: number;
+  lastError: string | null;
 }
 
 export interface HandoffGeneration {
@@ -280,6 +285,10 @@ export interface ReceiverRecord {
   id: string;
   handoffId: string;
   payload: HandoffPayload;
+  /** The exact text received, its hash, and the receipt's own ID (RC-...). Null for seeded examples. */
+  payloadText: string | null;
+  payloadSha256: string | null;
+  receiptCode: string | null;
   receivedAt: string;
   acknowledgedAt: string | null;
   synthetic: boolean;

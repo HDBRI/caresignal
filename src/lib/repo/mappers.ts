@@ -163,6 +163,10 @@ export const toHandoff = (r: Row): Handoff => ({
   generatedContent: r.generated_content ? json(r.generated_content) : null,
   generation: r.generation ? json(r.generation) : {},
   editedAt: isoOrNull(r.edited_at),
+  approvedPayloadText: (r.approved_payload_text as string) ?? null,
+  approvedPayloadSha256: (r.approved_payload_sha256 as string) ?? null,
+  submitAttempts: Number(r.submit_attempts ?? 0),
+  lastError: (r.last_error as string) ?? null,
 });
 
 export const toStatusEvent = (r: Row): HandoffStatusEvent => ({
@@ -178,6 +182,9 @@ export const toReceiverRecord = (r: Row): ReceiverRecord => ({
   id: r.id as string,
   handoffId: r.handoff_id as string,
   payload: json(r.payload),
+  payloadText: (r.payload_text as string) ?? null,
+  payloadSha256: (r.payload_sha256 as string) ?? null,
+  receiptCode: (r.receipt_code as string) ?? null,
   receivedAt: iso(r.received_at),
   acknowledgedAt: isoOrNull(r.acknowledged_at),
   synthetic: Boolean(r.synthetic),

@@ -36,7 +36,8 @@ This README tracks what is actually built. Current stage: **optional daily check
 | Optional daily check-in: 4 explicit answers (incl. "Skip today"), response timestamp, optional note for change/concern that can be saved as an observation; "No response recorded" never read as fine | ✅ Built + tested |
 | In-app reminder preference: off by default, one daily local time, shown only inside the app (no email/SMS/push), never blocks logging | ✅ Built + tested |
 | Care insights dashboard: chart period (7 / 30 days / all history) separate from the AI window; metrics and 7 category charts from stored records; "Changes worth reviewing" labeled by source (records / safety rule / AI); baseline comparison; evidence drawer; raw IDs hidden (kept internally) | ✅ Built + tested |
-| Weekly handoff: draft from stored notes + validated AI output (or notes only when AI is unavailable), caregiver edit, approve, submit to the simulated receiver, acknowledge, fictional response (Case 1), versions and full status history | ✅ Built + tested |
+| Weekly handoff: draft from stored notes + validated AI output (or notes only when AI is unavailable), caregiver edit, approve, versions and full status history | ✅ Built + tested |
+| Backend delivery `POST /api/handoffs`: exact approved snapshot, server-side validation, receipts, Failed + safe retry, idempotent duplicates, simulated receiver queue, separate acknowledge, fictional outcome after acknowledgement (Case 1) | ✅ Built + tested |
 | Hosted deployment (Vercel + Supabase) | ✅ Live at https://caresignal-gilt.vercel.app — tested in a clean incognito session on 2026-10-25: demo entry, registration with Terms/Privacy acceptance, case creation, sign-out/sign-in, password-reset email |
 
 ---
@@ -170,9 +171,25 @@ A handoff organizes the **last 7 days** of caregiver-reported observations for a
 - **Labels:** caregiver-reported notes, AI-drafted text, text edited by the caregiver, and the simulated receiver's fictional response are labeled separately.
 - **Review before submit:** nothing is ever sent automatically. The caregiver may edit wording (sources stay attached and can't be changed or invented), must confirm they reviewed the draft to approve it, and then chooses to submit. Editing an approved handoff returns it to draft.
 - **One open draft per case:** regenerating updates the open draft. A submitted handoff is frozen. If information is added or corrected after submission, a new version is created and the earlier version and its receipt are kept unchanged. If nothing changed, no new draft is made.
-- **Submit:** the server checks status, payload schema and that every source ID exists in the case, then saves the receipt and status history in one transaction. Retrying with the same submission key returns the original receipt.
-- **Status history:** draft → reviewed → submitted → received (simulated) → acknowledged (simulated), plus edits, regenerations and the fictional response.
+- **Submit:** goes through the backend endpoint `POST /api/handoffs` (see *Delivery to the simulated receiver* below).
+- **Status history:** draft → reviewed → submitted → received (simulated) → acknowledged (simulated), or failed (retryable), plus edits, regenerations and the fictional response. Stored in the database, so it survives refresh and restart.
 - **Urgent notes are never deferred:** emergency and prompt-attention guidance appears the moment a note is saved; the handoff only records that it was shown.
+
+## Delivery to the simulated receiver
+
+`POST /api/handoffs` (`src/app/api/handoffs/route.ts` → `src/lib/repo/handoff-api.ts` → `submitHandoff` in `handoff-workflow.ts`) is a real request to this app's own server. **No hospital, EHR, pharmacy or care team is connected** — the "receiver" is a table in this app's database, shown on the Demo receiver page.
+
+- **Request:** `{ caseId, handoffId: "HO-XXXXXXXX", idempotencyKey }` from a signed-in, same-origin session. The client cannot send or change the payload: the server uses the snapshot the caregiver approved. The handoff ID is generated on the server.
+- **Snapshot:** approving stores the exact payload text and its SHA-256. Later edits or regenerations create a new draft/version; the approved text never changes. The receipt stores the same text byte for byte and its hash.
+- **Validation (nothing changes if it fails):** status must be Reviewed (or Failed/Submitted for a retry); payload schema; snapshot hash matches what was approved; every cited observation exists for this same patient and is one of the handoff's sources.
+- **Two steps:** (1) status → **Submitted** (attempt counted, history row). (2) The simulated receiver saves the payload and the status becomes **Received** in the same transaction — so Received never appears without a stored receipt. If step 2 fails, status → **Failed** with the reason; retrying is safe.
+- **Receipt** (returned only after it is saved): handoff ID, receipt ID (`RC-…`), received timestamp, status, payload SHA-256, version.
+- **Duplicates:** a retry with the same idempotency key returns the original receipt (200, `duplicate: true`); concurrent double clicks still produce one receipt (enforced by a unique constraint); a different key on an already-received handoff gets 409.
+- **Responses:** 201 received · 200 duplicate · 400 malformed · 401 signed out · 403 cross-site · 404 not found / not yours · 409 not approved or already received · 422 invalid payload or unknown source · 502 delivery failed (status Failed).
+- **Demo failure switch:** the submit form has "Demo: simulate a failed delivery" so the Failed status and a safe retry can be shown.
+- **Acknowledged** is a separate explicit click on the Demo receiver page. Neither Received nor Acknowledged means a clinician acted or care changed.
+- **Fictional outcome (Case 1 only):** after acknowledgement, the scenario's prewritten response can be added. It is labeled a synthetic scenario outcome — written in advance, not generated by AI, not a real clinical event.
+- **Urgent guidance** never depends on this flow: alerts are created when a note is saved.
 
 ## Project structure
 

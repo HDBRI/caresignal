@@ -12,7 +12,6 @@ import {
   editDraft,
   HandoffError,
   handoffEditInput,
-  submitHandoff,
 } from "@/lib/repo/handoff-workflow";
 import { evaluateSafety, explainMatches, TIER_GUIDANCE, type SafetyTier } from "@/lib/safety/rules";
 
@@ -95,20 +94,6 @@ export async function approveHandoffAction(_prev: HandoffFormState, fd: FormData
   }
   done(caseId);
   return { ok: "Approved. It has not been sent — submit it when you are ready." };
-}
-
-export async function submitHandoffAction(_prev: HandoffFormState, fd: FormData): Promise<HandoffFormState> {
-  const p = await principal();
-  const caseId = String(fd.get("caseId") ?? "");
-  const displayId = String(fd.get("displayId") ?? "");
-  try {
-    await submitHandoff(await getDb(), p, String(fd.get("handoffId") ?? ""), String(fd.get("idempotencyKey") ?? ""));
-  } catch (e) {
-    console.error("[handoff] submit failed");
-    return { error: message(e, "The handoff was not sent and no receipt was created. It is still approved — please try again.") };
-  }
-  done(caseId);
-  redirect(`/cases/${caseId}/handoffs/${displayId}?submitted=1`);
 }
 
 export async function acknowledgeHandoffAction(fd: FormData): Promise<void> {

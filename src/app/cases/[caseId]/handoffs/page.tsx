@@ -4,7 +4,7 @@ import { getDb } from "@/lib/repo/db";
 import { listHandoffs } from "@/lib/repo/handoffs";
 import { EmptyState, fmtDateTime } from "@/components/display";
 import { DraftButton } from "@/components/handoff/HandoffForms";
-import { HANDOFF_STATUS, periodLabel, provenance, StatusPath } from "@/components/handoff/HandoffView";
+import { HANDOFF_STATUS, periodLabel, provenance, StatusBadge, StatusPath } from "@/components/handoff/HandoffView";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +14,7 @@ export default async function HandoffsPage({ params }: { params: Promise<{ caseI
   const actor = await requireActor();
   const handoffs = await listHandoffs(await getDb(), principalOf(actor), caseId);
   const open = handoffs.find((b) => b.handoff.status === "draft" || b.handoff.status === "reviewed");
+  const stuck = handoffs.filter((b) => b.handoff.status === "failed" || b.handoff.status === "submitted");
   const sorted = [...handoffs].sort((a, b) => b.handoff.version - a.handoff.version || b.handoff.createdAt.localeCompare(a.handoff.createdAt));
 
   return (
@@ -54,6 +55,13 @@ export default async function HandoffsPage({ params }: { params: Promise<{ caseI
         )}
       </section>
 
+      {stuck.map(({ handoff: h }) => (
+        <p key={h.id} className="form-error" role="alert" style={{ alignItems: "center" }}>
+          <StatusBadge status={h.status} /> Version {h.version} ({h.displayId}) was not received by the simulated receiver.{" "}
+          <Link href={`/cases/${caseId}/handoffs/${h.displayId}`}>Open it to retry safely</Link>
+        </p>
+      ))}
+
       {sorted.length === 0 ? (
         <EmptyState title="No handoffs yet">Drafting one doesn&apos;t send anything.</EmptyState>
       ) : (
@@ -67,11 +75,12 @@ export default async function HandoffsPage({ params }: { params: Promise<{ caseI
                     Version {h.version} · {periodLabel(h)}
                   </Link>
                 </h3>
-                <span className="secondary">{provenance(h)}</span>
+                <StatusBadge status={h.status} />
               </div>
               <StatusPath status={h.status} />
               <p className="meta">
-                <span>Handoff ID {h.displayId}</span>
+                <span>{provenance(h)}</span>
+                <span>· Handoff ID {h.displayId}</span>
                 <span>· {h.sourceIds.length} source note{h.sourceIds.length === 1 ? "" : "s"}</span>
                 {h.submittedAt && <span>· Submitted {fmtDateTime(h.submittedAt)} (frozen — never changed afterwards)</span>}
                 {receipt && <span>· Receipt saved by the simulated receiver</span>}
