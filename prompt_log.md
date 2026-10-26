@@ -1034,3 +1034,6 @@
 
 **Follow-up:**
 > Yes, push to GitHub and redeploy the live site.
+
+**Follow-up:**
+> *[screenshot: instructor post — submit report HTML and slides HTML only (optional video); GitHub repo URL must be in report and slides; mention if repo is private]* can u make sure the link to teh site & the repo & if repo is private or not & everything they would need to access & clone is there in the report & the slides check photo
